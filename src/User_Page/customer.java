@@ -1,8 +1,10 @@
-package Login;
+package User_Page;
 
 import javax.swing.JFrame;
+import Design.FocusListener;
+import Design.GradientPanel;
 
-class customer extends JFrame {
+public class customer extends JFrame {
 
     public customer() {
         setTitle("Profile Page");

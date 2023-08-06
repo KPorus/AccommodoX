@@ -1,7 +1,10 @@
-package Login;
+package UserAuthantication;
 
+import UserAuthantication.login;
 import DB.UserDAO;
 import DB.MySQLConnection;
+import Design.FocusListener;
+import Design.GradientPanel;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
