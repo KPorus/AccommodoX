@@ -5,6 +5,7 @@ import DB.MySQLConnection;
 import User_Page.customer;
 import Design.FocusListener;
 import Design.GradientPanel;
+import User_Page.admin;
 import java.awt.Color;
 import java.awt.Font;
 
@@ -81,10 +82,20 @@ public class login extends JFrame {
                 String Pass = new String(pass.getPassword());
                 if (userDAO.loginUser(User, Pass)) {
                     JOptionPane.showConfirmDialog(login.this, "Login Successful", "Success Message", 0b0);
-
-                    // Open the customer page
-                    customer customerPage = new customer();
-                    customerPage.setVisible(true);
+                    String role = userDAO.getUserRole(User);
+                    User_data.User user = userDAO.getUser(User);
+                    if ("customer".equals(role)) {
+                        // Open the customer page
+                        customer customerPage = new customer(user);
+                        customerPage.setVisible(true);
+                    }
+                    
+                    if("admin".equals(role))
+                    {
+                        admin adminPage = new admin(user);
+                        adminPage.setVisible(true);
+                                
+                    }
 
                     // Close the login page
                     dispose();
@@ -127,4 +138,3 @@ public class login extends JFrame {
     }
 
 }
-
