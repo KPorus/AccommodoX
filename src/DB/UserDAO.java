@@ -1,5 +1,5 @@
 
-package Login;
+package DB;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,7 +10,7 @@ import java.sql.SQLException;
  *
  * @author User
  */
-class UserDAO {
+public class UserDAO {
 
     private final Connection connection;
 

@@ -1,5 +1,7 @@
 package Login;
 
+import DB.UserDAO;
+import DB.MySQLConnection;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;

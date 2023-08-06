@@ -1,5 +1,7 @@
 package Login;
 
+import DB.UserDAO;
+import DB.MySQLConnection;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -7,11 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -129,69 +126,5 @@ public class register extends JFrame {
                 mysqlConnection.closeConnection(); // Close MySQL connection when window closes
             }
         });
-    }
-}
-
-class MySQLConnection {
-
-    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/users";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "";
-    private Connection connection;
-
-    public MySQLConnection() {
-        try {
-            connection = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Connection getConnection() {
-        return connection;
-    }
-
-    public void closeConnection() {
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-}
-
-class UserDAO {
-
-    private final Connection connection;
-
-    public UserDAO(Connection connection) {
-        this.connection = connection;
-    }
-
-    public boolean registerUser(String username, String email, String password, String role) {
-        String insertUserQuery = "INSERT INTO users (name, email, pass,role) VALUES (?, ?, ?,?)";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(insertUserQuery)) {
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, email);
-            preparedStatement.setString(3, password);
-            preparedStatement.setString(4, role);
-            return preparedStatement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public boolean loginUser(String username, String password) {
-        String selectUserQuery = "SELECT * FROM users WHERE name = ? AND pass = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(selectUserQuery)) {
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, password);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            return resultSet.next(); // If a matching user is found
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 }

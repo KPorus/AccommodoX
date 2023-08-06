@@ -1,11 +1,11 @@
 
-package Login;
+package DB;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-class MySQLConnection {
+public class MySQLConnection {
 
     private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/users";
     private static final String USERNAME = "root";
