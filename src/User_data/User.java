@@ -13,6 +13,10 @@ public class User {
         this.role = role;
     }
 
+    public User() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
     // Getters and setters for the fields
 
     public String getUsername() {
