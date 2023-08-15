@@ -3,6 +3,7 @@ package User_Page;
 import DB.MySQLConnection;
 import Design.GradientPanel;
 import User_data.User;
+import User_data.UserDetails;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import DB.UserDAO;
@@ -22,6 +23,7 @@ public class editPage extends JFrame {
     private MySQLConnection mysqlConnection;
     private UserDAO userDAO;
     private User userData;
+    private UserDetails details ;
 
     public editPage(User user) {
         this.userData = user;
@@ -53,6 +55,9 @@ public class editPage extends JFrame {
 
         mainContentPanel.add(menuPanel, BorderLayout.WEST);
 
+        int userId = user.getId();
+        details = userDAO.getUserDetails(userId);
+        
         // Create a panel for the welcome message and user information
         JPanel welcomePanel = new JPanel(new BorderLayout());
         welcomePanel.setOpaque(false);
@@ -67,14 +72,14 @@ public class editPage extends JFrame {
         JTextField passLabel = new JTextField(user.getPassword()); // Replace with actual method to get role
 
         JLabel address = new JLabel("Address");
-        JTextField addressText = new JTextField("");
+        JTextField addressText = new JTextField(details.getAddress());
         JPanel addresspanel = new JPanel(new GridLayout(1, 1, 10, 10));
         addresspanel.add(address);
         addresspanel.add(addressText);
         addresspanel.setOpaque(false);
 
         JLabel phone = new JLabel("Phone");
-        JTextField phoneText = new JTextField("");
+        JTextField phoneText = new JTextField(details.getPhone());
         JPanel phonepanel = new JPanel(new GridLayout(1, 1, 10, 10));
         phonepanel.add(phone);
         phonepanel.add(phoneText);
