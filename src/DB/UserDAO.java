@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import User_data.User;
+import java.sql.Statement;
 
 /**
  *
@@ -19,19 +20,33 @@ public class UserDAO {
     }
 
     public boolean registerUser(String username, String email, String password, String role) {
-        String insertUserQuery = "INSERT INTO users (name, email, pass,role) VALUES (?, ?, ?,?)";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(insertUserQuery)) {
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, email);
-            preparedStatement.setString(3, password);
-            preparedStatement.setString(4, role);
-            return preparedStatement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+    String insertUserQuery = "INSERT INTO users (name, email, pass, role) VALUES (?, ?, ?, ?)";
+    String insertUserDetailsQuery = "INSERT INTO userDetails (user_id, address, phone) VALUES (?, NULL, NULL)";
+    
+    try (PreparedStatement preparedStatement = connection.prepareStatement(insertUserQuery, Statement.RETURN_GENERATED_KEYS)) {
+        preparedStatement.setString(1, username);
+        preparedStatement.setString(2, email);
+        preparedStatement.setString(3, password);
+        preparedStatement.setString(4, role);
+        
+        int rowsAffected = preparedStatement.executeUpdate();
+        if (rowsAffected > 0) {
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                int userId = generatedKeys.getInt(1); // Retrieve the generated user id
+                
+                try (PreparedStatement userDetailsStatement = connection.prepareStatement(insertUserDetailsQuery)) {
+                    userDetailsStatement.setInt(1, userId); // Set the user id
+                    userDetailsStatement.executeUpdate();
+                    return true;
+                }
+            }
         }
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
-
+    return false;
+}
     public boolean loginUser(String username, String password) {
         String selectUserQuery = "SELECT * FROM users WHERE name = ? AND pass = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(selectUserQuery)) {
@@ -58,19 +73,63 @@ public class UserDAO {
         }
         return null; // Return null if the role is not found
     }
+    
+public boolean updateUserAndDetails(int userId, String name, String pass, String email, String address, String phone) {
+    String updateUserQuery = "UPDATE users SET name = ?, pass = ?, email = ? WHERE id = ?";
+    String updateUserDetailsQuery = "UPDATE userDetails SET address = ?, phone = ? WHERE user_id = ?";
+    
+    try {
+        connection.setAutoCommit(false); // Start transaction
+        
+        // Update users table
+        try (PreparedStatement userStatement = connection.prepareStatement(updateUserQuery)) {
+            userStatement.setString(1, name);
+            userStatement.setString(2, pass);
+            userStatement.setString(3, email);
+            userStatement.setInt(4, userId);
+            userStatement.executeUpdate();
+        }
+        
+        // Update userDetails table
+        try (PreparedStatement userDetailsStatement = connection.prepareStatement(updateUserDetailsQuery)) {
+            userDetailsStatement.setString(1, address);
+            userDetailsStatement.setString(2, phone);
+            userDetailsStatement.setInt(3, userId);
+            userDetailsStatement.executeUpdate();
+        }
+        
+        connection.commit(); // Commit the transaction
+        return true;
+    } catch (SQLException e) {
+        try {
+            connection.rollback(); // Rollback if there's an exception
+        } catch (SQLException rollbackEx) {
+            rollbackEx.printStackTrace();
+        }
+        e.printStackTrace();
+        return false;
+    } finally {
+        try {
+            connection.setAutoCommit(true); // Reset auto-commit mode
+        } catch (SQLException autoCommitEx) {
+            autoCommitEx.printStackTrace();
+        }
+    }
+}
 
-    public User getUser(String username) {
+public User getUser(String username) {
     String selectUserQuery = "SELECT * FROM users WHERE name = ?";
     try (PreparedStatement preparedStatement = connection.prepareStatement(selectUserQuery)) {
         preparedStatement.setString(1, username);
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
+            int id = resultSet.getInt("id");
             String email = resultSet.getString("email");
             String password = resultSet.getString("pass");
             String role = resultSet.getString("role");
             
             // Create a User object and return it
-            User user = new User(username, email, password, role);
+            User user = new User(id,username, email, password, role);
             return user;
         }
     } catch (SQLException e) {

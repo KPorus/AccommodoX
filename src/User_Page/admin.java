@@ -1,11 +1,15 @@
 package User_Page;
 
+import DB.MySQLConnection;
+import DB.UserDAO;
 import Design.GradientPanel;
 import javax.swing.JFrame;
 import User_data.User;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -13,9 +17,13 @@ import javax.swing.JPanel;
 
 public class admin extends JFrame {
     private User userData;
-
+    private UserDAO userDAO; 
+    private MySQLConnection mysqlConnection;
     public admin(User user) {
         this.userData = user;
+        mysqlConnection = new MySQLConnection(); 
+        this.userDAO = new UserDAO(mysqlConnection.getConnection()); // Initialize UserDAO
+        this.userData = userDAO.getUser(user.getUsername());
         setTitle("Admin Profile Page");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 50, 800, 500);
@@ -27,16 +35,14 @@ public class admin extends JFrame {
         mainContentPanel.setOpaque(false);
 
         // Create a panel for the menu options
-        JPanel menuPanel = new JPanel(new GridLayout(4, 1, 0, 20));
+        JPanel menuPanel = new JPanel(new GridLayout(3, 1, 0, 20));
         menuPanel.setOpaque(false);
 
         JButton profile = new JButton("Profile");
-        JButton home = new JButton("Home");
         JButton users = new JButton("Customers");
         JButton emp = new JButton("Employees");
 
         menuPanel.add(profile);
-        menuPanel.add(home);
         menuPanel.add(users);
         menuPanel.add(emp);
 
@@ -60,10 +66,20 @@ public class admin extends JFrame {
         JLabel nameLabel = new JLabel("Name: " + user.getUsername()); // Replace with actual method to get name
         JLabel emailLabel = new JLabel("Email: " + user.getEmail()); // Replace with actual method to get email
         JLabel roleLabel = new JLabel("Role: " + user.getRole()); // Replace with actual method to get role
-
+        
+        JButton edit = new JButton("Edit");
+        edit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              editPage edit = new editPage(user);
+               edit.setVisible(true);
+               dispose();
+            }
+        });
         userInfoPanel.add(nameLabel);
         userInfoPanel.add(emailLabel);
         userInfoPanel.add(roleLabel);
+        userInfoPanel.add(edit);
 
         welcomePanel.add(userInfoPanel, BorderLayout.CENTER);
 
