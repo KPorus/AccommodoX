@@ -42,7 +42,14 @@ public class allCustomer extends JFrame {
         JButton profile = new JButton("Profile");
         JButton users = new JButton("Customers");
         JButton emp = new JButton("Employees");
-
+        profile.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                 User user = new User(); // Provide actual user data
+                new admin(user).setVisible(true);
+                dispose();
+            }
+        });
         menuPanel.add(profile);
         menuPanel.add(users);
         menuPanel.add(emp);
@@ -66,7 +73,7 @@ public class allCustomer extends JFrame {
             JLabel nameLabel = new JLabel("Name: " + customer.getUsername());
             JLabel emailLabel = new JLabel("Email: " + customer.getEmail());
             JLabel roleLabel = new JLabel("Role: " + customer.getRole());
-          
+
             userInfoPanel.add(nameLabel);
             userInfoPanel.add(emailLabel);
             userInfoPanel.add(roleLabel);
