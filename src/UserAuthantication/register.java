@@ -5,6 +5,7 @@ import Validation.isEmailValid;
 import DB.MySQLConnection;
 import Design.FocusListener;
 import Design.GradientPanel;
+import Validation.isPassValid;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -29,11 +30,13 @@ public class register extends JFrame {
     private MySQLConnection mysqlConnection;
     private UserDAO userDAO;
     private isEmailValid emailValidator;
+    private isPassValid passValidator;
 
     public register() {
         mysqlConnection = new MySQLConnection(); // Initialize MySQLConnection
         userDAO = new UserDAO(mysqlConnection.getConnection()); // Initialize UserDAO
         emailValidator = new isEmailValid(); // Initialize the emailValidator instance
+        passValidator = new isPassValid();// Initialize the passValidator instance
         
         setTitle("Register Page");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -89,8 +92,12 @@ public class register extends JFrame {
             String User = userName.getText();
             String Email = email.getText();
             String Pass = new String(pass.getPassword());
-            if (!emailValidator.isValidEmail(Email)) {
+            if (!passValidator.isValidPass(Pass) && !emailValidator.isValidEmail(Email)) {
+                JOptionPane.showMessageDialog(register.this, "Invalid email & password format.");
+            } else if (!emailValidator.isValidEmail(Email)) {
                 JOptionPane.showMessageDialog(register.this, "Invalid email format.");
+            } else if (!passValidator.isValidPass(Pass)) {
+                JOptionPane.showMessageDialog(register.this, "Invalid password format.");
             } else if (userDAO.isUserExists(User)) {
                 JOptionPane.showMessageDialog(register.this, "Username already exists.");
             } else if (userDAO.isEmailExists(Email)) {
