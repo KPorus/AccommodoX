@@ -22,6 +22,32 @@ public class UserDAO {
     public UserDAO(Connection connection) {
         this.connection = connection;
     }
+    
+    public boolean isUserExists(String username) {
+        String query = "SELECT * FROM users WHERE name = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, username);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next(); // If there is a result, username exists
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Return false in case of an exception
+        }
+    }
+
+    public boolean isEmailExists(String email) {
+        String query = "SELECT * FROM users WHERE email = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, email);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next(); // If there is a result, email exists
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Return false in case of an exception
+        }
+    }
 
     public boolean registerUser(String username, String email, String password, String role) {
         String insertUserQuery = "INSERT INTO users (name, email, pass, role) VALUES (?, ?, ?, ?)";

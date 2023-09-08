@@ -17,16 +17,18 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class admin extends JFrame {
+
     private User userData;
-    private UserDetails details ;
-    private UserDAO userDAO; 
+    private UserDetails details;
+    private UserDAO userDAO;
     private MySQLConnection mysqlConnection;
+
     public admin(User user) {
         this.userData = user;
-        mysqlConnection = new MySQLConnection(); 
+        mysqlConnection = new MySQLConnection();
         this.userDAO = new UserDAO(mysqlConnection.getConnection()); // Initialize UserDAO
         this.userData = userDAO.getUser(user.getId());
-        
+
         setTitle("Admin Profile Page");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 50, 800, 500);
@@ -64,37 +66,58 @@ public class admin extends JFrame {
         title.setForeground(new Color(255, 255, 255));
 
         welcomePanel.add(title, BorderLayout.NORTH);
-        
+
         JPanel userInfoPanel = new JPanel(new GridLayout(5, 1, 0, 10)); // 3 rows, 1 column
         userInfoPanel.setOpaque(false);
-        userInfoPanel.setForeground(new Color(255,255,255));
+        userInfoPanel.setForeground(new Color(255, 255, 255));
         userInfoPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 0, 0));
-        
+
         int userId = user.getId();
         details = userDAO.getUserDetails(userId);
-        
         JLabel nameLabel = new JLabel("Name: " + user.getUsername()); // Replace with actual method to get name
         JLabel emailLabel = new JLabel("Email: " + user.getEmail()); // Replace with actual method to get email
         JLabel roleLabel = new JLabel("Role: " + user.getRole()); // Replace with actual method to get role
-        JLabel address = new JLabel("Address: " + details.getAddress()); // Replace with actual method to get role
-        JLabel phone = new JLabel("phone: " + details.getPhone()); // Replace with actual method to get role
-        
-        JButton edit = new JButton("Edit");
-        edit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              editPage edit = new editPage(user);
-               edit.setVisible(true);
-               dispose();
-            }
-        });
-        userInfoPanel.add(nameLabel);
-        userInfoPanel.add(emailLabel);
-        userInfoPanel.add(roleLabel);
-        userInfoPanel.add(address);
-        userInfoPanel.add(phone);
-        userInfoPanel.add(edit);
+        if (details != null || details == null) {
 
+            JLabel address = new JLabel("Address: " + details.getAddress()); // Replace with actual method to get role
+            JLabel phone = new JLabel("phone: " + details.getPhone()); // Replace with actual method to get role
+
+            JButton edit = new JButton("Edit");
+            edit.addActionListener((ActionEvent e) -> {
+                editPage edit1 = new editPage(user);
+                edit1.setVisible(true);
+                dispose();
+            });
+
+            userInfoPanel.add(nameLabel);
+            userInfoPanel.add(emailLabel);
+            userInfoPanel.add(roleLabel);
+            userInfoPanel.add(address);
+            userInfoPanel.add(phone);
+            userInfoPanel.add(edit);
+        } else if (details == null) {
+            details = userDAO.getUserDetails(userId);
+             JLabel address = new JLabel("Address: " + details.getAddress()); // Replace with actual method to get role
+            JLabel phone = new JLabel("phone: " + details.getPhone()); // Replace with actual method to get role
+
+            JButton edit = new JButton("Edit");
+            edit.addActionListener((ActionEvent e) -> {
+                editPage edit1 = new editPage(user);
+                edit1.setVisible(true);
+                dispose();
+            });
+
+            userInfoPanel.add(nameLabel);
+            userInfoPanel.add(emailLabel);
+            userInfoPanel.add(roleLabel);
+            userInfoPanel.add(address);
+            userInfoPanel.add(phone);
+            userInfoPanel.add(edit);
+        }
+        else{
+            JLabel errorLabel = new JLabel("User details not available");
+            userInfoPanel.add(errorLabel);
+        }
         welcomePanel.add(userInfoPanel, BorderLayout.CENTER);
 
         mainContentPanel.add(welcomePanel, BorderLayout.CENTER);

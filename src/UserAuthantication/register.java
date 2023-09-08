@@ -1,7 +1,7 @@
 package UserAuthantication;
 
-import UserAuthantication.login;
 import DB.UserDAO;
+import Validation.isEmailValid;
 import DB.MySQLConnection;
 import Design.FocusListener;
 import Design.GradientPanel;
@@ -9,7 +9,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JButton;
@@ -29,11 +28,13 @@ public class register extends JFrame {
 
     private MySQLConnection mysqlConnection;
     private UserDAO userDAO;
+    private isEmailValid emailValidator;
 
     public register() {
         mysqlConnection = new MySQLConnection(); // Initialize MySQLConnection
         userDAO = new UserDAO(mysqlConnection.getConnection()); // Initialize UserDAO
-
+        emailValidator = new isEmailValid(); // Initialize the emailValidator instance
+        
         setTitle("Register Page");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 50, 800, 500);
@@ -84,12 +85,18 @@ public class register extends JFrame {
         SignUp.setBackground(new Color(14, 129, 152));
         SignUp.setForeground(Color.WHITE); // Set text color to white
         SignUp.setFocusPainted(false); // Remove focus border
-        SignUp.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String User = userName.getText();
-                String Email = email.getText();
-                String Pass = new String(pass.getPassword());
+        SignUp.addActionListener((ActionEvent e) -> {
+            String User = userName.getText();
+            String Email = email.getText();
+            String Pass = new String(pass.getPassword());
+            if (!emailValidator.isValidEmail(Email)) {
+                JOptionPane.showMessageDialog(register.this, "Invalid email format.");
+            } else if (userDAO.isUserExists(User)) {
+                JOptionPane.showMessageDialog(register.this, "Username already exists.");
+            } else if (userDAO.isEmailExists(Email)) {
+                JOptionPane.showMessageDialog(register.this, "Email already exists.");
+            } else {
+                // Proceed with registration
                 if (userDAO.registerUser(User, Email, Pass, "customer")) {
                     JOptionPane.showConfirmDialog(register.this, "Registration Successful", "Success Message", 0b0);
                 } else {
