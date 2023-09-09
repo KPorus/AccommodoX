@@ -4,22 +4,24 @@ import DB.MySQLConnection;
 import DB.UserDAO;
 import Design.GradientPanel;
 import User_data.User;
-import java.util.List;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.GridLayout;
+import User_data.UserDetails;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import java.util.List;
 
 public class allCustomer extends JFrame {
 
     private UserDAO userDAO;
     private MySQLConnection mysqlConnection;
+    private JTable customerTable;
+    private DefaultTableModel tableModel;
+    private int currentPage = 1;
+    private int pageSize = 10; // Number of rows per page
+    private List<User> allCustomers;
 
     public allCustomer(User user, int userId) {
         mysqlConnection = new MySQLConnection();
@@ -45,7 +47,6 @@ public class allCustomer extends JFrame {
         profile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Assuming you have a method to fetch a specific user by ID from your database
                 User userData = userDAO.getUser(userId); // Fetch user data by ID
                 new admin(userData).setVisible(true); // Pass the fetched user data
                 dispose();
@@ -61,32 +62,102 @@ public class allCustomer extends JFrame {
         JPanel welcomePanel = new JPanel(new BorderLayout());
         welcomePanel.setOpaque(false);
 
-        JPanel userInfoPanel = new JPanel(new GridLayout(5, 1, 0, 10)); // 5 rows, 1 column
-        userInfoPanel.setOpaque(false);
-        userInfoPanel.setForeground(new Color(255, 255, 255));
-        userInfoPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 0, 0));
+        // Initialize the table model with columns
+        String[] columnNames = {"Name", "Email", "Role", "Phone", "Address", "Action"};
+        tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Make cells non-editable
+            }
 
-        // Here you should fetch the list of customers from the database using userDAO
-        // and then iterate over them to display their information
-        // For example:
-        List<User> customers = userDAO.getAllCustomers();
-        for (User customer : customers) {
-            JLabel nameLabel = new JLabel("Name: " + customer.getUsername());
-            JLabel emailLabel = new JLabel("Email: " + customer.getEmail());
-            JLabel roleLabel = new JLabel("Role: " + customer.getRole());
+            @Override
+            public Object getValueAt(int row, int column) {
+                if (column == 4) { // Check if it's the "Address" column
+                    int customerId = allCustomers.get(row).getId();
+                    UserDetails userDetails = userDAO.getUserDetails(customerId);
+                    return userDetails.getAddress();
+                } else if (column == 5) { // Check if it's the "Action" column
+                    return "Delete";
+                }
+                return super.getValueAt(row, column);
+            }
+        };
 
-            userInfoPanel.add(nameLabel);
-            userInfoPanel.add(emailLabel);
-            userInfoPanel.add(roleLabel);
-        }
+        customerTable = new JTable(tableModel);
+        customerTable.setAutoCreateRowSorter(true); // Allow sorting by columns
 
-        welcomePanel.add(userInfoPanel, BorderLayout.CENTER);
+        // Fetch the list of customers from the database using userDAO
+        allCustomers = userDAO.getAllCustomers();
+        displayCustomers(currentPage);
+
+        JScrollPane scrollPane = new JScrollPane(customerTable);
+        welcomePanel.add(scrollPane, BorderLayout.CENTER);
 
         mainContentPanel.add(welcomePanel, BorderLayout.CENTER);
+
+        // Add pagination controls
+        JPanel paginationPanel = new JPanel();
+        JButton prevButton = new JButton("Previous");
+        JButton nextButton = new JButton("Next");
+
+        prevButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayCustomers(currentPage);
+                }
+            }
+        });
+
+        nextButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int maxPage = (int) Math.ceil((double) allCustomers.size() / pageSize);
+                if (currentPage < maxPage) {
+                    currentPage++;
+                    displayCustomers(currentPage);
+                }
+            }
+        });
+
+        paginationPanel.add(prevButton);
+        paginationPanel.add(nextButton);
+        mainContentPanel.add(paginationPanel, BorderLayout.SOUTH);
 
         // Add the main content panel to the JFrame
         getContentPane().add(mainContentPanel);
     }
 
+    private void displayCustomers(int page) {
+        tableModel.setRowCount(0); // Clear existing rows
+        int startIdx = (page - 1) * pageSize;
+        int endIdx = Math.min(startIdx + pageSize, allCustomers.size());
 
+        for (int i = startIdx; i < endIdx; i++) {
+            User customer = allCustomers.get(i);
+            UserDetails userDetails = userDAO.getUserDetails(customer.getId());
+
+            // Create a "Delete" button for each row
+            JButton deleteButton = new JButton("Delete");
+            deleteButton.setActionCommand(Integer.toString(customer.getId())); // Set action command to customer ID
+            deleteButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int customerId = Integer.parseInt(e.getActionCommand()); // Get customer ID from action command
+                    System.out.println("Delete button clicked for customer ID: " + customerId);
+                    // Implement your delete logic here
+                }
+            });
+
+            Object[] rowData = {customer.getUsername(), customer.getEmail(), customer.getRole(), userDetails.getPhone(), userDetails.getAddress(), deleteButton};
+            tableModel.addRow(rowData);
+        }
+    }
+
+    public static void main(String[] args) {
+        // This is just for testing, you can remove this part when integrating with your application.
+        JFrame frame = new allCustomer(null, 0);
+        frame.setVisible(true);
+    }
 }
