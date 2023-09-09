@@ -21,7 +21,7 @@ public class allCustomer extends JFrame {
     private UserDAO userDAO;
     private MySQLConnection mysqlConnection;
 
-    public allCustomer(User user) {
+    public allCustomer(User user, int userId) {
         mysqlConnection = new MySQLConnection();
         this.userDAO = new UserDAO(mysqlConnection.getConnection()); // Initialize UserDAO
 
@@ -45,8 +45,9 @@ public class allCustomer extends JFrame {
         profile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                 User user = new User(); // Provide actual user data
-                new admin(user).setVisible(true);
+                // Assuming you have a method to fetch a specific user by ID from your database
+                User userData = userDAO.getUser(userId); // Fetch user data by ID
+                new admin(userData).setVisible(true); // Pass the fetched user data
                 dispose();
             }
         });
@@ -87,11 +88,5 @@ public class allCustomer extends JFrame {
         getContentPane().add(mainContentPanel);
     }
 
-    public static void main(String[] args) {
-        // You can create an instance of allCustomer and pass a user to it
-        User user = new User(); // Replace with actual user data
-        allCustomer customerPage = new allCustomer(user);
-        customerPage.setVisible(true);
-    }
 
 }
