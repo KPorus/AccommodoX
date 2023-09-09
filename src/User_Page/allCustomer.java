@@ -1,5 +1,4 @@
 package User_Page;
-
 import DB.MySQLConnection;
 import DB.UserDAO;
 import Design.GradientPanel;
@@ -12,6 +11,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.DefaultTableColumnModel;
 
 public class allCustomer extends JFrame {
 
@@ -29,7 +31,7 @@ public class allCustomer extends JFrame {
 
         setTitle("All customers page");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 50, 800, 500);
+        setBounds(100, 50, 1000, 500);
         setResizable(false);
         setContentPane(new GradientPanel());
 
@@ -69,7 +71,6 @@ public class allCustomer extends JFrame {
             public boolean isCellEditable(int row, int column) {
                 return false; // Make cells non-editable
             }
-
             @Override
             public Object getValueAt(int row, int column) {
                 if (column == 4) { // Check if it's the "Address" column
@@ -153,6 +154,38 @@ public class allCustomer extends JFrame {
             Object[] rowData = {customer.getUsername(), customer.getEmail(), customer.getRole(), userDetails.getPhone(), userDetails.getAddress(), deleteButton};
             tableModel.addRow(rowData);
         }
+
+        // Automatically adjust column widths based on content
+        for (int i = 0; i < tableModel.getColumnCount(); i++) {
+            packColumn(customerTable, i);
+        }
+    }
+
+    // Automatically adjust the column width based on content
+    private void packColumn(JTable table, int columnIndex) {
+        int margin = 5; // Add a small margin for aesthetics
+        DefaultTableColumnModel colModel = (DefaultTableColumnModel) table.getColumnModel();
+        TableColumn col = colModel.getColumn(columnIndex);
+        int width = 0;
+
+        // Get the header renderer to calculate the width
+        TableCellRenderer headerRenderer = col.getHeaderRenderer();
+        if (headerRenderer == null) {
+            headerRenderer = table.getTableHeader().getDefaultRenderer();
+        }
+
+        Component headerComp = headerRenderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
+        width = headerComp.getPreferredSize().width;
+
+        // Iterate over the rows to find the maximum cell width
+        for (int row = 0; row < table.getRowCount(); row++) {
+            TableCellRenderer renderer = table.getCellRenderer(row, columnIndex);
+            Component comp = table.prepareRenderer(renderer, row, columnIndex);
+            width = Math.max(comp.getPreferredSize().width + margin, width);
+        }
+
+        // Set the column width with some additional margin
+        col.setPreferredWidth(width + margin);
     }
 
     public static void main(String[] args) {
