@@ -30,7 +30,7 @@ public class admin extends JFrame {
 
         setTitle("Admin Profile Page");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 50, 800, 500);
+        setBounds(100, 50, 1000, 500);
         setResizable(false);
         setContentPane(new GradientPanel());
 
