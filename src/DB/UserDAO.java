@@ -22,7 +22,7 @@ public class UserDAO {
     public UserDAO(Connection connection) {
         this.connection = connection;
     }
-    
+
     public boolean isUserExists(String username) {
         String query = "SELECT * FROM users WHERE name = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -107,29 +107,28 @@ public class UserDAO {
         return null; // Return null if the role is not found
     }
 
-public List<User> getAllCustomers() {
-    List<User> customers = new ArrayList<>();
-    String selectUserRoleQuery = "SELECT * FROM users WHERE role = ?";
-    try (PreparedStatement preparedStatement = connection.prepareStatement(selectUserRoleQuery)) {
-        preparedStatement.setString(1, "customer"); // Set the role value
-        ResultSet resultSet = preparedStatement.executeQuery();
-        while (resultSet.next()) {
-            int id = resultSet.getInt("id");
-            String username = resultSet.getString("name");
-            String email = resultSet.getString("email");
-            String password = resultSet.getString("pass");
-            String role = resultSet.getString("role");
+    public List<User> getAllCustomers() {
+        List<User> customers = new ArrayList<>();
+        String selectUserRoleQuery = "SELECT * FROM users WHERE role = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectUserRoleQuery)) {
+            preparedStatement.setString(1, "customer"); // Set the role value
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String username = resultSet.getString("name");
+                String email = resultSet.getString("email");
+                String password = resultSet.getString("pass");
+                String role = resultSet.getString("role");
 
-            // Create a User object and add it to the list
-            User user = new User(id, username, email, password, role);
-            customers.add(user);
+                // Create a User object and add it to the list
+                User user = new User(id, username, email, password, role);
+                customers.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return customers;
     }
-    return customers;
-}
-
 
     public boolean updateUserAndDetails(int userId, String name, String pass, String email, String address, String phone) {
         String updateUserQuery = "UPDATE users SET name = ?, pass = ?, email = ? WHERE id = ?";
@@ -215,6 +214,30 @@ public List<User> getAllCustomers() {
             e.printStackTrace();
         }
         return null; // Return null if the user details are not found
+    }
+
+    public boolean deleteUser(int user_id) {
+        String deleteUserQuery = "DELETE FROM users WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteUserQuery)) {
+            preparedStatement.setInt(1, user_id);
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean deleteUserDetails(int user_id) {
+        String deleteUserDetailsQuery = "DELETE FROM userDetails WHERE user_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteUserDetailsQuery)) {
+            preparedStatement.setInt(1, user_id);
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

@@ -10,7 +10,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -42,11 +41,12 @@ public class admin extends JFrame {
         // Create a panel for the menu options
         JPanel menuPanel = new JPanel(new GridLayout(3, 1, 0, 20));
         menuPanel.setOpaque(false);
-
+        
+        int userId = user.getId();
         JButton profile = new JButton("Profile");
         JButton users = new JButton("Customers");
         users.addActionListener((ActionEvent e) -> {
-            new allCustomer(user).setVisible(true);
+            new allCustomer(user,userId).setVisible(true);
             dispose();
         });
         JButton emp = new JButton("Employees");
@@ -72,7 +72,6 @@ public class admin extends JFrame {
         userInfoPanel.setForeground(new Color(255, 255, 255));
         userInfoPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 0, 0));
 
-        int userId = user.getId();
         details = userDAO.getUserDetails(userId);
         JLabel nameLabel = new JLabel("Name: " + user.getUsername()); // Replace with actual method to get name
         JLabel emailLabel = new JLabel("Email: " + user.getEmail()); // Replace with actual method to get email
