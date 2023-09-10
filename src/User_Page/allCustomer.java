@@ -1,4 +1,5 @@
 package User_Page;
+
 import DB.MySQLConnection;
 import DB.UserDAO;
 import Design.GradientPanel;
@@ -24,6 +25,7 @@ public class allCustomer extends JFrame {
     private int currentPage = 1;
     private int pageSize = 10; // Number of rows per page
     private List<User> allCustomers;
+    private JButton deleteButton; // Moved the deleteButton declaration here
 
     public allCustomer(User user, int userId) {
         mysqlConnection = new MySQLConnection();
@@ -40,7 +42,7 @@ public class allCustomer extends JFrame {
         mainContentPanel.setOpaque(false);
 
         // Create a panel for the menu options
-        JPanel menuPanel = new JPanel(new GridLayout(3, 1, 0, 20));
+        JPanel menuPanel = new JPanel(new GridLayout(5, 1, 0, 20));
         menuPanel.setOpaque(false);
 
         JButton profile = new JButton("Profile");
@@ -65,20 +67,22 @@ public class allCustomer extends JFrame {
         welcomePanel.setOpaque(false);
 
         // Initialize the table model with columns
-        String[] columnNames = {"Name", "Email", "Role", "Phone", "Address", "Action"};
+        String[] columnNames = {"Name", "Email", "Role", "Phone", "Address"};
+        deleteButton = new JButton("Delete"); // Initialize the delete button
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false; // Make cells non-editable
             }
+
             @Override
             public Object getValueAt(int row, int column) {
-                if (column == 4) { // Check if it's the "Address" column
+                if (column == 3 || column == 4) { // Check if it's the "Phone" column
                     int customerId = allCustomers.get(row).getId();
                     UserDetails userDetails = userDAO.getUserDetails(customerId);
-                    return userDetails.getAddress();
-                } else if (column == 5) { // Check if it's the "Action" column
-                    return "Delete";
+                    if (userDetails != null) {
+                        return userDetails.getPhone(); // Check for null userDetails
+                    }
                 }
                 return super.getValueAt(row, column);
             }
@@ -99,6 +103,7 @@ public class allCustomer extends JFrame {
         // Add pagination controls
         JPanel paginationPanel = new JPanel();
         JButton prevButton = new JButton("Previous");
+        JButton deleteSelectedButton = new JButton("Delete"); // New button
         JButton nextButton = new JButton("Next");
 
         prevButton.addActionListener(new ActionListener() {
@@ -107,6 +112,57 @@ public class allCustomer extends JFrame {
                 if (currentPage > 1) {
                     currentPage--;
                     displayCustomers(currentPage);
+                }
+            }
+        });
+
+        deleteSelectedButton.addActionListener(new ActionListener() { // New button action
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = customerTable.getSelectedRow();
+                if (selectedRow >= 0) {
+                    int customerId = allCustomers.get(selectedRow).getId();
+                    UserDetails userDetails = userDAO.getUserDetails(customerId);
+                    int userId = userDetails.getUserId();
+
+                    int confirm = JOptionPane.showConfirmDialog(
+                            allCustomer.this,
+                            "Are you sure you want to delete this user?",
+                            "Confirm Delete",
+                            JOptionPane.YES_NO_OPTION
+                    );
+
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        boolean deletedUserDetails = userDAO.deleteUserDetails(userId);
+                        boolean deletedUser = userDAO.deleteUser(customerId);
+
+                        if (deletedUserDetails && deletedUser) {
+                            JOptionPane.showMessageDialog(
+                                    allCustomer.this,
+                                    "User deleted successfully.",
+                                    "Delete Successful",
+                                    JOptionPane.INFORMATION_MESSAGE
+                            );
+                            
+                            
+                            // Refresh the displayed customers
+                            displayCustomers(currentPage);                            
+                        } else {
+                            JOptionPane.showMessageDialog(
+                                    allCustomer.this,
+                                    "Error deleting user.",
+                                    "Delete Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(
+                            allCustomer.this,
+                            "Please select a user to delete.",
+                            "Delete Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
             }
         });
@@ -123,6 +179,7 @@ public class allCustomer extends JFrame {
         });
 
         paginationPanel.add(prevButton);
+        paginationPanel.add(deleteSelectedButton); // Add the new delete button
         paginationPanel.add(nextButton);
         mainContentPanel.add(paginationPanel, BorderLayout.SOUTH);
 
@@ -139,19 +196,7 @@ public class allCustomer extends JFrame {
             User customer = allCustomers.get(i);
             UserDetails userDetails = userDAO.getUserDetails(customer.getId());
 
-            // Create a "Delete" button for each row
-            JButton deleteButton = new JButton("Delete");
-            deleteButton.setActionCommand(Integer.toString(customer.getId())); // Set action command to customer ID
-            deleteButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    int customerId = Integer.parseInt(e.getActionCommand()); // Get customer ID from action command
-                    System.out.println("Delete button clicked for customer ID: " + customerId);
-                    // Implement your delete logic here
-                }
-            });
-
-            Object[] rowData = {customer.getUsername(), customer.getEmail(), customer.getRole(), userDetails.getPhone(), userDetails.getAddress(), deleteButton};
+            Object[] rowData = {customer.getUsername(), customer.getEmail(), customer.getRole(), userDetails != null ? userDetails.getPhone() : "", userDetails != null ? userDetails.getAddress() : ""};
             tableModel.addRow(rowData);
         }
 
@@ -189,7 +234,7 @@ public class allCustomer extends JFrame {
     }
 
     public static void main(String[] args) {
-        // This is just for testing, you can remove this part when integrating with your application.
+        // This is just for testing; you can remove this part when integrating with your application.
         JFrame frame = new allCustomer(null, 0);
         frame.setVisible(true);
     }

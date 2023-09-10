@@ -23,7 +23,7 @@ public class editPage extends JFrame {
     private MySQLConnection mysqlConnection;
     private UserDAO userDAO;
     private User userData;
-    private UserDetails details ;
+    private UserDetails details;
 
     public editPage(User user) {
         this.userData = user;
@@ -48,16 +48,20 @@ public class editPage extends JFrame {
 
         JButton users = new JButton("Customers");
         JButton emp = new JButton("Employees");
-
+        int userId = user.getId();
+        users.addActionListener((ActionEvent e) -> {
+            new allCustomer(user, userId).setVisible(true);
+            dispose();
+        });
         menuPanel.add(profile);
         menuPanel.add(users);
         menuPanel.add(emp);
 
         mainContentPanel.add(menuPanel, BorderLayout.WEST);
 
-        int userId = user.getId();
-        details = userDAO.getUserDetails(userId);
         
+        details = userDAO.getUserDetails(userId);
+
         // Create a panel for the welcome message and user information
         JPanel welcomePanel = new JPanel(new BorderLayout());
         welcomePanel.setOpaque(false);
