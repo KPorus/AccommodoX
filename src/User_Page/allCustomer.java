@@ -56,6 +56,14 @@ public class allCustomer extends JFrame {
                 dispose();
             }
         });
+        
+        emp.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new employee(userId).setVisible(true); // Pass the fetched user data
+                dispose();
+            }
+        });
         menuPanel.add(profile);
         menuPanel.add(users);
         menuPanel.add(emp);
