@@ -41,16 +41,19 @@ public class admin extends JFrame {
         // Create a panel for the menu options
         JPanel menuPanel = new JPanel(new GridLayout(3, 1, 0, 20));
         menuPanel.setOpaque(false);
-        
+
         int userId = user.getId();
         JButton profile = new JButton("Profile");
         JButton users = new JButton("Customers");
         users.addActionListener((ActionEvent e) -> {
-            new allCustomer(user,userId).setVisible(true);
+            new allCustomer(user, userId).setVisible(true);
             dispose();
         });
         JButton emp = new JButton("Employees");
-
+        emp.addActionListener((ActionEvent e) -> {
+            new employee(userId).setVisible(true);
+            dispose();
+        });
         menuPanel.add(profile);
         menuPanel.add(users);
         menuPanel.add(emp);
@@ -96,7 +99,7 @@ public class admin extends JFrame {
             userInfoPanel.add(edit);
         } else if (details == null) {
             details = userDAO.getUserDetails(userId);
-             JLabel address = new JLabel("Address: " + details.getAddress()); // Replace with actual method to get role
+            JLabel address = new JLabel("Address: " + details.getAddress()); // Replace with actual method to get role
             JLabel phone = new JLabel("phone: " + details.getPhone()); // Replace with actual method to get role
 
             JButton edit = new JButton("Edit");
@@ -112,8 +115,7 @@ public class admin extends JFrame {
             userInfoPanel.add(address);
             userInfoPanel.add(phone);
             userInfoPanel.add(edit);
-        }
-        else{
+        } else {
             JLabel errorLabel = new JLabel("User details not available");
             userInfoPanel.add(errorLabel);
         }

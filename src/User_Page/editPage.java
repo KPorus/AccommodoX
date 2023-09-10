@@ -53,13 +53,19 @@ public class editPage extends JFrame {
             new allCustomer(user, userId).setVisible(true);
             dispose();
         });
+        emp.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new employee(userId).setVisible(true); // Pass the fetched user data
+                dispose();
+            }
+        });
         menuPanel.add(profile);
         menuPanel.add(users);
         menuPanel.add(emp);
 
         mainContentPanel.add(menuPanel, BorderLayout.WEST);
 
-        
         details = userDAO.getUserDetails(userId);
 
         // Create a panel for the welcome message and user information
