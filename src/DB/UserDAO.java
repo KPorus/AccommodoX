@@ -7,9 +7,12 @@ import java.sql.SQLException;
 import User_data.User;
 import User_data.UserDetails;
 import User_data.UserInfo;
+import User_data.empDetails;
 import java.sql.Statement;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Date;
+import java.sql.Types; // Add this import statement
 
 /**
  *
@@ -240,4 +243,98 @@ public class UserDAO {
         }
     }
 
+    public boolean addEmployee(String name, String email, String phone, String address, String role, String salary, String employeeType) {
+        String insertUserQuery = "INSERT INTO employee (name, email, phone, address, employeeType, role, salary, joinDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertUserQuery, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, email);
+            preparedStatement.setString(3, phone);
+            preparedStatement.setString(4, address);
+            preparedStatement.setString(5, employeeType);
+            preparedStatement.setString(6, role);
+            preparedStatement.setString(7, salary);
+            preparedStatement.setDate(8, new java.sql.Date(System.currentTimeMillis())); // Assuming you want to set the joinDate to the current date
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            if (rowsAffected > 0) {
+                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    int userId = generatedKeys.getInt(1); // Retrieve the generated user id
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateEmployee(int employeeId, String name, String email, String phone, String address, String role, String salary, String employeeType, Date joinDate, Date resignDate) {
+        String updateEmployeeQuery = "UPDATE employee SET name=?, email=?, phone=?, address=?, employeeType=?, role=?, salary=?, joinDate=?, resignDate=? WHERE id=?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateEmployeeQuery)) {
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, email);
+            preparedStatement.setString(3, phone);
+            preparedStatement.setString(4, address);
+            preparedStatement.setString(5, employeeType);
+            preparedStatement.setString(6, role);
+            preparedStatement.setString(7, salary);
+
+            // Check if joinDate is null before setting it
+            if (joinDate != null) {
+                preparedStatement.setDate(8, new java.sql.Date(joinDate.getTime())); // Correct casting
+            } else {
+                preparedStatement.setNull(8, Types.DATE); // Set joinDate as NULL in the database
+            }
+
+            // Check if resignDate is null before setting it
+            if (resignDate != null) {
+                preparedStatement.setDate(9, new java.sql.Date(resignDate.getTime())); // Correct casting
+            } else {
+                preparedStatement.setNull(9, Types.DATE); // Set resignDate as NULL in the database
+            }
+
+            preparedStatement.setInt(10, employeeId);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public List<empDetails> getAllEmployees() {
+        List<empDetails> employees = new ArrayList<>();
+        String selectAllEmployeesQuery = "SELECT * FROM employee";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectAllEmployeesQuery)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String phone = resultSet.getString("phone");
+                String email = resultSet.getString("email");
+                String address = resultSet.getString("address");
+                Date joinDate = resultSet.getDate("joinDate");
+                Date resignDate = resultSet.getDate("resignDate");
+                String role = resultSet.getString("role");
+                String salary = resultSet.getString("salary");
+                String employeeType = resultSet.getString("employeeType");
+
+                // Check for null resignDate and handle it appropriately
+                if (resultSet.wasNull()) {
+                    resignDate = null;
+                }
+
+                // Create an empDetails object and add it to the list
+                empDetails details = new empDetails(id, name, email, address, phone, joinDate, resignDate, role, salary, employeeType);
+                employees.add(details);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employees;
+    }
 }
