@@ -42,12 +42,13 @@ public class allCustomer extends JFrame {
         mainContentPanel.setOpaque(false);
 
         // Create a panel for the menu options
-        JPanel menuPanel = new JPanel(new GridLayout(5, 1, 0, 20));
+        JPanel menuPanel = new JPanel(new GridLayout(6, 1, 0, 20));
         menuPanel.setOpaque(false);
 
         JButton profile = new JButton("Profile");
         JButton users = new JButton("Customers");
         JButton emp = new JButton("Employees");
+        JButton rooms = new JButton("Rooms");
         profile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -56,7 +57,7 @@ public class allCustomer extends JFrame {
                 dispose();
             }
         });
-        
+
         emp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -64,10 +65,18 @@ public class allCustomer extends JFrame {
                 dispose();
             }
         });
+        
+        rooms.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new rooms(userId).setVisible(true); // Pass the fetched user data
+                dispose();
+            }
+        });
         menuPanel.add(profile);
         menuPanel.add(users);
         menuPanel.add(emp);
-
+        menuPanel.add(rooms);
         mainContentPanel.add(menuPanel, BorderLayout.WEST);
 
         // Create a panel for the welcome message and user information
@@ -151,10 +160,9 @@ public class allCustomer extends JFrame {
                                     "Delete Successful",
                                     JOptionPane.INFORMATION_MESSAGE
                             );
-                            
-                            
+
                             // Refresh the displayed customers
-                            displayCustomers(currentPage);                            
+                            displayCustomers(currentPage);
                         } else {
                             JOptionPane.showMessageDialog(
                                     allCustomer.this,

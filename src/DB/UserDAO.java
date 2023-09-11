@@ -1,5 +1,6 @@
 package DB;
 
+import User_data.Rooms;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -337,4 +338,55 @@ public class UserDAO {
         }
         return employees;
     }
+
+    public List<Rooms> getAllRooms() {
+        List<Rooms> rooms = new ArrayList<>();
+        String selectAllRoomsQuery = "SELECT * FROM rooms";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectAllRoomsQuery)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String type = resultSet.getString("room_Type"); // Use correct column name
+                int availableRooms = resultSet.getInt("available_room"); // Use correct column name
+                int bookedRooms = resultSet.getInt("booked_rooms"); // Use correct column name
+                boolean freeBreakfast = resultSet.getBoolean("free_breakfast"); // Use correct column name
+                boolean parking = resultSet.getBoolean("parking"); // Use correct column name
+                boolean flowers = resultSet.getBoolean("flowers"); // Use correct column name
+                boolean freeWifi = resultSet.getBoolean("free_wifi"); // Use correct column name
+                boolean privateBus = resultSet.getBoolean("private_bus"); // Use correct column name
+                int prizePerDay = resultSet.getInt("prize_per_day"); // Use correct column name
+
+                // Create a Rooms object and add it to the list
+                Rooms room = new Rooms(id, type, availableRooms, bookedRooms, freeBreakfast, parking, flowers, freeWifi, privateBus, prizePerDay);
+                rooms.add(room);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rooms;
+    }
+
+    public boolean updateRoom(Rooms room) {
+        String updateRoomQuery = "UPDATE rooms SET room_Type=?, available_room=?, booked_rooms=?, free_breakfast=?, parking=?, free_wifi=?, private_bus=?, flowers=?, prize_per_day=? WHERE id=?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateRoomQuery)) {
+            preparedStatement.setString(1, room.getRoomType());
+            preparedStatement.setInt(2, room.getAvailableRooms());
+            preparedStatement.setInt(3, room.getBookedRooms());
+            preparedStatement.setBoolean(4, room.isFreeBreakfast());
+            preparedStatement.setBoolean(5, room.isParking());
+            preparedStatement.setBoolean(6, room.isFreeWifi());
+            preparedStatement.setBoolean(7, room.isPrivateBus());
+            preparedStatement.setBoolean(8, room.isFlowers());
+            preparedStatement.setInt(9, room.getPrizePerDay());
+            preparedStatement.setInt(10, room.getId());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

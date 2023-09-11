@@ -1,4 +1,5 @@
 package User_Page;
+
 import DB.MySQLConnection;
 import DB.UserDAO;
 import Design.GradientPanel;
@@ -22,7 +23,7 @@ public class employee extends JFrame {
     private UserDAO userDAO;
     private MySQLConnection mysqlConnection;
     private JTable employeeTable;
-    private DefaultTableModel tableModel;
+    private DefaultTableModel tableModel; // Initialize the tableModel
     private int currentPage = 1;
     private int pageSize = 10; // Number of rows per page
     private List<empDetails> allEmployee;
@@ -48,6 +49,7 @@ public class employee extends JFrame {
         JButton profile = new JButton("Profile");
         JButton customers = new JButton("Customers");
         JButton employees = new JButton("Employees");
+        JButton rooms = new JButton("Rooms");
         profile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -60,10 +62,17 @@ public class employee extends JFrame {
             new allCustomer(null, userId).setVisible(true);
             dispose();
         });
+        rooms.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new rooms(userId).setVisible(true); // Pass the fetched user data
+                dispose();
+            }
+        });
         menuPanel.add(profile);
         menuPanel.add(customers);
         menuPanel.add(employees);
-
+        menuPanel.add(rooms);
         mainContentPanel.add(menuPanel, BorderLayout.WEST);
 
         // Create a panel for the welcome message and user information
@@ -182,16 +191,15 @@ public class employee extends JFrame {
 
         // Automatically adjust column widths based on content
         for (int i = 0; i < tableModel.getColumnCount(); i++) {
-            packColumn(employeeTable, i);
+            packColumn(employeeTable, i, 150);
         }
     }
 
     // Automatically adjust the column width based on content
-    private void packColumn(JTable table, int columnIndex) {
+    private void packColumn(JTable table, int columnIndex, int width) {
         int margin = 5; // Add a small margin for aesthetics
         DefaultTableColumnModel colModel = (DefaultTableColumnModel) table.getColumnModel();
         TableColumn col = colModel.getColumn(columnIndex);
-        int width = 0;
 
         // Get the header renderer to calculate the width
         TableCellRenderer headerRenderer = col.getHeaderRenderer();
@@ -428,19 +436,22 @@ public class employee extends JFrame {
         }
     }
 
-  // Custom table cell renderer for handling row colors
+    // Custom table cell renderer for handling row colors
     class CustomTableCellRenderer extends DefaultTableCellRenderer {
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            // Convert the view index (sorted index) to the model index (original index)
+            int modelRow = table.convertRowIndexToModel(row);
             Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-            empDetails employee = allEmployee.get(row);
+            empDetails employee = allEmployee.get(modelRow); // Use the modelRow to access the data
 
             if (employee.getResignDate() != null) {
                 cell.setBackground(Color.RED);
                 cell.setForeground(Color.WHITE);
             } else {
-                cell.setBackground(Color.WHITE); 
+                cell.setBackground(Color.WHITE);
                 cell.setForeground(Color.BLACK);
             }
 
