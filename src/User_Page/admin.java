@@ -39,12 +39,17 @@ public class admin extends JFrame {
         mainContentPanel.setOpaque(false);
 
         // Create a panel for the menu options
-        JPanel menuPanel = new JPanel(new GridLayout(3, 1, 0, 20));
+        JPanel menuPanel = new JPanel(new GridLayout(6, 1, 0, 20));
         menuPanel.setOpaque(false);
 
         int userId = user.getId();
         JButton profile = new JButton("Profile");
         JButton users = new JButton("Customers");
+        JButton rooms = new JButton("Rooms");
+        rooms.addActionListener((ActionEvent e) -> {
+            new rooms(userId).setVisible(true);
+            dispose();
+        });
         users.addActionListener((ActionEvent e) -> {
             new allCustomer(user, userId).setVisible(true);
             dispose();
@@ -57,7 +62,8 @@ public class admin extends JFrame {
         menuPanel.add(profile);
         menuPanel.add(users);
         menuPanel.add(emp);
-
+        menuPanel.add(rooms);
+        
         mainContentPanel.add(menuPanel, BorderLayout.WEST);
 
         // Create a panel for the welcome message and user information
