@@ -48,37 +48,64 @@ public class rooms extends JFrame {
         JButton customers = new JButton("Customers");
         JButton employees = new JButton("Employees");
         JButton rooms = new JButton("Rooms");
-        profile.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                User userData = userDAO.getUser(userId); // Fetch user data by ID
-                new admin(userData).setVisible(true); // Pass the fetched user data
-                dispose();
-            }
-        });
-        customers.addActionListener((ActionEvent e) -> {
-            new allCustomer(null, userId).setVisible(true);
-            dispose();
-        });
-        employees.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new employee(userId).setVisible(true); // Pass the fetched user data
-                dispose();
-            }
-        });
-        menuPanel.add(profile);
-        menuPanel.add(customers);
-        menuPanel.add(employees);
-        menuPanel.add(rooms);
-        mainContentPanel.add(menuPanel, BorderLayout.WEST);
 
+        // Check the user's role
+        User user = userDAO.getUser(userId);
+        String role = user.getRole();
+        if ("admin".equals(role)) {
+            profile.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    User userData = userDAO.getUser(userId); // Fetch user data by ID
+                    new admin(userData).setVisible(true); // Pass the fetched user data
+                    dispose();
+                }
+            });
+            customers.addActionListener((ActionEvent e) -> {
+                new allCustomer(null, userId).setVisible(true);
+                dispose();
+            });
+            employees.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new employee(userId).setVisible(true); // Pass the fetched user data
+                    dispose();
+                }
+            });
+            menuPanel.add(profile);
+            menuPanel.add(customers);
+            menuPanel.add(employees);
+            menuPanel.add(rooms);
+            mainContentPanel.add(menuPanel, BorderLayout.WEST);
+
+        }
+
+        if ("customer".equals(role)) {
+            profile.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    User userData = userDAO.getUser(userId); // Fetch user data by ID
+                    new customer(userData).setVisible(true); // Pass the fetched user data
+                    dispose();
+                }
+            });
+            menuPanel.add(profile);
+            menuPanel.add(rooms);
+            mainContentPanel.add(menuPanel, BorderLayout.WEST);
+
+        }
         // Create a panel for the welcome message and user information
         JPanel welcomePanel = new JPanel(new BorderLayout());
         welcomePanel.setOpaque(false);
 
         // Initialize the table model with columns
-        String[] columnNames = {"Room Type", "Available Rooms", "Booked Rooms", "Free Breakfast", "Parking", "Flowers", "Free WiFi", "Private Bus"};
+        String[] columnNames = null;
+        if ("admin".equals(role)) {
+            columnNames = new String[]{"Room Type", "Available Rooms", "Booked Rooms", "Free Breakfast", "Parking", "Flowers", "Free WiFi", "Private Bus"};
+        }
+        if ("customer".equals(role)) {
+            columnNames = new String[]{"Room Type", "Available Rooms", "Free Breakfast", "Parking", "Flowers", "Free WiFi", "Private Bus"};
+        }
 
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -92,7 +119,7 @@ public class rooms extends JFrame {
 
         // Fetch the list of rooms from the database using userDAO
         allRooms = userDAO.getAllRooms();
-        displayRooms(currentPage);
+        displayRooms(currentPage, role);
 
         JScrollPane scrollPane = new JScrollPane(roomTable);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED); // Enable horizontal scrolling
@@ -110,7 +137,7 @@ public class rooms extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (currentPage > 1) {
                     currentPage--;
-                    displayRooms(currentPage);
+                    displayRooms(currentPage, role);
                 }
             }
         });
@@ -121,10 +148,32 @@ public class rooms extends JFrame {
                 int maxPage = (int) Math.ceil((double) allRooms.size() / pageSize);
                 if (currentPage < maxPage) {
                     currentPage++;
-                    displayRooms(currentPage);
+                    displayRooms(currentPage, role);
                 }
             }
         });
+
+        if ("customer".equals(role)) {
+            // Create an "Booking room" button
+            JButton roomBookButton = new JButton("Room Book");
+            paginationPanel.add(roomBookButton);
+
+            roomBookButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int selectedRow = roomTable.getSelectedRow();
+                    if (selectedRow >= 0) {
+                        Rooms selectedRoom = allRooms.get(selectedRow);
+                        // Open a dialog to add a new employee
+                        BookingDialog dialog = new BookingDialog(rooms.this,selectedRoom,userId);
+                        dialog.setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(rooms.this, "Please select an room to booking.");
+                    }
+
+                }
+            });
+        }
 
         paginationPanel.add(prevButton);
         paginationPanel.add(nextButton);
@@ -135,44 +184,63 @@ public class rooms extends JFrame {
 
         // Add an "Update Rooms" button for selected rows
         JButton updateRoomsButton = new JButton("Update Room");
-        paginationPanel.add(updateRoomsButton);
+        if ("admin".equals(role)) {
+            paginationPanel.add(updateRoomsButton);
 
-        updateRoomsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedRow = roomTable.getSelectedRow();
-                if (selectedRow >= 0) {
-                    // Get the selected room
-                    Rooms selectedRoom = allRooms.get(selectedRow);
+            updateRoomsButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int selectedRow = roomTable.getSelectedRow();
+                    if (selectedRow >= 0) {
+                        // Get the selected room
+                        Rooms selectedRoom = allRooms.get(selectedRow);
 
-                    // Open a dialog to update the selected room
-                    UpdateRoomDialog dialog = new UpdateRoomDialog(rooms.this, selectedRoom);
-                    dialog.setVisible(true);
-                } else {
-                    JOptionPane.showMessageDialog(rooms.this, "Please select a room to update.");
+                        // Open a dialog to update the selected room
+                        UpdateRoomDialog dialog = new UpdateRoomDialog(rooms.this, selectedRoom, role);
+                        dialog.setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(rooms.this, "Please select a room to update.");
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
-    private void displayRooms(int page) {
+    private void displayRooms(int page, String role) {
         tableModel.setRowCount(0); // Clear existing rows
         int startIdx = (page - 1) * pageSize;
         int endIdx = Math.min(startIdx + pageSize, allRooms.size());
 
         for (int i = startIdx; i < endIdx; i++) {
             Rooms room = allRooms.get(i);
+            Object[] rowData;
 
-            Object[] rowData = {
-                room.getRoomType(),
-                room.getAvailableRooms(),
-                room.getBookedRooms(),
-                room.isFreeBreakfast() ? "Yes" : "No",
-                room.isParking() ? "Yes" : "No",
-                room.isFlowers() ? "Yes" : "No",
-                room.isFreeWifi() ? "Yes" : "No",
-                room.isPrivateBus() ? "Yes" : "No"
-            };
+            if ("admin".equals(role)) {
+                rowData = new Object[]{
+                    room.getRoomType(),
+                    room.getAvailableRooms(),
+                    room.getBookedRooms(),
+                    room.isFreeBreakfast() ? "Yes" : "No",
+                    room.isParking() ? "Yes" : "No",
+                    room.isFlowers() ? "Yes" : "No",
+                    room.isFreeWifi() ? "Yes" : "No",
+                    room.isPrivateBus() ? "Yes" : "No"
+                };
+            } else if ("customer".equals(role)) {
+                rowData = new Object[]{
+                    room.getRoomType(),
+                    room.getAvailableRooms(),
+                    room.isFreeBreakfast() ? "Yes" : "No",
+                    room.isParking() ? "Yes" : "No",
+                    room.isFlowers() ? "Yes" : "No",
+                    room.isFreeWifi() ? "Yes" : "No",
+                    room.isPrivateBus() ? "Yes" : "No"
+                };
+            } else {
+                // Handle other roles or scenarios here
+                rowData = new Object[]{};
+            }
+
             tableModel.addRow(rowData);
         }
 
@@ -218,7 +286,7 @@ public class rooms extends JFrame {
         private JCheckBox privateBusCheckBox;
         private JButton updateButton;
 
-        public UpdateRoomDialog(JFrame parent, Rooms room) {
+        public UpdateRoomDialog(JFrame parent, Rooms room, String role) {
             super(parent, "Update Room", true);
 
             // Initialize dialog components
@@ -297,7 +365,7 @@ public class rooms extends JFrame {
                     if (success) {
                         // Refresh the room table
                         allRooms = userDAO.getAllRooms();
-                        displayRooms(currentPage);
+                        displayRooms(currentPage, role);
                         JOptionPane.showMessageDialog(rooms.this, "Room updated successfully.");
                         dispose(); // Close the dialog
                     } else {

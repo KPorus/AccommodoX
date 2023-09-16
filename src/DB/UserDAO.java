@@ -1,7 +1,10 @@
 package DB;
 
+import User_data.Booking;
 import User_data.Rooms;
 import java.sql.Connection;
+import java.sql.Date;
+import java.sql.Time;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,7 +15,6 @@ import User_data.empDetails;
 import java.sql.Statement;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Date;
 import java.sql.Types; // Add this import statement
 
 /**
@@ -387,6 +389,103 @@ public class UserDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public boolean updateAvailableRoom(int available_room, int booked_rooms, int roomId) {
+        String updateRoomQuery = "UPDATE rooms SET available_room=?, booked_rooms=? WHERE id=?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateRoomQuery)) {
+            preparedStatement.setInt(1, available_room); // Set the value for the first parameter
+            preparedStatement.setInt(2, booked_rooms);   // Set the value for the second parameter
+            preparedStatement.setInt(3, roomId);        // Set the value for the third parameter
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean insertBooking(int userId, int roomId, int NumberOfRooms, int prize, Date bookingTo, Date bookingFrom, String checkInTime, String checkOutTime) {
+        String insertBookingQuery = "INSERT INTO booking (userId, roomId, NumberOfRooms,prize, booking_to, booking_from, checkInTime, checkOutTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertBookingQuery)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, roomId);
+            preparedStatement.setInt(3, NumberOfRooms);
+            preparedStatement.setInt(4, prize);
+            preparedStatement.setDate(5, bookingTo);
+            preparedStatement.setDate(6, bookingFrom);
+            preparedStatement.setString(7, checkInTime);
+            preparedStatement.setString(8, checkOutTime);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public Rooms getOneRoom(int roomId) {
+        String selectBookingQuery = "SELECT * FROM rooms WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectBookingQuery)) {
+            preparedStatement.setInt(1, roomId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String type = resultSet.getString("room_Type"); // Use correct column name
+                int availableRooms = resultSet.getInt("available_room"); // Use correct column name
+                int bookedRooms = resultSet.getInt("booked_rooms"); // Use correct column name
+                boolean freeBreakfast = resultSet.getBoolean("free_breakfast"); // Use correct column name
+                boolean parking = resultSet.getBoolean("parking"); // Use correct column name
+                boolean flowers = resultSet.getBoolean("flowers"); // Use correct column name
+                boolean freeWifi = resultSet.getBoolean("free_wifi"); // Use correct column name
+                boolean privateBus = resultSet.getBoolean("private_bus"); // Use correct column name
+                int prizePerDay = resultSet.getInt("prize_per_day"); // Use correct column name
+
+                // Create a Rooms object and add it to the list
+                Rooms room = new Rooms(id, type, availableRooms, bookedRooms, freeBreakfast, parking, flowers, freeWifi, privateBus, prizePerDay);
+                return room;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Return null if the booking is not found
+    }
+
+    public Booking getBooking(int userId) {
+        String selectBookingQuery = "SELECT * FROM booking WHERE userId = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectBookingQuery)) {
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                int id = resultSet.getInt("userId");
+                int roomId = resultSet.getInt("roomId");
+                int NumberOfRooms = resultSet.getInt("NumberOfRooms");
+                int prize = resultSet.getInt("prize");
+                Date bookingTo = resultSet.getDate("booking_to");
+                Date bookingFrom = resultSet.getDate("booking_from");
+                String checkInTimeStr = resultSet.getString("checkInTime");
+                String checkOutTimeStr = resultSet.getString("checkOutTime");
+
+                // Parse the formatted time strings into Time objects
+                Time checkInTime = Time.valueOf(checkInTimeStr);
+                Time checkOutTime = Time.valueOf(checkOutTimeStr);
+
+                // Create a Booking object and return it
+                Booking booking = new Booking(id, roomId, NumberOfRooms, prize, bookingTo, bookingFrom, checkInTime, checkOutTime);
+                return booking;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Return null if the booking is not found
+    }
+
+    public boolean insertBooking(int userId, int roomId, java.util.Date bookingDate, java.util.Date bookingDate0, Time checkInTime, Time checkOutTime) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }
