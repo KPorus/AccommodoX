@@ -153,6 +153,28 @@ public class rooms extends JFrame {
             }
         });
 
+        if ("customer".equals(role)) {
+            // Create an "Booking room" button
+            JButton roomBookButton = new JButton("Room Book");
+            paginationPanel.add(roomBookButton);
+
+            roomBookButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int selectedRow = roomTable.getSelectedRow();
+                    if (selectedRow >= 0) {
+                        Rooms selectedRoom = allRooms.get(selectedRow);
+                        // Open a dialog to add a new employee
+                        BookingDialog dialog = new BookingDialog(rooms.this,selectedRoom,userId);
+                        dialog.setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(rooms.this, "Please select an room to booking.");
+                    }
+
+                }
+            });
+        }
+
         paginationPanel.add(prevButton);
         paginationPanel.add(nextButton);
         mainContentPanel.add(paginationPanel, BorderLayout.SOUTH);
@@ -174,7 +196,7 @@ public class rooms extends JFrame {
                         Rooms selectedRoom = allRooms.get(selectedRow);
 
                         // Open a dialog to update the selected room
-                        UpdateRoomDialog dialog = new UpdateRoomDialog(rooms.this, selectedRoom,role);
+                        UpdateRoomDialog dialog = new UpdateRoomDialog(rooms.this, selectedRoom, role);
                         dialog.setVisible(true);
                     } else {
                         JOptionPane.showMessageDialog(rooms.this, "Please select a room to update.");
