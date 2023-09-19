@@ -23,16 +23,18 @@ public class editPage extends JFrame {
     private MySQLConnection mysqlConnection;
     private UserDAO userDAO;
     private User userData;
-    private UserDetails details ;
+    private UserDetails details;
 
     public editPage(User user) {
         this.userData = user;
         mysqlConnection = new MySQLConnection(); // Initialize MySQLConnection
         userDAO = new UserDAO(mysqlConnection.getConnection()); // Initialize UserDAO
+        int userId = user.getId();
+        String role = user.getRole();
 
         setTitle("Edit profile page");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 50, 800, 500);
+        setBounds(100, 50, 1000, 500);
         setResizable(false);
         setContentPane(new GradientPanel());
 
@@ -41,23 +43,11 @@ public class editPage extends JFrame {
         mainContentPanel.setOpaque(false);
 
         // Create a panel for the menu options
-        JPanel menuPanel = new JPanel(new GridLayout(3, 1, 0, 20));
+        JPanel menuPanel = new JPanel(new GridLayout(6, 1, 0, 20));
         menuPanel.setOpaque(false);
 
-        JButton profile = new JButton("Profile");
-
-        JButton users = new JButton("Customers");
-        JButton emp = new JButton("Employees");
-
-        menuPanel.add(profile);
-        menuPanel.add(users);
-        menuPanel.add(emp);
-
-        mainContentPanel.add(menuPanel, BorderLayout.WEST);
-
-        int userId = user.getId();
         details = userDAO.getUserDetails(userId);
-        
+
         // Create a panel for the welcome message and user information
         JPanel welcomePanel = new JPanel(new BorderLayout());
         welcomePanel.setOpaque(false);
@@ -102,18 +92,79 @@ public class editPage extends JFrame {
                 }
             }
         });
-        profile.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String Name = nameLabel.getText();
-                String Email = emailLabel.getText();
-                String Pass = passLabel.getText();
-                int Id = user.getId();
-                User initialUserData = new User(Id, Name, Email, Pass, user.getRole()); // Provide actual user data
-                new admin(initialUserData).setVisible(true);
+
+        JButton profile = new JButton("Profile");
+        JButton users = new JButton("Customers");
+        JButton emp = new JButton("Employees");
+        JButton rooms = new JButton("Rooms");
+
+        if ("admin".equals(role)) {
+            profile.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String Name = nameLabel.getText();
+                    String Email = emailLabel.getText();
+                    String Pass = passLabel.getText();
+                    int Id = user.getId();
+                    User initialUserData = new User(Id, Name, Email, Pass, user.getRole()); // Provide actual user data
+                    new admin(initialUserData).setVisible(true);
+                    dispose();
+                }
+            });
+            users.addActionListener((ActionEvent e) -> {
+                new allCustomer(user, userId).setVisible(true);
                 dispose();
-            }
-        });
+            });
+            emp.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new employee(userId).setVisible(true); // Pass the fetched user data
+                    dispose();
+                }
+            });
+            rooms.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new rooms(userId).setVisible(true); // Pass the fetched user data
+                    dispose();
+                }
+            });
+            menuPanel.add(profile);
+            menuPanel.add(users);
+            menuPanel.add(emp);
+            menuPanel.add(rooms);
+
+            mainContentPanel.add(menuPanel, BorderLayout.WEST);
+
+        }
+
+        if ("customer".equals(role)) {
+            profile.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String Name = nameLabel.getText();
+                    String Email = emailLabel.getText();
+                    String Pass = passLabel.getText();
+                    int Id = user.getId();
+                    User initialUserData = new User(Id, Name, Email, Pass, user.getRole()); // Provide actual user data
+                    new customer(initialUserData).setVisible(true);
+                    dispose();
+                }
+            });
+            rooms.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new rooms(userId).setVisible(true); // Pass the fetched user data
+                    dispose();
+                }
+            });
+            menuPanel.add(profile);
+            menuPanel.add(rooms);
+
+            mainContentPanel.add(menuPanel, BorderLayout.WEST);
+
+        }
+
         userInfoPanel.add(nameLabel);
         userInfoPanel.add(emailLabel);
         userInfoPanel.add(passLabel);

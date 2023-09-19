@@ -1,15 +1,21 @@
 package DB;
 
+import User_data.Booking;
+import User_data.Rooms;
 import java.sql.Connection;
+import java.sql.Date;
+import java.sql.Time;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import User_data.User;
 import User_data.UserDetails;
 import User_data.UserInfo;
+import User_data.empDetails;
 import java.sql.Statement;
 import java.util.List;
 import java.util.ArrayList;
+import java.sql.Types; // Add this import statement
 
 /**
  *
@@ -22,7 +28,7 @@ public class UserDAO {
     public UserDAO(Connection connection) {
         this.connection = connection;
     }
-    
+
     public boolean isUserExists(String username) {
         String query = "SELECT * FROM users WHERE name = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -107,29 +113,28 @@ public class UserDAO {
         return null; // Return null if the role is not found
     }
 
-public List<User> getAllCustomers() {
-    List<User> customers = new ArrayList<>();
-    String selectUserRoleQuery = "SELECT * FROM users WHERE role = ?";
-    try (PreparedStatement preparedStatement = connection.prepareStatement(selectUserRoleQuery)) {
-        preparedStatement.setString(1, "customer"); // Set the role value
-        ResultSet resultSet = preparedStatement.executeQuery();
-        while (resultSet.next()) {
-            int id = resultSet.getInt("id");
-            String username = resultSet.getString("name");
-            String email = resultSet.getString("email");
-            String password = resultSet.getString("pass");
-            String role = resultSet.getString("role");
+    public List<User> getAllCustomers() {
+        List<User> customers = new ArrayList<>();
+        String selectUserRoleQuery = "SELECT * FROM users WHERE role = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectUserRoleQuery)) {
+            preparedStatement.setString(1, "customer"); // Set the role value
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String username = resultSet.getString("name");
+                String email = resultSet.getString("email");
+                String password = resultSet.getString("pass");
+                String role = resultSet.getString("role");
 
-            // Create a User object and add it to the list
-            User user = new User(id, username, email, password, role);
-            customers.add(user);
+                // Create a User object and add it to the list
+                User user = new User(id, username, email, password, role);
+                customers.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return customers;
     }
-    return customers;
-}
-
 
     public boolean updateUserAndDetails(int userId, String name, String pass, String email, String address, String phone) {
         String updateUserQuery = "UPDATE users SET name = ?, pass = ?, email = ? WHERE id = ?";
@@ -215,6 +220,272 @@ public List<User> getAllCustomers() {
             e.printStackTrace();
         }
         return null; // Return null if the user details are not found
+    }
+
+    public boolean deleteUser(int user_id) {
+        String deleteUserQuery = "DELETE FROM users WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteUserQuery)) {
+            preparedStatement.setInt(1, user_id);
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean deleteUserDetails(int user_id) {
+        String deleteUserDetailsQuery = "DELETE FROM userDetails WHERE user_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteUserDetailsQuery)) {
+            preparedStatement.setInt(1, user_id);
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean addEmployee(String name, String email, String phone, String address, String role, String salary, String employeeType) {
+        String insertUserQuery = "INSERT INTO employee (name, email, phone, address, employeeType, role, salary, joinDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertUserQuery, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, email);
+            preparedStatement.setString(3, phone);
+            preparedStatement.setString(4, address);
+            preparedStatement.setString(5, employeeType);
+            preparedStatement.setString(6, role);
+            preparedStatement.setString(7, salary);
+            preparedStatement.setDate(8, new java.sql.Date(System.currentTimeMillis())); // Assuming you want to set the joinDate to the current date
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            if (rowsAffected > 0) {
+                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    int userId = generatedKeys.getInt(1); // Retrieve the generated user id
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateEmployee(int employeeId, String name, String email, String phone, String address, String role, String salary, String employeeType, Date joinDate, Date resignDate) {
+        String updateEmployeeQuery = "UPDATE employee SET name=?, email=?, phone=?, address=?, employeeType=?, role=?, salary=?, joinDate=?, resignDate=? WHERE id=?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateEmployeeQuery)) {
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, email);
+            preparedStatement.setString(3, phone);
+            preparedStatement.setString(4, address);
+            preparedStatement.setString(5, employeeType);
+            preparedStatement.setString(6, role);
+            preparedStatement.setString(7, salary);
+
+            // Check if joinDate is null before setting it
+            if (joinDate != null) {
+                preparedStatement.setDate(8, new java.sql.Date(joinDate.getTime())); // Correct casting
+            } else {
+                preparedStatement.setNull(8, Types.DATE); // Set joinDate as NULL in the database
+            }
+
+            // Check if resignDate is null before setting it
+            if (resignDate != null) {
+                preparedStatement.setDate(9, new java.sql.Date(resignDate.getTime())); // Correct casting
+            } else {
+                preparedStatement.setNull(9, Types.DATE); // Set resignDate as NULL in the database
+            }
+
+            preparedStatement.setInt(10, employeeId);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public List<empDetails> getAllEmployees() {
+        List<empDetails> employees = new ArrayList<>();
+        String selectAllEmployeesQuery = "SELECT * FROM employee";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectAllEmployeesQuery)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String phone = resultSet.getString("phone");
+                String email = resultSet.getString("email");
+                String address = resultSet.getString("address");
+                Date joinDate = resultSet.getDate("joinDate");
+                Date resignDate = resultSet.getDate("resignDate");
+                String role = resultSet.getString("role");
+                String salary = resultSet.getString("salary");
+                String employeeType = resultSet.getString("employeeType");
+
+                // Check for null resignDate and handle it appropriately
+                if (resultSet.wasNull()) {
+                    resignDate = null;
+                }
+
+                // Create an empDetails object and add it to the list
+                empDetails details = new empDetails(id, name, email, address, phone, joinDate, resignDate, role, salary, employeeType);
+                employees.add(details);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employees;
+    }
+
+    public List<Rooms> getAllRooms() {
+        List<Rooms> rooms = new ArrayList<>();
+        String selectAllRoomsQuery = "SELECT * FROM rooms";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectAllRoomsQuery)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String type = resultSet.getString("room_Type"); // Use correct column name
+                int availableRooms = resultSet.getInt("available_room"); // Use correct column name
+                int bookedRooms = resultSet.getInt("booked_rooms"); // Use correct column name
+                boolean freeBreakfast = resultSet.getBoolean("free_breakfast"); // Use correct column name
+                boolean parking = resultSet.getBoolean("parking"); // Use correct column name
+                boolean flowers = resultSet.getBoolean("flowers"); // Use correct column name
+                boolean freeWifi = resultSet.getBoolean("free_wifi"); // Use correct column name
+                boolean privateBus = resultSet.getBoolean("private_bus"); // Use correct column name
+                int prizePerDay = resultSet.getInt("prize_per_day"); // Use correct column name
+
+                // Create a Rooms object and add it to the list
+                Rooms room = new Rooms(id, type, availableRooms, bookedRooms, freeBreakfast, parking, flowers, freeWifi, privateBus, prizePerDay);
+                rooms.add(room);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rooms;
+    }
+
+    public boolean updateRoom(Rooms room) {
+        String updateRoomQuery = "UPDATE rooms SET room_Type=?, available_room=?, booked_rooms=?, free_breakfast=?, parking=?, free_wifi=?, private_bus=?, flowers=?, prize_per_day=? WHERE id=?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateRoomQuery)) {
+            preparedStatement.setString(1, room.getRoomType());
+            preparedStatement.setInt(2, room.getAvailableRooms());
+            preparedStatement.setInt(3, room.getBookedRooms());
+            preparedStatement.setBoolean(4, room.isFreeBreakfast());
+            preparedStatement.setBoolean(5, room.isParking());
+            preparedStatement.setBoolean(6, room.isFreeWifi());
+            preparedStatement.setBoolean(7, room.isPrivateBus());
+            preparedStatement.setBoolean(8, room.isFlowers());
+            preparedStatement.setInt(9, room.getPrizePerDay());
+            preparedStatement.setInt(10, room.getId());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateAvailableRoom(int available_room, int booked_rooms, int roomId) {
+        String updateRoomQuery = "UPDATE rooms SET available_room=?, booked_rooms=? WHERE id=?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateRoomQuery)) {
+            preparedStatement.setInt(1, available_room); // Set the value for the first parameter
+            preparedStatement.setInt(2, booked_rooms);   // Set the value for the second parameter
+            preparedStatement.setInt(3, roomId);        // Set the value for the third parameter
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean insertBooking(int userId, int roomId, int NumberOfRooms, int prize, Date bookingTo, Date bookingFrom, String checkInTime, String checkOutTime) {
+        String insertBookingQuery = "INSERT INTO booking (userId, roomId, NumberOfRooms,prize, booking_to, booking_from, checkInTime, checkOutTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertBookingQuery)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, roomId);
+            preparedStatement.setInt(3, NumberOfRooms);
+            preparedStatement.setInt(4, prize);
+            preparedStatement.setDate(5, bookingTo);
+            preparedStatement.setDate(6, bookingFrom);
+            preparedStatement.setString(7, checkInTime);
+            preparedStatement.setString(8, checkOutTime);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public Rooms getOneRoom(int roomId) {
+        String selectBookingQuery = "SELECT * FROM rooms WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectBookingQuery)) {
+            preparedStatement.setInt(1, roomId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String type = resultSet.getString("room_Type"); // Use correct column name
+                int availableRooms = resultSet.getInt("available_room"); // Use correct column name
+                int bookedRooms = resultSet.getInt("booked_rooms"); // Use correct column name
+                boolean freeBreakfast = resultSet.getBoolean("free_breakfast"); // Use correct column name
+                boolean parking = resultSet.getBoolean("parking"); // Use correct column name
+                boolean flowers = resultSet.getBoolean("flowers"); // Use correct column name
+                boolean freeWifi = resultSet.getBoolean("free_wifi"); // Use correct column name
+                boolean privateBus = resultSet.getBoolean("private_bus"); // Use correct column name
+                int prizePerDay = resultSet.getInt("prize_per_day"); // Use correct column name
+
+                // Create a Rooms object and add it to the list
+                Rooms room = new Rooms(id, type, availableRooms, bookedRooms, freeBreakfast, parking, flowers, freeWifi, privateBus, prizePerDay);
+                return room;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Return null if the booking is not found
+    }
+
+    public Booking getBooking(int userId) {
+        String selectBookingQuery = "SELECT * FROM booking WHERE userId = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectBookingQuery)) {
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                int id = resultSet.getInt("userId");
+                int roomId = resultSet.getInt("roomId");
+                int NumberOfRooms = resultSet.getInt("NumberOfRooms");
+                int prize = resultSet.getInt("prize");
+                Date bookingTo = resultSet.getDate("booking_to");
+                Date bookingFrom = resultSet.getDate("booking_from");
+                String checkInTimeStr = resultSet.getString("checkInTime");
+                String checkOutTimeStr = resultSet.getString("checkOutTime");
+
+                // Parse the formatted time strings into Time objects
+                Time checkInTime = Time.valueOf(checkInTimeStr);
+                Time checkOutTime = Time.valueOf(checkOutTimeStr);
+
+                // Create a Booking object and return it
+                Booking booking = new Booking(id, roomId, NumberOfRooms, prize, bookingTo, bookingFrom, checkInTime, checkOutTime);
+                return booking;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Return null if the booking is not found
+    }
+
+    public boolean insertBooking(int userId, int roomId, java.util.Date bookingDate, java.util.Date bookingDate0, Time checkInTime, Time checkOutTime) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }
