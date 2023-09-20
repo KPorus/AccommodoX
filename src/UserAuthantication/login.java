@@ -6,6 +6,7 @@ import User_Page.customer;
 import Design.FocusListener;
 import Design.GradientPanel;
 import User_Page.admin;
+import User_Page.receiptionist;
 import User_data.UserInfo;
 import java.awt.Color;
 import java.awt.Font;
@@ -91,12 +92,17 @@ public class login extends JFrame {
                         customer customerPage = new customer(user);
                         customerPage.setVisible(true);
                     }
-
                     if ("admin".equals(info.getRole())) {
                         admin adminPage = new admin(user);
                         adminPage.setVisible(true);
 
                     }
+                    if ("receiptionist".equals(info.getRole())) {
+                        receiptionist adminPage = new receiptionist(user);
+                        adminPage.setVisible(true);
+
+                    }
+
 
                     // Close the login page
                     dispose();

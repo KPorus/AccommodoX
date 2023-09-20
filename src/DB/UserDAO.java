@@ -1,6 +1,7 @@
 package DB;
 
 import User_data.Booking;
+import User_data.BookingWithUserInfo;
 import User_data.Rooms;
 import java.sql.Connection;
 import java.sql.Date;
@@ -482,6 +483,42 @@ public class UserDAO {
             e.printStackTrace();
         }
         return null; // Return null if the booking is not found
+    }
+
+    public List<BookingWithUserInfo> getAllBookingsWithUserInfo() {
+        String selectBookingQuery = "SELECT u.name AS user_name, r.room_Type, b.booking_to, b.booking_from, b.checkInTime, b.checkOutTime, b.NumberOfRooms, b.prize "
+                + "FROM booking b "
+                + "JOIN users u ON u.id = b.userId "
+                + "JOIN rooms r ON r.id = b.roomId";
+
+        List<BookingWithUserInfo> bookings = new ArrayList<>();
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectBookingQuery)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                String userName = resultSet.getString("user_name");
+                String roomType = resultSet.getString("room_Type");
+                Date bookingTo = resultSet.getDate("booking_to");
+                Date bookingFrom = resultSet.getDate("booking_from");
+                String checkInTimeStr = resultSet.getString("checkInTime");
+                String checkOutTimeStr = resultSet.getString("checkOutTime");
+                int numberOfRooms = resultSet.getInt("NumberOfRooms");
+                int prize = resultSet.getInt("prize");
+
+                // Parse the formatted time strings into Time objects
+                Time checkInTime = Time.valueOf(checkInTimeStr);
+                Time checkOutTime = Time.valueOf(checkOutTimeStr);
+
+                // Create a BookingWithUserInfo object and add it to the list
+                BookingWithUserInfo bookingWithUserInfo = new BookingWithUserInfo(userName, roomType, bookingTo, bookingFrom, checkInTime, checkOutTime, numberOfRooms, prize);
+                bookings.add(bookingWithUserInfo);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return bookings;
     }
 
     public boolean insertBooking(int userId, int roomId, java.util.Date bookingDate, java.util.Date bookingDate0, Time checkInTime, Time checkOutTime) {
