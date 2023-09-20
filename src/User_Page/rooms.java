@@ -46,6 +46,7 @@ public class rooms extends JFrame {
 
         JButton profile = new JButton("Profile");
         JButton customers = new JButton("Customers");
+        JButton BookedRoom = new JButton("Booked Room");
         JButton employees = new JButton("Employees");
         JButton rooms = new JButton("Rooms");
 
@@ -94,6 +95,27 @@ public class rooms extends JFrame {
             mainContentPanel.add(menuPanel, BorderLayout.WEST);
 
         }
+
+        if ("receiptionist".equals(role)) {
+            profile.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    User userData = userDAO.getUser(userId); // Fetch user data by ID
+                    new receiptionist(userData).setVisible(true); // Pass the fetched user data
+                    dispose();
+                }
+            });
+            BookedRoom.addActionListener((ActionEvent e) -> {
+                new BookedRooms(null, userId).setVisible(true);
+                dispose();
+            });
+            menuPanel.add(profile);
+            menuPanel.add(BookedRoom);
+            menuPanel.add(rooms);
+            mainContentPanel.add(menuPanel, BorderLayout.WEST);
+
+        }
+
         // Create a panel for the welcome message and user information
         JPanel welcomePanel = new JPanel(new BorderLayout());
         welcomePanel.setOpaque(false);
@@ -106,7 +128,9 @@ public class rooms extends JFrame {
         if ("customer".equals(role)) {
             columnNames = new String[]{"Room Type", "Available Rooms", "Free Breakfast", "Parking", "Flowers", "Free WiFi", "Private Bus"};
         }
-
+        if ("receiptionist".equals(role)) {
+            columnNames = new String[]{"Room Type", "Available Rooms", "Free Breakfast", "Parking", "Flowers", "Free WiFi", "Private Bus"};
+        }
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -165,7 +189,7 @@ public class rooms extends JFrame {
                     if (selectedRow >= 0) {
                         Rooms selectedRoom = allRooms.get(selectedRow);
                         // Open a dialog to add a new employee
-                        BookingDialog dialog = new BookingDialog(rooms.this,selectedRoom,userId);
+                        BookingDialog dialog = new BookingDialog(rooms.this, selectedRoom, userId);
                         dialog.setVisible(true);
                     } else {
                         JOptionPane.showMessageDialog(rooms.this, "Please select an room to booking.");
@@ -227,6 +251,16 @@ public class rooms extends JFrame {
                     room.isPrivateBus() ? "Yes" : "No"
                 };
             } else if ("customer".equals(role)) {
+                rowData = new Object[]{
+                    room.getRoomType(),
+                    room.getAvailableRooms(),
+                    room.isFreeBreakfast() ? "Yes" : "No",
+                    room.isParking() ? "Yes" : "No",
+                    room.isFlowers() ? "Yes" : "No",
+                    room.isFreeWifi() ? "Yes" : "No",
+                    room.isPrivateBus() ? "Yes" : "No"
+                };
+            } else if ("receiptionist".equals(role)) {
                 rowData = new Object[]{
                     room.getRoomType(),
                     room.getAvailableRooms(),
