@@ -5,14 +5,13 @@ import java.sql.Time;
 
 public class Booking {
     private int userId;
-    private int roomId ;
+    private int roomId;
     private int NumberOfRooms;
     private int prize;
     private Date bookingTo;
     private Date bookingFrom;
     private Time checkInTime;
     private Time checkOutTime;
-
 
     public Booking(int userId, int roomId, int NumberOfRooms, int prize, Date bookingTo, Date bookingFrom, Time checkInTime, Time checkOutTime) {
         this.userId = userId;
@@ -24,8 +23,8 @@ public class Booking {
         this.checkInTime = checkInTime;
         this.checkOutTime = checkOutTime;
     }
-// Empty constructor
 
+    // Empty constructor
     public Booking() {
         // Empty constructor
     }
@@ -33,36 +32,32 @@ public class Booking {
     public int getUserId() {
         return userId;
     }
-    
-    public int getRoomId(){
+
+    public int getRoomId() {
         return roomId;
     }
-    
-    public int getNumberOfRoom(){
+
+    public int getNumberOfRooms() {
         return NumberOfRooms;
     }
-    
-    public int getTotalPrize(){
+
+    public int getPrize() {
         return prize;
     }
-    
-    public Date getBookingTo()
-    {
+
+    public Date getBookingTo() {
         return bookingTo;
     }
-    
-    public Date getBookingFrom()
-    {
+
+    public Date getBookingFrom() {
         return bookingFrom;
     }
-    
-    public Time getCheckInTime()
-    {
+
+    public Time getCheckInTime() {
         return checkInTime;
     }
- 
-    public Time getCheckOutTime()
-    {
+
+    public Time getCheckOutTime() {
         return checkOutTime;
     }
 }

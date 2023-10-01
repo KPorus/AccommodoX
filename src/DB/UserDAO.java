@@ -16,12 +16,8 @@ import User_data.empDetails;
 import java.sql.Statement;
 import java.util.List;
 import java.util.ArrayList;
-import java.sql.Types; // Add this import statement
+import java.sql.Types;
 
-/**
- *
- * @author User
- */
 public class UserDAO {
 
     private final Connection connection;
@@ -455,6 +451,36 @@ public class UserDAO {
         }
         return null; // Return null if the booking is not found
     }
+
+public List<Booking> getAllRoomsOfUser(int userId) {
+    List<Booking> bookings = new ArrayList<>();
+    String selectBookingQuery = "SELECT * FROM booking WHERE userId = ?";
+    try (PreparedStatement preparedStatement = connection.prepareStatement(selectBookingQuery)) {
+        preparedStatement.setInt(1, userId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            int id = resultSet.getInt("userId");
+                int roomId = resultSet.getInt("roomId");
+                int NumberOfRooms = resultSet.getInt("NumberOfRooms");
+                int prize = resultSet.getInt("prize");
+                Date bookingTo = resultSet.getDate("booking_to");
+                Date bookingFrom = resultSet.getDate("booking_from");
+                String checkInTimeStr = resultSet.getString("checkInTime");
+                String checkOutTimeStr = resultSet.getString("checkOutTime");
+
+                // Parse the formatted time strings into Time objects
+                Time checkInTime = Time.valueOf(checkInTimeStr);
+                Time checkOutTime = Time.valueOf(checkOutTimeStr);
+
+            // Create a Booking object and add it to the list
+            Booking booking = new Booking(id, roomId, NumberOfRooms, prize, bookingTo, bookingFrom, checkInTime, checkOutTime);
+            bookings.add(booking);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return bookings;
+}
 
     public Booking getBooking(int userId) {
         String selectBookingQuery = "SELECT * FROM booking WHERE userId = ?";
