@@ -45,12 +45,18 @@ public class customer extends JFrame {
         int userId = user.getId();
         JButton profile = new JButton("Profile");
         JButton rooms = new JButton("Rooms");
+        JButton BookedRooms = new JButton("Booked Room");
         rooms.addActionListener((ActionEvent e) -> {
             new rooms(userId).setVisible(true);
             dispose();
         });
+        BookedRooms.addActionListener((ActionEvent e) -> {
+            new SingleUserBooking(userId).setVisible(true);
+            dispose();
+        });
         menuPanel.add(profile);
         menuPanel.add(rooms);
+        menuPanel.add(BookedRooms);
 
         mainContentPanel.add(menuPanel, BorderLayout.WEST);
 

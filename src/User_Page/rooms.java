@@ -90,8 +90,16 @@ public class rooms extends JFrame {
                     dispose();
                 }
             });
+            BookedRoom.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new SingleUserBooking(userId).setVisible(true); // Pass the fetched user data
+                    dispose();
+                }
+            });
             menuPanel.add(profile);
             menuPanel.add(rooms);
+            menuPanel.add(BookedRoom);
             mainContentPanel.add(menuPanel, BorderLayout.WEST);
 
         }
