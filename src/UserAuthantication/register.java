@@ -45,7 +45,7 @@ public class register extends JFrame {
         setContentPane(new GradientPanel());
 
         // Title Label
-        JLabel title = new JLabel("Welcome to sweet Hotal");
+        JLabel title = new JLabel("Welcome to AccommodoX");
         title.setForeground(Color.WHITE);
         title.setFont(new Font("SAN", Font.BOLD, 28));
 
