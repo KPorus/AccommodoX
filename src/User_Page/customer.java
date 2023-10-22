@@ -55,6 +55,10 @@ public class customer extends JFrame {
         JButton profile = new JButton("Profile");
         JButton rooms = new JButton("Rooms");
         JButton BookedRooms = new JButton("Booked Room");
+        JButton contact = new JButton("Contact Us");
+        contact.addActionListener(((e) -> {
+            new Contact().setVisible(true);
+        }));
         rooms.addActionListener((ActionEvent e) -> {
             new rooms(userId).setVisible(true);
             dispose();
@@ -66,6 +70,7 @@ public class customer extends JFrame {
         menuPanel.add(profile);
         menuPanel.add(rooms);
         menuPanel.add(BookedRooms);
+        menuPanel.add(contact);
 
         mainContentPanel.add(menuPanel, BorderLayout.WEST);
 
