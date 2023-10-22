@@ -1,9 +1,11 @@
 package User_Page;
 
+import com.sun.mail.util.MailSSLSocketFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.security.GeneralSecurityException;
 import java.util.Properties;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -56,8 +58,8 @@ public class Contact extends JFrame {
     }
 
     private void sendEmail(String recipient, String subject, String body) {
-        final String username = "21225103451@cse.bubt.edu.bd"; // Your Gmail username
-        final String password = "yvijkundnkzxrrbr"; // Your Gmail password
+        final String username = "mdfardinkhan1952@gmail.com"; // Your Gmail username
+        final String password = "vuihbzbbvyfdrljp"; // Your Gmail password
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
@@ -65,6 +67,15 @@ public class Contact extends JFrame {
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.port", "587");
 
+//        // Enable SSL/TLS for the connection (added this part)
+//        try {
+//            MailSSLSocketFactory sf = new MailSSLSocketFactory();
+//            sf.setTrustAllHosts(true);
+//            props.put("mail.smtp.ssl.socketFactory", sf);
+//        } catch (GeneralSecurityException e) {
+//            e.printStackTrace();
+//        }
+//        
         Session session;
         session = Session.getInstance(props, new Authenticator() {
             @Override
