@@ -49,7 +49,7 @@ public class rooms extends JFrame {
         JButton BookedRoom = new JButton("Booked Room");
         JButton employees = new JButton("Employees");
         JButton rooms = new JButton("Rooms");
-
+        JButton offer = new JButton("Offers");
         // Check the user's role
         User user = userDAO.getUser(userId);
         String role = user.getRole();
@@ -73,10 +73,15 @@ public class rooms extends JFrame {
                     dispose();
                 }
             });
+            offer.addActionListener((ActionEvent e) -> {
+                new Offers(userId).setVisible(true);
+                dispose();
+            });
             menuPanel.add(profile);
             menuPanel.add(customers);
             menuPanel.add(employees);
             menuPanel.add(rooms);
+            menuPanel.add(offer);
             mainContentPanel.add(menuPanel, BorderLayout.WEST);
 
         }

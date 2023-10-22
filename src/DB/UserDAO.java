@@ -2,6 +2,7 @@ package DB;
 
 import User_data.Booking;
 import User_data.BookingWithUserInfo;
+import User_data.Offer;
 import User_data.Rooms;
 import java.sql.Connection;
 import java.sql.Date;
@@ -452,14 +453,14 @@ public class UserDAO {
         return null; // Return null if the booking is not found
     }
 
-public List<Booking> getAllRoomsOfUser(int userId) {
-    List<Booking> bookings = new ArrayList<>();
-    String selectBookingQuery = "SELECT * FROM booking WHERE userId = ?";
-    try (PreparedStatement preparedStatement = connection.prepareStatement(selectBookingQuery)) {
-        preparedStatement.setInt(1, userId);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        while (resultSet.next()) {
-            int id = resultSet.getInt("userId");
+    public List<Booking> getAllRoomsOfUser(int userId) {
+        List<Booking> bookings = new ArrayList<>();
+        String selectBookingQuery = "SELECT * FROM booking WHERE userId = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectBookingQuery)) {
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int id = resultSet.getInt("userId");
                 int roomId = resultSet.getInt("roomId");
                 int NumberOfRooms = resultSet.getInt("NumberOfRooms");
                 int prize = resultSet.getInt("prize");
@@ -472,15 +473,15 @@ public List<Booking> getAllRoomsOfUser(int userId) {
                 Time checkInTime = Time.valueOf(checkInTimeStr);
                 Time checkOutTime = Time.valueOf(checkOutTimeStr);
 
-            // Create a Booking object and add it to the list
-            Booking booking = new Booking(id, roomId, NumberOfRooms, prize, bookingTo, bookingFrom, checkInTime, checkOutTime);
-            bookings.add(booking);
+                // Create a Booking object and add it to the list
+                Booking booking = new Booking(id, roomId, NumberOfRooms, prize, bookingTo, bookingFrom, checkInTime, checkOutTime);
+                bookings.add(booking);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return bookings;
     }
-    return bookings;
-}
 
     public Booking getBooking(int userId) {
         String selectBookingQuery = "SELECT * FROM booking WHERE userId = ?";
@@ -545,6 +546,71 @@ public List<Booking> getAllRoomsOfUser(int userId) {
         }
 
         return bookings;
+    }
+
+    public boolean insertOffer(String title, String description, String status) {
+        String insertOfferQuery = "INSERT INTO offers (title,description,status) VALUES (?, ?,?)";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertOfferQuery)) {
+            preparedStatement.setString(1, title);
+            preparedStatement.setString(2, description);
+            preparedStatement.setString(3, status);
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public List<Offer> getAllOffers() {
+        String selectOffersQuery = "SELECT id,title, description,status FROM offers";
+        List<Offer> offersList = new ArrayList<>();
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectOffersQuery); ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                String title = resultSet.getString("title");
+                String description = resultSet.getString("description");
+                String status = resultSet.getString("status");
+                int id = resultSet.getInt("id");
+                Offer offer = new Offer(id, title, description, status);
+                offersList.add(offer);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return offersList;
+    }
+
+    public boolean updateOffer(int id, String status) {
+        String updateOfferQuery = "UPDATE offers SET status=? WHERE id=?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateOfferQuery)) {
+            preparedStatement.setString(1, status); // Set the value for the first parameter
+            preparedStatement.setInt(2, id); // Set the value for the second parameter
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean deleteOffer(int id) {
+        String deleteOfferQuery = "DELETE FROM offers WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteOfferQuery)) {
+            preparedStatement.setInt(1, id); // Set the ID as a parameter
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public boolean insertBooking(int userId, int roomId, java.util.Date bookingDate, java.util.Date bookingDate0, Time checkInTime, Time checkOutTime) {

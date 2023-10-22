@@ -3,6 +3,7 @@ package User_Page;
 import DB.MySQLConnection;
 import DB.UserDAO;
 import Design.GradientPanel;
+import User_data.Offer;
 import javax.swing.JFrame;
 import User_data.User;
 import User_data.UserDetails;
@@ -10,10 +11,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 public class customer extends JFrame {
 
@@ -21,7 +26,11 @@ public class customer extends JFrame {
     private UserDetails details;
     private UserDAO userDAO;
     private MySQLConnection mysqlConnection;
-    
+
+    private JLabel offersLabel;
+    private List<Offer> offers;
+    private int currentOfferIndex = 0;
+
     public customer(User user) {
         this.userData = user;
         mysqlConnection = new MySQLConnection();
@@ -123,8 +132,43 @@ public class customer extends JFrame {
 
         mainContentPanel.add(welcomePanel, BorderLayout.CENTER);
 
-        // Add the main content panel to the JFrame
+        JPanel offersPanel = new JPanel();
+        offersPanel.setOpaque(false);
+
+        offersLabel = new JLabel();
+        offersLabel.setForeground(Color.WHITE);
+        offersLabel.setBorder(BorderFactory.createEmptyBorder(10, 20, 0, 0));
+        offersPanel.add(offersLabel);
+
+        mainContentPanel.add(offersPanel, BorderLayout.SOUTH);
+
         getContentPane().add(mainContentPanel);
+
+        // Create a timer to update the offers text
+        Timer timer = new Timer(3000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showNextOffer();
+            }
+        });
+        timer.start();
+    }
+
+    private void showNextOffer() {
+        offers = userDAO.getAllOffers();
+
+        // Filter offers with "open" status
+        List<Offer> openOffers = offers.stream()
+                .filter(offer -> "open".equalsIgnoreCase(offer.getStatus()))
+                .collect(Collectors.toList());
+
+        if (!openOffers.isEmpty()) {
+            offersLabel.setText(openOffers.get(currentOfferIndex).getDescription());
+            currentOfferIndex = (currentOfferIndex + 1) % openOffers.size();
+        } else {
+            // No open offers found, you can display a message or take other actions
+            offersLabel.setText("No open offers available");
+        }
     }
 
     public static void main(String[] args) {

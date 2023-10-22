@@ -49,6 +49,7 @@ public class allCustomer extends JFrame {
         JButton users = new JButton("Customers");
         JButton emp = new JButton("Employees");
         JButton rooms = new JButton("Rooms");
+         JButton offer = new JButton("Offers");
         profile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -73,10 +74,15 @@ public class allCustomer extends JFrame {
                 dispose();
             }
         });
+        offer.addActionListener((ActionEvent e) -> {
+            new Offers(userId).setVisible(true);
+            dispose();
+        });
         menuPanel.add(profile);
         menuPanel.add(users);
         menuPanel.add(emp);
         menuPanel.add(rooms);
+        menuPanel.add(offer);
         mainContentPanel.add(menuPanel, BorderLayout.WEST);
 
         // Create a panel for the welcome message and user information

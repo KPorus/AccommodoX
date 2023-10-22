@@ -9,9 +9,11 @@ import Validation.isPassValid;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -38,17 +40,24 @@ public class register extends JFrame {
         emailValidator = new isEmailValid(); // Initialize the emailValidator instance
         passValidator = new isPassValid();// Initialize the passValidator instance
         
+        
         setTitle("Register Page");
+        setIconImage(getAppIcon()); // Set the application icon
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 50, 1000, 500);
         setResizable(false);
+        setLayout(new GridLayout(1, 2));
         setContentPane(new GradientPanel());
+
+        // Add an image to the left side
+        JLabel logo = new JLabel();
+        ImageIcon logoIcon = new ImageIcon("Image/Icon.jpg"); // Replace "logo.png" with your image file
+        logo.setIcon(logoIcon);
 
         // Title Label
         JLabel title = new JLabel("Welcome to AccommodoX");
         title.setForeground(Color.WHITE);
         title.setFont(new Font("SAN", Font.BOLD, 28));
-
         // User Name Input Field
         JTextField userName = new JTextField("Enter your user name");
         userName.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
@@ -136,6 +145,7 @@ public class register extends JFrame {
         panel.add(SignUp);
 
         getContentPane().add(panel);
+         getContentPane().add(logo);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -143,5 +153,11 @@ public class register extends JFrame {
                 mysqlConnection.closeConnection(); // Close MySQL connection when window closes
             }
         });
+        
+        
+    }
+       private Image getAppIcon() {
+        ImageIcon icon = new ImageIcon("Icon.jpg"); // Replace "icon.png" with your application icon file
+        return icon.getImage();
     }
 }
