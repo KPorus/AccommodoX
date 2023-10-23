@@ -12,7 +12,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.util.List;
 import javax.swing.table.DefaultTableColumnModel;
@@ -24,7 +23,7 @@ public class employee extends JFrame {
     private UserDAO userDAO;
     private MySQLConnection mysqlConnection;
     private JTable employeeTable;
-    private DefaultTableModel tableModel; // Initialize the tableModel
+    private final DefaultTableModel tableModel; // Initialize the tableModel
     private int currentPage = 1;
     private int pageSize = 10; // Number of rows per page
     private List<empDetails> allEmployee;
@@ -56,24 +55,18 @@ public class employee extends JFrame {
         JButton employees = new JButton("Employees");
         JButton rooms = new JButton("Rooms");
         JButton offer = new JButton("Offers");
-        profile.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                User userData = userDAO.getUser(userId); // Fetch user data by ID
-                new admin(userData).setVisible(true); // Pass the fetched user data
-                dispose();
-            }
+        profile.addActionListener((ActionEvent e) -> {
+            User userData = userDAO.getUser(userId); // Fetch user data by ID
+            new admin(userData).setVisible(true); // Pass the fetched user data
+            dispose();
         });
         customers.addActionListener((ActionEvent e) -> {
             new allCustomer(null, userId).setVisible(true);
             dispose();
         });
-        rooms.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new rooms(userId).setVisible(true); // Pass the fetched user data
-                dispose();
-            }
+        rooms.addActionListener((ActionEvent e) -> {
+            new rooms(userId).setVisible(true); // Pass the fetched user data
+            dispose();
         });
         offer.addActionListener((ActionEvent e) -> {
             new Offers(userId).setVisible(true);
@@ -121,24 +114,18 @@ public class employee extends JFrame {
         JButton prevButton = new JButton("Previous");
         JButton nextButton = new JButton("Next");
 
-        prevButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (currentPage > 1) {
-                    currentPage--;
-                    displayEmployee(currentPage);
-                }
+        prevButton.addActionListener((ActionEvent e) -> {
+            if (currentPage > 1) {
+                currentPage--;
+                displayEmployee(currentPage);
             }
         });
 
-        nextButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int maxPage = (int) Math.ceil((double) allEmployee.size() / pageSize);
-                if (currentPage < maxPage) {
-                    currentPage++;
-                    displayEmployee(currentPage);
-                }
+        nextButton.addActionListener((ActionEvent e) -> {
+            int maxPage = (int) Math.ceil((double) allEmployee.size() / pageSize);
+            if (currentPage < maxPage) {
+                currentPage++;
+                displayEmployee(currentPage);
             }
         });
 
@@ -153,33 +140,27 @@ public class employee extends JFrame {
         JButton addEmployeeButton = new JButton("Add Employee");
         paginationPanel.add(addEmployeeButton);
 
-        addEmployeeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Open a dialog to add a new employee
-                AddEmployeeDialog dialog = new AddEmployeeDialog(employee.this);
-                dialog.setVisible(true);
-            }
+        addEmployeeButton.addActionListener((ActionEvent e) -> {
+            // Open a dialog to add a new employee
+            AddEmployeeDialog dialog = new AddEmployeeDialog(employee.this);
+            dialog.setVisible(true);
         });
 
         // Add an "Update" button for selected rows
         JButton updateEmployeeButton = new JButton("Update Employee");
         paginationPanel.add(updateEmployeeButton);
 
-        updateEmployeeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedRow = employeeTable.getSelectedRow();
-                if (selectedRow >= 0) {
-                    // Get the selected employee
-                    empDetails selectedEmployee = allEmployee.get(selectedRow);
-
-                    // Open a dialog to update the selected employee
-                    UpdateEmployeeDialog dialog = new UpdateEmployeeDialog(employee.this, selectedEmployee);
-                    dialog.setVisible(true);
-                } else {
-                    JOptionPane.showMessageDialog(employee.this, "Please select an employee to update.");
-                }
+        updateEmployeeButton.addActionListener((ActionEvent e) -> {
+            int selectedRow = employeeTable.getSelectedRow();
+            if (selectedRow >= 0) {
+                // Get the selected employee
+                empDetails selectedEmployee = allEmployee.get(selectedRow);
+                
+                // Open a dialog to update the selected employee
+                UpdateEmployeeDialog dialog = new UpdateEmployeeDialog(employee.this, selectedEmployee);
+                dialog.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(employee.this, "Please select an employee to update.");
             }
         });
     }
@@ -281,60 +262,54 @@ public class employee extends JFrame {
             JButton saveButton = new JButton("Save");
             JButton cancelButton = new JButton("Cancel");
 
-            saveButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // Get the employee information from the dialog
-                    String name = nameField.getText();
-                    String email = emailField.getText().toLowerCase();
-                    String phone = phoneField.getText();
-                    String address = addressField.getText();
-                    String role = roleField.getText().toLowerCase();
-                    String salary = salaryField.getText();
-                    String employeeType = employeeTypeField.getText();
-                    // Call the addEmployee method to save the new employee
-                    boolean success = false;
-                    if ("receiptionist".equals(role) || "accountent".equals(role)) {
-                        String pass = JOptionPane.showInputDialog(employee.this, "Enter a demo password:");
-                        if (!passValidator.isValidPass(pass) && !emailValidator.isValidEmail(email)) {
-                            JOptionPane.showMessageDialog(employee.this, "Invalid email & password format.");
-                        } else if (!emailValidator.isValidEmail(email)) {
-                            JOptionPane.showMessageDialog(employee.this, "Invalid email format.");
-                        } else if (!passValidator.isValidPass(pass)) {
-                            JOptionPane.showMessageDialog(employee.this, "Invalid password format.");
-                        } else if (userDAO.isUserExists(name)) {
-                            JOptionPane.showMessageDialog(employee.this, "Username already exists.");
-                        } else if (userDAO.isEmailExists(email)) {
-                            JOptionPane.showMessageDialog(employee.this, "Email already exists.");
+            saveButton.addActionListener((ActionEvent e) -> {
+                // Get the employee information from the dialog
+                String name1 = nameField.getText();
+                String email = emailField.getText().toLowerCase();
+                String phone = phoneField.getText();
+                String address = addressField.getText();
+                String role = roleField.getText().toLowerCase();
+                String salary = salaryField.getText();
+                String employeeType = employeeTypeField.getText();
+                // Call the addEmployee method to save the new employee
+                boolean success = false;
+                if ("receiptionist".equals(role) || "accountent".equals(role)) {
+                    String pass = JOptionPane.showInputDialog(employee.this, "Enter a demo password:");
+                    if (!passValidator.isValidPass(pass) && !emailValidator.isValidEmail(email)) {
+                        JOptionPane.showMessageDialog(employee.this, "Invalid email & password format.");
+                    } else if (!emailValidator.isValidEmail(email)) {
+                        JOptionPane.showMessageDialog(employee.this, "Invalid email format.");
+                    } else if (!passValidator.isValidPass(pass)) {
+                        JOptionPane.showMessageDialog(employee.this, "Invalid password format.");
+                    } else if (userDAO.isUserExists(name1)) {
+                        JOptionPane.showMessageDialog(employee.this, "Username already exists.");
+                    } else if (userDAO.isEmailExists(email)) {
+                        JOptionPane.showMessageDialog(employee.this, "Email already exists.");
+                    } else {
+                        // Proceed with registration
+                        if (userDAO.registerUser(name1, email, pass, role)) {
+                            JOptionPane.showConfirmDialog(employee.this, "Employee Registration Successful", "Success Message", 0b0);
+                            success = userDAO.addEmployee(name1, email, phone, address, role, salary, employeeType);
                         } else {
-                            // Proceed with registration
-                            if (userDAO.registerUser(name, email, pass, role)) {
-                                JOptionPane.showConfirmDialog(employee.this, "Employee Registration Successful", "Success Message", 0b0);
-                                success = userDAO.addEmployee(name, email, phone, address, role, salary, employeeType);
-                            } else {
-                                JOptionPane.showMessageDialog(employee.this, "Employee registration failed.");
-                            }
+                            JOptionPane.showMessageDialog(employee.this, "Employee registration failed.");
                         }
-                    } else {
-                        success = userDAO.addEmployee(name, email, phone, address, role, salary, employeeType);
                     }
-                    if (success) {
-                        // Refresh the employee table
-                        allEmployee = userDAO.getAllEmployees();
-                        displayEmployee(currentPage);
-                        JOptionPane.showMessageDialog(employee.this, "Employee added successfully.");
-                        dispose(); // Close the dialog
-                    } else {
-                        JOptionPane.showMessageDialog(employee.this, "Failed to add employee.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
+                } else {
+                    success = userDAO.addEmployee(name1, email, phone, address, role, salary, employeeType);
+                }
+                if (success) {
+                    // Refresh the employee table
+                    allEmployee = userDAO.getAllEmployees();
+                    displayEmployee(currentPage);
+                    JOptionPane.showMessageDialog(employee.this, "Employee added successfully.");
+                    dispose(); // Close the dialog
+                } else {
+                    JOptionPane.showMessageDialog(employee.this, "Failed to add employee.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
 
-            cancelButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    dispose(); // Close the dialog
-                }
+            cancelButton.addActionListener((ActionEvent e) -> {
+                dispose(); // Close the dialog
             });
 
             panel.add(saveButton);
@@ -408,57 +383,51 @@ public class employee extends JFrame {
 
             JButton cancelButton = new JButton("Cancel");
 
-            updateButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // Get the updated employee information from the dialog
-                    String updatedName = nameField.getText();
-                    String updatedEmail = emailField.getText();
-                    String updatedPhone = phoneField.getText();
-                    String updatedAddress = addressField.getText();
-                    String updatedRole = roleField.getText();
-                    String updatedSalary = salaryField.getText();
-                    String updatedEmployeeType = employeeTypeField.getText();
-                    String updatedJoinDateStr = joinDateField.getText(); // Get the join date as a string
-                    String updatedResignDateStr = resignDateField.getText(); // Get the resign date as a string
-
-                    // Parse the join date and resign date from the string format
-                    Date updatedJoinDate = null;
-                    Date updatedResignDate = null;
-
-                    try {
-                        if (!updatedJoinDateStr.isEmpty()) {
-                            updatedJoinDate = Date.valueOf(updatedJoinDateStr);
-                        }
-
-                        if (!updatedResignDateStr.isEmpty()) {
-                            updatedResignDate = Date.valueOf(updatedResignDateStr);
-                        }
-                    } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(employee.this, "Invalid date format. Please use yyyy-MM-dd.");
-                        return;
+            updateButton.addActionListener((ActionEvent e) -> {
+                // Get the updated employee information from the dialog
+                String updatedName = nameField.getText();
+                String updatedEmail = emailField.getText();
+                String updatedPhone = phoneField.getText();
+                String updatedAddress = addressField.getText();
+                String updatedRole = roleField.getText();
+                String updatedSalary = salaryField.getText();
+                String updatedEmployeeType = employeeTypeField.getText();
+                String updatedJoinDateStr = joinDateField.getText(); // Get the join date as a string
+                String updatedResignDateStr = resignDateField.getText(); // Get the resign date as a string
+                
+                // Parse the join date and resign date from the string format
+                Date updatedJoinDate = null;
+                Date updatedResignDate = null;
+                
+                try {
+                    if (!updatedJoinDateStr.isEmpty()) {
+                        updatedJoinDate = Date.valueOf(updatedJoinDateStr);
                     }
-
-                    // Call the updateEmployee method to save the updated employee
-                    boolean success = userDAO.updateEmployee(employee.getId(), updatedName, updatedEmail, updatedPhone, updatedAddress, updatedRole, updatedSalary, updatedEmployeeType, updatedJoinDate, updatedResignDate);
-
-                    if (success) {
-                        // Refresh the employee table
-                        allEmployee = userDAO.getAllEmployees();
-                        displayEmployee(currentPage);
-                        JOptionPane.showMessageDialog(employee.this, "Employee updated successfully.");
-                        dispose(); // Close the dialog
-                    } else {
-                        JOptionPane.showMessageDialog(employee.this, "Failed to update employee.", "Error", JOptionPane.ERROR_MESSAGE);
+                    
+                    if (!updatedResignDateStr.isEmpty()) {
+                        updatedResignDate = Date.valueOf(updatedResignDateStr);
                     }
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(employee.this, "Invalid date format. Please use yyyy-MM-dd.");
+                    return;
+                }
+                
+                // Call the updateEmployee method to save the updated employee
+                boolean success = userDAO.updateEmployee(employee.getId(), updatedName, updatedEmail, updatedPhone, updatedAddress, updatedRole, updatedSalary, updatedEmployeeType, updatedJoinDate, updatedResignDate);
+                
+                if (success) {
+                    // Refresh the employee table
+                    allEmployee = userDAO.getAllEmployees();
+                    displayEmployee(currentPage);
+                    JOptionPane.showMessageDialog(employee.this, "Employee updated successfully.");
+                    dispose(); // Close the dialog
+                } else {
+                    JOptionPane.showMessageDialog(employee.this, "Failed to update employee.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
 
-            cancelButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    dispose(); // Close the dialog
-                }
+            cancelButton.addActionListener((ActionEvent e) -> {
+                dispose(); // Close the dialog
             });
 
             panel.add(cancelButton);
@@ -493,13 +462,10 @@ public class employee extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                // This is just for testing; you can remove this part when integrating with your application.
-                JFrame frame = new employee(0);
-                frame.setVisible(true);
-            }
+        SwingUtilities.invokeLater(() -> {
+            // This is just for testing; you can remove this part when integrating with your application.
+            JFrame frame = new employee(0);
+            frame.setVisible(true);
         });
     }
 }
