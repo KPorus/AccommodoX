@@ -13,8 +13,9 @@ public class BookingWithUserInfo {
     private Time checkOutTime;
     private int numberOfRooms;
     private int prize;
+    private int offer;
 
-    public BookingWithUserInfo(String userName, String roomType, Date bookingTo, Date bookingFrom, Time checkInTime, Time checkOutTime, int numberOfRooms, int prize) {
+    public BookingWithUserInfo(String userName, String roomType, Date bookingTo, Date bookingFrom, Time checkInTime, Time checkOutTime, int numberOfRooms, int prize, int offer) {
         this.userName = userName;
         this.roomType = roomType;
         this.bookingTo = bookingTo;
@@ -23,6 +24,7 @@ public class BookingWithUserInfo {
         this.checkOutTime = checkOutTime;
         this.numberOfRooms = numberOfRooms;
         this.prize = prize;
+        this.offer = offer;
     }
 
     public BookingWithUserInfo() {
@@ -59,5 +61,8 @@ public class BookingWithUserInfo {
 
     public int getPrize() {
         return prize;
+    }
+    public int getOffer() {
+        return offer;
     }
 }

@@ -64,7 +64,7 @@ public class BookedRooms extends JFrame {
         JPanel bookingPanel = new JPanel(new BorderLayout());
         bookingPanel.setOpaque(false);
 
-        String[] columnNames = {"User Name", "Room Type", "Booking To", "Booking From", "Check-In Time", "Check-Out Time", "Number of Rooms", "Prize"};
+        String[] columnNames = {"User Name", "Room Type", "Booking To", "Booking From", "Check-In Time", "Check-Out Time", "Number of Rooms", "Prize","Offer"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -98,7 +98,8 @@ public class BookedRooms extends JFrame {
                 room.getCheckInTime(),
                 room.getCheckOutTime(),
                 room.getNumberOfRooms(),
-                room.getPrize()
+                room.getPrize(),
+                room.getOffer()
             };
             tableModel.addRow(rowData);
         }

@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -147,17 +148,43 @@ public class Offers extends JFrame {
             // Show the input dialog
             String title1 = JOptionPane.showInputDialog(Offers.this, "Enter Offer Title:");
             String description = JOptionPane.showInputDialog(Offers.this, "Enter Offer Description:");
-            // Check if both title and description are not empty or null
-            if (title1 != null && !title1.isEmpty() && description != null && !description.isEmpty()) {
-                userDAO.insertOffer(title1, description, "open");
-                // Refresh the offers panel to display the newly added offer
-                updateOffersPanel();
+            String percentInput = JOptionPane.showInputDialog(Offers.this, "Enter Offer amount (in percent):");
+            String room_type = JOptionPane.showInputDialog(Offers.this, "Enter room types (Queen, Master, Normal, Double): ");
+
+            // Check if both title, description, room_type, and percent are not empty or null
+            if (title1 != null && !title1.isEmpty()
+                    && description != null && !description.isEmpty()
+                    && room_type != null && !room_type.isEmpty()
+                    && percentInput != null && !percentInput.isEmpty()) {
+                try {
+                    int percent = Integer.parseInt(percentInput);
+
+                    // Ensure the room_type is a valid option
+                    String[] validRoomTypes = {"queen", "master", "normal", "double"};
+                    String normalizedRoomType = room_type.toLowerCase();
+                    System.out.println(normalizedRoomType);
+                    if (Arrays.asList(validRoomTypes).contains(normalizedRoomType)) {
+                        if(userDAO.updateRoomOffer(normalizedRoomType, percent))
+                        {
+                            userDAO.insertOffer(title1, description, "open");
+                        }else
+                        {
+                            JOptionPane.showMessageDialog(Offers.this, "Failed to update room");
+                        }
+                        
+                        // Refresh the offers panel to display the newly added offer
+                        updateOffersPanel();
+                    } else {
+                        JOptionPane.showMessageDialog(Offers.this, "Invalid room type. Please enter a valid room type.");
+                    }
+                } catch (NumberFormatException ex) {
+                    // Handle the case when "percentInput" is not a valid integer
+                    JOptionPane.showMessageDialog(Offers.this, "Please enter a valid offer amount.");
+                }
             } else {
-                // Handle the case when either title or description is empty
-                JOptionPane.showMessageDialog(Offers.this, "Title and description are required.");
+                // Handle the case when either title, description, room_type, or percent is empty
+                JOptionPane.showMessageDialog(Offers.this, "Title, description, room type, and offer amount are required.");
             }
-            // Refresh the offers panel to display the newly added offer
-            updateOffersPanel();
         });
 
         close.addActionListener((ActionEvent e) -> {

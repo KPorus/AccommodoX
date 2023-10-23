@@ -355,9 +355,10 @@ public class UserDAO {
                 boolean freeWifi = resultSet.getBoolean("free_wifi"); // Use correct column name
                 boolean privateBus = resultSet.getBoolean("private_bus"); // Use correct column name
                 int prizePerDay = resultSet.getInt("prize_per_day"); // Use correct column name
+                int offer = resultSet.getInt("offer");
 
                 // Create a Rooms object and add it to the list
-                Rooms room = new Rooms(id, type, availableRooms, bookedRooms, freeBreakfast, parking, flowers, freeWifi, privateBus, prizePerDay);
+                Rooms room = new Rooms(id, type, availableRooms, bookedRooms, freeBreakfast, parking, flowers, freeWifi, privateBus, prizePerDay, offer);
                 rooms.add(room);
             }
         } catch (SQLException e) {
@@ -405,8 +406,8 @@ public class UserDAO {
         return false;
     }
 
-    public boolean insertBooking(int userId, int roomId, int NumberOfRooms, int prize, Date bookingTo, Date bookingFrom, String checkInTime, String checkOutTime) {
-        String insertBookingQuery = "INSERT INTO booking (userId, roomId, NumberOfRooms,prize, booking_to, booking_from, checkInTime, checkOutTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    public boolean insertBooking(int userId, int roomId, int NumberOfRooms, int prize, Date bookingTo, Date bookingFrom, String checkInTime, String checkOutTime, int offer) {
+        String insertBookingQuery = "INSERT INTO booking (userId, roomId, NumberOfRooms,prize, booking_to, booking_from, checkInTime, checkOutTime,offer) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertBookingQuery)) {
             preparedStatement.setInt(1, userId);
@@ -417,7 +418,7 @@ public class UserDAO {
             preparedStatement.setDate(6, bookingFrom);
             preparedStatement.setString(7, checkInTime);
             preparedStatement.setString(8, checkOutTime);
-
+            preparedStatement.setInt(9, offer);
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -433,18 +434,19 @@ public class UserDAO {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 int id = resultSet.getInt("id");
-                String type = resultSet.getString("room_Type"); // Use correct column name
-                int availableRooms = resultSet.getInt("available_room"); // Use correct column name
-                int bookedRooms = resultSet.getInt("booked_rooms"); // Use correct column name
-                boolean freeBreakfast = resultSet.getBoolean("free_breakfast"); // Use correct column name
-                boolean parking = resultSet.getBoolean("parking"); // Use correct column name
-                boolean flowers = resultSet.getBoolean("flowers"); // Use correct column name
-                boolean freeWifi = resultSet.getBoolean("free_wifi"); // Use correct column name
-                boolean privateBus = resultSet.getBoolean("private_bus"); // Use correct column name
-                int prizePerDay = resultSet.getInt("prize_per_day"); // Use correct column name
+                String type = resultSet.getString("room_Type");
+                int availableRooms = resultSet.getInt("available_room");
+                int bookedRooms = resultSet.getInt("booked_rooms");
+                boolean freeBreakfast = resultSet.getBoolean("free_breakfast");
+                boolean parking = resultSet.getBoolean("parking");
+                boolean flowers = resultSet.getBoolean("flowers");
+                boolean freeWifi = resultSet.getBoolean("free_wifi");
+                boolean privateBus = resultSet.getBoolean("private_bus");
+                int prizePerDay = resultSet.getInt("prize_per_day");
+                int offer = resultSet.getInt("offer");
 
                 // Create a Rooms object and add it to the list
-                Rooms room = new Rooms(id, type, availableRooms, bookedRooms, freeBreakfast, parking, flowers, freeWifi, privateBus, prizePerDay);
+                Rooms room = new Rooms(id, type, availableRooms, bookedRooms, freeBreakfast, parking, flowers, freeWifi, privateBus, prizePerDay, offer);
                 return room;
             }
         } catch (SQLException e) {
@@ -513,7 +515,7 @@ public class UserDAO {
     }
 
     public List<BookingWithUserInfo> getAllBookingsWithUserInfo() {
-        String selectBookingQuery = "SELECT u.name AS user_name, r.room_Type, b.booking_to, b.booking_from, b.checkInTime, b.checkOutTime, b.NumberOfRooms, b.prize "
+        String selectBookingQuery = "SELECT u.name AS user_name, r.room_Type, b.booking_to, b.booking_from, b.checkInTime, b.checkOutTime, b.NumberOfRooms, b.prize,b.offer "
                 + "FROM booking b "
                 + "JOIN users u ON u.id = b.userId "
                 + "JOIN rooms r ON r.id = b.roomId";
@@ -532,13 +534,13 @@ public class UserDAO {
                 String checkOutTimeStr = resultSet.getString("checkOutTime");
                 int numberOfRooms = resultSet.getInt("NumberOfRooms");
                 int prize = resultSet.getInt("prize");
-
+                int offer = resultSet.getInt("offer");
                 // Parse the formatted time strings into Time objects
                 Time checkInTime = Time.valueOf(checkInTimeStr);
                 Time checkOutTime = Time.valueOf(checkOutTimeStr);
 
                 // Create a BookingWithUserInfo object and add it to the list
-                BookingWithUserInfo bookingWithUserInfo = new BookingWithUserInfo(userName, roomType, bookingTo, bookingFrom, checkInTime, checkOutTime, numberOfRooms, prize);
+                BookingWithUserInfo bookingWithUserInfo = new BookingWithUserInfo(userName, roomType, bookingTo, bookingFrom, checkInTime, checkOutTime, numberOfRooms, prize,offer);
                 bookings.add(bookingWithUserInfo);
             }
         } catch (SQLException e) {
@@ -582,6 +584,21 @@ public class UserDAO {
         }
 
         return offersList;
+    }
+
+    public boolean updateRoomOffer(String type, int offer) {
+        String updateOfferQuery = "UPDATE rooms SET offer=? WHERE room_Type=?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateOfferQuery)) {
+            preparedStatement.setInt(1, offer); // Set the value for the first parameter
+            preparedStatement.setString(2, type); // Set the value for the second parameter
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public boolean updateOffer(int id, String status) {

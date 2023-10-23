@@ -5,7 +5,8 @@ import DB.UserDAO;
 import Design.GradientPanel;
 import User_data.empDetails;
 import User_data.User;
-
+import Validation.isEmailValid;
+import Validation.isPassValid;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -27,10 +28,14 @@ public class employee extends JFrame {
     private int currentPage = 1;
     private int pageSize = 10; // Number of rows per page
     private List<empDetails> allEmployee;
+    private isEmailValid emailValidator;
+    private isPassValid passValidator;
 
     public employee(int userId) {
         mysqlConnection = new MySQLConnection();
         this.userDAO = new UserDAO(mysqlConnection.getConnection()); // Initialize UserDAO
+        emailValidator = new isEmailValid(); // Initialize the emailValidator instance
+        passValidator = new isPassValid();// Initialize the passValidator instance
 
         setTitle("All Employees");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -281,16 +286,38 @@ public class employee extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     // Get the employee information from the dialog
                     String name = nameField.getText();
-                    String email = emailField.getText();
+                    String email = emailField.getText().toLowerCase();
                     String phone = phoneField.getText();
                     String address = addressField.getText();
-                    String role = roleField.getText();
+                    String role = roleField.getText().toLowerCase();
                     String salary = salaryField.getText();
                     String employeeType = employeeTypeField.getText();
-
                     // Call the addEmployee method to save the new employee
-                    boolean success = userDAO.addEmployee(name, email, phone, address, role, salary, employeeType);
-
+                    boolean success = false;
+                    if ("receiptionist".equals(role) || "accountent".equals(role)) {
+                        String pass = JOptionPane.showInputDialog(employee.this, "Enter a demo password:");
+                        if (!passValidator.isValidPass(pass) && !emailValidator.isValidEmail(email)) {
+                            JOptionPane.showMessageDialog(employee.this, "Invalid email & password format.");
+                        } else if (!emailValidator.isValidEmail(email)) {
+                            JOptionPane.showMessageDialog(employee.this, "Invalid email format.");
+                        } else if (!passValidator.isValidPass(pass)) {
+                            JOptionPane.showMessageDialog(employee.this, "Invalid password format.");
+                        } else if (userDAO.isUserExists(name)) {
+                            JOptionPane.showMessageDialog(employee.this, "Username already exists.");
+                        } else if (userDAO.isEmailExists(email)) {
+                            JOptionPane.showMessageDialog(employee.this, "Email already exists.");
+                        } else {
+                            // Proceed with registration
+                            if (userDAO.registerUser(name, email, pass, role)) {
+                                JOptionPane.showConfirmDialog(employee.this, "Employee Registration Successful", "Success Message", 0b0);
+                                success = userDAO.addEmployee(name, email, phone, address, role, salary, employeeType);
+                            } else {
+                                JOptionPane.showMessageDialog(employee.this, "Employee registration failed.");
+                            }
+                        }
+                    } else {
+                        success = userDAO.addEmployee(name, email, phone, address, role, salary, employeeType);
+                    }
                     if (success) {
                         // Refresh the employee table
                         allEmployee = userDAO.getAllEmployees();

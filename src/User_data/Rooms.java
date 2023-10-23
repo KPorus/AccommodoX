@@ -12,9 +12,10 @@ public class Rooms {
     private boolean freeWifi;
     private boolean privateBus;
     private int prizePerDay;
+    private int offer;
 
     public Rooms(int id, String roomType, int availableRooms, int bookedRooms, boolean freeBreakfast,
-            boolean parking, boolean flowers, boolean freeWifi, boolean privateBus, int prizePerDay) {
+            boolean parking, boolean flowers, boolean freeWifi, boolean privateBus, int prizePerDay, int offer) {
         this.id = id;
         this.roomType = roomType;
         this.availableRooms = availableRooms;
@@ -25,6 +26,7 @@ public class Rooms {
         this.freeWifi = freeWifi;
         this.privateBus = privateBus;
         this.prizePerDay = prizePerDay;
+        this.offer = offer;
     }
 // Empty constructor
 
@@ -32,6 +34,10 @@ public class Rooms {
         // Empty constructor
     }
 
+    public int getOffer() {
+        return offer;
+    }
+    
     public int getId() {
         return id;
     }

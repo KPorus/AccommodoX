@@ -109,8 +109,14 @@ public class BookingDialog extends JDialog {
                         int prize = Room.getPrizePerDay() * numberOfRooms;
                         int available = Room.getAvailableRooms() - numberOfRooms;
                         int booked = Room.getBookedRooms() + numberOfRooms;
+                        int offer = Room.getOffer();
+                        if (Room.getOffer() > 0) {
+                            int percent = Room.getOffer();
+                            double p = percent / 100.0;
+                            prize = (int) (prize * p);
+                        }
                         // Call the insertBooking method to save the booking
-                        boolean success = userDAO.insertBooking(userId, room.getId(), numberOfRooms, prize, bookingTo, bookingFrom, checkInTimeFormatted, checkOutTimeFormatted);
+                        boolean success = userDAO.insertBooking(userId, room.getId(), numberOfRooms, prize, bookingTo, bookingFrom, checkInTimeFormatted, checkOutTimeFormatted, offer);
                         boolean roomSuccess = userDAO.updateAvailableRoom(available, booked, room.getId());
                         if (success && roomSuccess) {
                             JOptionPane.showMessageDialog(BookingDialog.this, "Room booked successfully.");
