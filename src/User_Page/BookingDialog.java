@@ -13,10 +13,16 @@ import DB.UserDAO;
 import User_data.Rooms;
 import Design.CustomDatePicker;
 import Design.CustomTimePicker;
+import User_data.User;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 
 public class BookingDialog extends JDialog {
 
     private UserDAO userDAO;
+    private User userData;
     private MySQLConnection mysqlConnection;
     private Rooms Room;
     private CustomTimePicker checkInTimePicker;
@@ -120,6 +126,7 @@ public class BookingDialog extends JDialog {
                         boolean roomSuccess = userDAO.updateAvailableRoom(available, booked, room.getId());
                         if (success && roomSuccess) {
                             JOptionPane.showMessageDialog(BookingDialog.this, "Room booked successfully.");
+                            generateBookingConfirmationPDF(userId, room, numberOfRooms, prize, offer);
                             dispose(); // Close the dialog
                         } else {
                             JOptionPane.showMessageDialog(BookingDialog.this, "Failed to book room.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -135,6 +142,82 @@ public class BookingDialog extends JDialog {
         add(panel);
         pack();
         setLocationRelativeTo(parent);
+    }
+
+    private void generateBookingConfirmationPDF(int userId, Rooms room, int numberOfRooms, int prize, int offer) {
+        // Create a PageFormat for the printer
+        PageFormat pageFormat = new PageFormat();
+        pageFormat.setOrientation(PageFormat.PORTRAIT);
+        this.userData = userDAO.getUser(userId);
+
+        // Create a Printable object
+        Printable printable = new Printable() {
+            @Override
+            public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+                if (pageIndex == 0) {
+                    Graphics2D g2d = (Graphics2D) graphics;
+                    g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
+
+                    // Hotel Name
+                    String hotelName = "Accomodox";
+                    String invoiceSymbol = "************ Invoice for Room Booking ************";
+
+                    // Create a text string to be printed
+                    String text = "Booking Confirmation ************\n\n"
+                            + "Customer Name: " + userData.getUsername() + "\n"
+                            + " ************ ************ ************ ************ \n"
+                            + "Email: " + userData.getEmail() + "\n"
+                            + " ************ ************ ************ ************ \n"
+                            + "Room Type: " + room.getRoomType() + "\n"
+                            + " ************ ************ ************ ************ \n"
+                            + "Number of Rooms: " + numberOfRooms + "\n"
+                            + " ************ ************ ************ ************ \n"
+                            + "Offer: " + offer + "%\n"
+                            + " ************ ************ ************ ************ \n"
+                            + "Prize: $" + prize;
+
+                    // Set font and size for hotel name
+                    g2d.setFont(new Font("Serif", Font.BOLD, 16));
+                    g2d.drawString(hotelName, 100, 80);
+
+                    // Set font and size for invoice symbol
+                    g2d.setFont(new Font("Serif", Font.BOLD, 12));
+                    g2d.drawString(invoiceSymbol, 100, 100);
+
+                    // Set font and size for the rest of the text
+                    g2d.setFont(new Font("Serif", Font.PLAIN, 12));
+
+                    // Split the text into lines
+                    String[] lines = text.split("\n");
+
+                    int y = 140; // Initial y-coordinate
+
+                    // Print each line of text
+                    for (String line : lines) {
+                        g2d.drawString(line, 100, y);
+                        y += 20; // Move to the next line
+                    }
+
+                    return Printable.PAGE_EXISTS;
+                } else {
+                    return Printable.NO_SUCH_PAGE;
+                }
+            }
+        };
+
+        // Create a PrinterJob
+        PrinterJob printerJob = PrinterJob.getPrinterJob();
+        printerJob.setPrintable(printable, pageFormat);
+
+        // Show a print dialog to choose printer and settings
+        if (printerJob.printDialog()) {
+            try {
+                printerJob.print();
+                JOptionPane.showMessageDialog(this, "Booking confirmation PDF printed successfully.");
+            } catch (PrinterException ex) {
+                JOptionPane.showMessageDialog(this, "Failed to print booking confirmation PDF.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     // Helper function to format time as HH:mm:ss
