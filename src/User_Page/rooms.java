@@ -139,7 +139,7 @@ public class rooms extends JFrame {
             columnNames = new String[]{"Room Type", "Available Rooms", "Booked Rooms", "Free Breakfast", "Parking", "Flowers", "Free WiFi", "Private Bus"};
         }
         if ("customer".equals(role)) {
-            columnNames = new String[]{"Room Type", "Available Rooms", "Free Breakfast", "Parking", "Flowers", "Free WiFi", "Private Bus"};
+            columnNames = new String[]{"Room Type", "Offer", "Free Breakfast", "Parking", "Flowers", "Free WiFi", "Private Bus"};
         }
         if ("receiptionist".equals(role)) {
             columnNames = new String[]{"Room Type", "Available Rooms", "Free Breakfast", "Parking", "Flowers", "Free WiFi", "Private Bus"};
@@ -266,7 +266,7 @@ public class rooms extends JFrame {
             } else if ("customer".equals(role)) {
                 rowData = new Object[]{
                     room.getRoomType(),
-                    room.getAvailableRooms(),
+                    room.getOffer()+"%",
                     room.isFreeBreakfast() ? "Yes" : "No",
                     room.isParking() ? "Yes" : "No",
                     room.isFlowers() ? "Yes" : "No",
