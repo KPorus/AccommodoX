@@ -10,11 +10,13 @@ import User_data.UserDetails;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -38,6 +40,7 @@ public class customer extends JFrame {
         this.userData = userDAO.getUser(user.getId());
 
         setTitle("Customer Profile Page");
+        setIconImage(getAppIcon());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 50, 1000, 500);
         setResizable(false);
@@ -178,6 +181,11 @@ public class customer extends JFrame {
 
     public static void main(String[] args) {
         new customer().setVisible(true);
+    }
+
+    private Image getAppIcon() {
+        ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
+        return icon.getImage();
     }
 
     private customer() {

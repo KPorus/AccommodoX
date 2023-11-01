@@ -30,6 +30,7 @@ public class BookedRooms extends JFrame {
         this.userDAO = new UserDAO(mysqlConnection.getConnection());
 
         setTitle("Booked Rooms Page");
+        setIconImage(getAppIcon());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 50, 1000, 500);
         setResizable(false);
@@ -138,5 +139,9 @@ public class BookedRooms extends JFrame {
         int userId = 1; // Replace with the actual user ID
         JFrame frame = new BookedRooms(user, userId);
         frame.setVisible(true);
+    }
+    private Image getAppIcon() {
+        ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
+        return icon.getImage();
     }
 }

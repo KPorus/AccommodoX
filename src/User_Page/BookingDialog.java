@@ -37,6 +37,9 @@ public class BookingDialog extends JDialog {
         super(parent, "Book Room", true);
         mysqlConnection = new MySQLConnection();
         this.userDAO = new UserDAO(mysqlConnection.getConnection()); // Initialize UserDAO
+        setTitle("Register Page");
+        setIconImage(getAppIcon());
+
         // Initialize dialog components
         JPanel panel = new JPanel(new GridLayout(8, 2));
 
@@ -245,5 +248,10 @@ public class BookingDialog extends JDialog {
 
         frame.add(openDialogButton);
         frame.setVisible(true);
+    }
+
+    private Image getAppIcon() {
+        ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
+        return icon.getImage();
     }
 }

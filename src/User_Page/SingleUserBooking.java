@@ -25,6 +25,7 @@ public class SingleUserBooking extends JFrame {
         this.userDAO = new UserDAO(mysqlConnection.getConnection()); // Initialize UserDAO using the connection
 
         setTitle("Booking Information");
+        setIconImage(getAppIcon());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 50, 1000, 500);
         setResizable(false);
@@ -108,5 +109,9 @@ public class SingleUserBooking extends JFrame {
             JFrame frame = new SingleUserBooking(1); // Replace '1' with the actual user ID
             frame.setVisible(true);
         });
+    }
+    private Image getAppIcon() {
+        ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
+        return icon.getImage();
     }
 }

@@ -8,8 +8,10 @@ import User_data.UserDetails;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,6 +32,7 @@ public class Account extends JFrame{
         this.userData = userDAO.getUser(user.getId());
 
          setTitle("Account Page");
+         setIconImage(getAppIcon());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 50, 1000, 500);
         setResizable(false);
@@ -115,5 +118,9 @@ public class Account extends JFrame{
         getContentPane().add(mainContentPanel);
 
        
+    }
+    private Image getAppIcon() {
+        ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\Icon.jpeg");
+        return icon.getImage();
     }
 }

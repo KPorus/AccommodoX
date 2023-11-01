@@ -9,8 +9,10 @@ import User_data.UserDetails;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -29,6 +31,7 @@ public class admin extends JFrame {
         this.userData = userDAO.getUser(user.getId());
 
         setTitle("Admin Profile Page");
+        setIconImage(getAppIcon());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 50, 1000, 500);
         setResizable(false);
@@ -69,7 +72,7 @@ public class admin extends JFrame {
         menuPanel.add(emp);
         menuPanel.add(rooms);
         menuPanel.add(offer);
-        
+
         mainContentPanel.add(menuPanel, BorderLayout.WEST);
 
         // Create a panel for the welcome message and user information
@@ -141,6 +144,11 @@ public class admin extends JFrame {
 
     public static void main(String[] args) {
         new admin().setVisible(true);
+    }
+
+    private Image getAppIcon() {
+        ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
+        return icon.getImage();
     }
 
     private admin() {

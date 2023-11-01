@@ -32,6 +32,7 @@ public class allCustomer extends JFrame {
         this.userDAO = new UserDAO(mysqlConnection.getConnection()); // Initialize UserDAO
 
         setTitle("All customers page");
+        setIconImage(getAppIcon());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 50, 1000, 500);
         setResizable(false);
@@ -259,5 +260,9 @@ public class allCustomer extends JFrame {
         // This is just for testing; you can remove this part when integrating with your application.
         JFrame frame = new allCustomer(null, 0);
         frame.setVisible(true);
+    }
+    private Image getAppIcon() {
+        ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
+        return icon.getImage();
     }
 }

@@ -31,6 +31,7 @@ public class rooms extends JFrame {
         this.userDAO = new UserDAO(mysqlConnection.getConnection()); // Initialize UserDAO
 
         setTitle("All Rooms");
+        setIconImage(getAppIcon());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 50, 1000, 500);
         setResizable(false);
@@ -136,10 +137,10 @@ public class rooms extends JFrame {
         // Initialize the table model with columns
         String[] columnNames = null;
         if ("admin".equals(role)) {
-            columnNames = new String[]{"Room Type","Prize", "Available Rooms", "Booked Rooms", "Free Breakfast", "Parking", "Flowers", "Free WiFi", "Private Bus"};
+            columnNames = new String[]{"Room Type", "Prize", "Available Rooms", "Booked Rooms", "Free Breakfast", "Parking", "Flowers", "Free WiFi", "Private Bus"};
         }
         if ("customer".equals(role)) {
-            columnNames = new String[]{"Room Type", "Offer","Prize", "Free Breakfast", "Parking", "Flowers", "Free WiFi", "Private Bus"};
+            columnNames = new String[]{"Room Type", "Offer", "Prize", "Free Breakfast", "Parking", "Flowers", "Free WiFi", "Private Bus"};
         }
         if ("receiptionist".equals(role)) {
             columnNames = new String[]{"Room Type", "Available Rooms", "Free Breakfast", "Parking", "Flowers", "Free WiFi", "Private Bus"};
@@ -267,7 +268,7 @@ public class rooms extends JFrame {
             } else if ("customer".equals(role)) {
                 rowData = new Object[]{
                     room.getRoomType(),
-                    room.getOffer()+"%",
+                    room.getOffer() + "%",
                     room.getPrizePerDay(),
                     room.isFreeBreakfast() ? "Yes" : "No",
                     room.isParking() ? "Yes" : "No",
@@ -445,5 +446,10 @@ public class rooms extends JFrame {
                 frame.setVisible(true);
             }
         });
+    }
+
+    private Image getAppIcon() {
+        ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
+        return icon.getImage();
     }
 }

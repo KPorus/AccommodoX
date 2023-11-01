@@ -155,7 +155,7 @@ public class register extends JFrame {
     }
 
     private Image getAppIcon() {
-        ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\Icon.jpg");
+        ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\Icon.jpeg");
         return icon.getImage();
     }
 

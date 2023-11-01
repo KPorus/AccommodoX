@@ -1,4 +1,3 @@
-
 package User_Page;
 
 import DB.MySQLConnection;
@@ -9,8 +8,10 @@ import User_data.UserDetails;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,6 +31,7 @@ public class receiptionist extends JFrame {
         this.userData = userDAO.getUser(user.getId());
 
         setTitle("Welcome receiptionist" + user.getUsername());
+        setIconImage(getAppIcon());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 50, 1000, 500);
         setResizable(false);
@@ -58,7 +60,7 @@ public class receiptionist extends JFrame {
         menuPanel.add(profile);
         menuPanel.add(users);
         menuPanel.add(rooms);
-        
+
         mainContentPanel.add(menuPanel, BorderLayout.WEST);
 
         // Create a panel for the welcome message and user information
@@ -130,6 +132,11 @@ public class receiptionist extends JFrame {
 
     public static void main(String[] args) {
         new receiptionist().setVisible(true);
+    }
+
+    private Image getAppIcon() {
+        ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
+        return icon.getImage();
     }
 
     private receiptionist() {

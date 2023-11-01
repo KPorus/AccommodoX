@@ -8,9 +8,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import DB.UserDAO;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,15 +26,15 @@ public class editPage extends JFrame {
     private UserDAO userDAO;
     private User userData;
     private UserDetails details;
-
+   
     public editPage(User user) {
         this.userData = user;
         mysqlConnection = new MySQLConnection(); // Initialize MySQLConnection
         userDAO = new UserDAO(mysqlConnection.getConnection()); // Initialize UserDAO
         int userId = user.getId();
         String role = user.getRole();
-
         setTitle("Edit profile page");
+        setIconImage(getAppIcon());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 50, 1000, 500);
         setResizable(false);
@@ -172,7 +174,7 @@ public class editPage extends JFrame {
             mainContentPanel.add(menuPanel, BorderLayout.WEST);
 
         }
-        
+
         if ("accountent".equals(role)) {
             profile.addActionListener(new ActionListener() {
                 @Override
@@ -186,12 +188,11 @@ public class editPage extends JFrame {
                     dispose();
                 }
             });
-            
+
             menuPanel.add(profile);
             mainContentPanel.add(menuPanel, BorderLayout.WEST);
 
         }
-
 
         userInfoPanel.add(nameLabel);
         userInfoPanel.add(emailLabel);
@@ -210,6 +211,11 @@ public class editPage extends JFrame {
 
     public static void main(String[] args) {
         new editPage().setVisible(true);
+    }
+
+    private Image getAppIcon() {
+        ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
+        return icon.getImage();
     }
 
     private editPage() {

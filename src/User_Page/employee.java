@@ -37,6 +37,7 @@ public class employee extends JFrame {
         passValidator = new isPassValid();// Initialize the passValidator instance
 
         setTitle("All Employees");
+        setIconImage(getAppIcon());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 50, 1000, 500);
         setResizable(false);
@@ -155,7 +156,7 @@ public class employee extends JFrame {
             if (selectedRow >= 0) {
                 // Get the selected employee
                 empDetails selectedEmployee = allEmployee.get(selectedRow);
-                
+
                 // Open a dialog to update the selected employee
                 UpdateEmployeeDialog dialog = new UpdateEmployeeDialog(employee.this, selectedEmployee);
                 dialog.setVisible(true);
@@ -394,16 +395,16 @@ public class employee extends JFrame {
                 String updatedEmployeeType = employeeTypeField.getText();
                 String updatedJoinDateStr = joinDateField.getText(); // Get the join date as a string
                 String updatedResignDateStr = resignDateField.getText(); // Get the resign date as a string
-                
+
                 // Parse the join date and resign date from the string format
                 Date updatedJoinDate = null;
                 Date updatedResignDate = null;
-                
+
                 try {
                     if (!updatedJoinDateStr.isEmpty()) {
                         updatedJoinDate = Date.valueOf(updatedJoinDateStr);
                     }
-                    
+
                     if (!updatedResignDateStr.isEmpty()) {
                         updatedResignDate = Date.valueOf(updatedResignDateStr);
                     }
@@ -411,10 +412,10 @@ public class employee extends JFrame {
                     JOptionPane.showMessageDialog(employee.this, "Invalid date format. Please use yyyy-MM-dd.");
                     return;
                 }
-                
+
                 // Call the updateEmployee method to save the updated employee
                 boolean success = userDAO.updateEmployee(employee.getId(), updatedName, updatedEmail, updatedPhone, updatedAddress, updatedRole, updatedSalary, updatedEmployeeType, updatedJoinDate, updatedResignDate);
-                
+
                 if (success) {
                     // Refresh the employee table
                     allEmployee = userDAO.getAllEmployees();
@@ -467,5 +468,10 @@ public class employee extends JFrame {
             JFrame frame = new employee(0);
             frame.setVisible(true);
         });
+    }
+
+    private Image getAppIcon() {
+        ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
+        return icon.getImage();
     }
 }

@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -17,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -38,6 +40,8 @@ public class Offers extends JFrame {
         this.userDAO = new UserDAO(mysqlConnection.getConnection()); // Initialize UserDAO
 
         setTitle("Offers");
+        setIconImage(getAppIcon());
+       
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 50, 1000, 500);
         setResizable(false);
@@ -296,5 +300,9 @@ public class Offers extends JFrame {
     public void selectOffer(Offer offer) {
         System.out.println("Selected offer: " + offer.getTitle());
         selectedOffers.add(offer);
+    }
+    private Image getAppIcon() {
+        ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
+        return icon.getImage();
     }
 }

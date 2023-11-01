@@ -40,6 +40,7 @@ public class login extends JFrame {
         mysqlConnection = new MySQLConnection(); // Initialize MySQLConnection
         userDAO = new UserDAO(mysqlConnection.getConnection()); // Initialize UserDAO
         setTitle("Login Page");
+        setIconImage(getAppIcon());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 50, 1000, 500);
         setResizable(false);
@@ -169,6 +170,11 @@ public class login extends JFrame {
                 mysqlConnection.closeConnection(); // Close MySQL connection when window closes
             }
         });
+    }
+
+    private Image getAppIcon() {
+        ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\Icon.jpeg");
+        return icon.getImage();
     }
 
 }
