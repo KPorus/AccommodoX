@@ -42,7 +42,7 @@ public class register extends JFrame {
         JLabel logo = new JLabel();
         try {
             ImageIcon logoIcon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
-            Image scaledImage = logoIcon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);
+            Image scaledImage = logoIcon.getImage().getScaledInstance(500, 500, Image.SCALE_SMOOTH);
             logoIcon = new ImageIcon(scaledImage);
             logo.setIcon(logoIcon);
         } catch (Exception ex) {

@@ -1,21 +1,13 @@
 package User_Page;
-
 import DB.MySQLConnection;
 import DB.UserDAO;
 import Design.GradientPanel;
-import javax.swing.JFrame;
 import User_data.User;
 import User_data.UserDetails;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.GridLayout;
-import java.awt.Image;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 public class admin extends JFrame {
 
@@ -36,13 +28,10 @@ public class admin extends JFrame {
         setBounds(100, 50, 1000, 500);
         setResizable(false);
         setContentPane(new GradientPanel());
+        setLayout(new BorderLayout()); // Use BorderLayout for the main frame
 
-        // Create a main content panel with BorderLayout
-        JPanel mainContentPanel = new JPanel(new BorderLayout());
-        mainContentPanel.setOpaque(false);
-
-        // Create a panel for the menu options
-        JPanel menuPanel = new JPanel(new GridLayout(6, 1, 0, 20));
+        // Create a panel for the menu options on the top
+        JPanel menuPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Align buttons to the right
         menuPanel.setOpaque(false);
 
         int userId = user.getId();
@@ -50,108 +39,170 @@ public class admin extends JFrame {
         JButton users = new JButton("Customers");
         JButton rooms = new JButton("Rooms");
         JButton offer = new JButton("Offers");
+
+        // Add action listeners to the buttons
         rooms.addActionListener((ActionEvent e) -> {
             new rooms(userId).setVisible(true);
             dispose();
         });
+
         users.addActionListener((ActionEvent e) -> {
             new allCustomer(user, userId).setVisible(true);
             dispose();
         });
-        JButton emp = new JButton("Employees");
-        emp.addActionListener((ActionEvent e) -> {
-            new employee(userId).setVisible(true);
-            dispose();
-        });
+
         offer.addActionListener((ActionEvent e) -> {
             new Offers(userId).setVisible(true);
             dispose();
         });
+
+        // Add buttons to the menu panel
         menuPanel.add(profile);
         menuPanel.add(users);
-        menuPanel.add(emp);
         menuPanel.add(rooms);
         menuPanel.add(offer);
 
-        mainContentPanel.add(menuPanel, BorderLayout.WEST);
+        // Create a panel for the logo, title, and menu buttons
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setOpaque(false);
 
-        // Create a panel for the welcome message and user information
-        JPanel welcomePanel = new JPanel(new BorderLayout());
-        welcomePanel.setOpaque(false);
+        // Create a panel for the logo and title
+        JPanel logoTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        logoTitlePanel.setOpaque(false);
 
-        JLabel title = new JLabel("Welcome " + user.getUsername()); // Using user.getUsername()
-        title.setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 0)); // Adjust the values as needed
-        title.setForeground(new Color(255, 255, 255));
+        // Add your logo using a JLabel
+        ImageIcon logoIcon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
+        Image scaledImage = logoIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+        logoIcon = new ImageIcon(scaledImage);
+        JLabel logoLabel = new JLabel(logoIcon);
 
-        welcomePanel.add(title, BorderLayout.NORTH);
+        // Add the logo to the logoTitlePanel
+        logoTitlePanel.add(logoLabel);
 
-        JPanel userInfoPanel = new JPanel(new GridLayout(5, 1, 0, 10)); // 3 rows, 1 column
+        JLabel title = new JLabel("AccommodoX");
+        title.setForeground(Color.WHITE);
+        title.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0)); // Add a gap between the logo and title
+        title.setFont(new Font("SansSerif", Font.BOLD, 24)); // Increase the font size
+        // Add the title to the logoTitlePanel
+        logoTitlePanel.add(title);
+
+        // Create a label for the title
+        JLabel titleLabel = new JLabel("Welcome " + user.getUsername());
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0)); // Add a gap between the title and user info
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 18)); // Increase the font size
+
+        // Create a panel for user information
+        JPanel userInfoPanel = new JPanel(new GridLayout(7, 2, 0, 5)); // Adjust the gap and columns
         userInfoPanel.setOpaque(false);
-        userInfoPanel.setForeground(new Color(255, 255, 255));
+        userInfoPanel.setForeground(Color.WHITE); // Set text color to white
         userInfoPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 0, 0));
 
         details = userDAO.getUserDetails(userId);
-        JLabel nameLabel = new JLabel("Name: " + user.getUsername()); // Replace with actual method to get name
-        JLabel emailLabel = new JLabel("Email: " + user.getEmail()); // Replace with actual method to get email
-        JLabel roleLabel = new JLabel("Role: " + user.getRole()); // Replace with actual method to get role
-        if (details != null || details == null) {
+        JLabel nameLabel = new JLabel("Name:");
+        JLabel nameLabelValue = new JLabel(user.getUsername());
 
-            JLabel address = new JLabel("Address: " + details.getAddress()); // Replace with actual method to get role
-            JLabel phone = new JLabel("phone: " + details.getPhone()); // Replace with actual method to get role
+        JLabel emailLabel = new JLabel("Email:");
+        JLabel emailLabelValue = new JLabel(user.getEmail());
+
+        JLabel roleLabel = new JLabel("Role:");
+        JLabel roleLabelValue = new JLabel(user.getRole());
+
+        String nameLabelText = nameLabel.getText();
+        String nameLabelValueText = nameLabelValue.getText();
+        String UseName = nameLabelText + " " + nameLabelValueText;
+
+        String emailLabelText = emailLabel.getText();
+        String emailLabelValueText = emailLabelValue.getText();
+        String UseEmail = emailLabelText + " " + emailLabelValueText;
+
+        String roleLabelText = roleLabel.getText();
+        String roleLabelValueText = roleLabelValue.getText();
+        String UseRole = roleLabelText + " " + roleLabelValueText;
+
+        // Create a label for the concatenated role information
+        JLabel useNameLabel = new JLabel(UseName);
+        useNameLabel.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
+        useNameLabel.setForeground(Color.WHITE); // Set text color to white
+
+        // Create a label for the concatenated role information
+        JLabel useEmailLabel = new JLabel(UseEmail);
+        useEmailLabel.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
+        useEmailLabel.setForeground(Color.WHITE); // Set text color to white
+
+        // Create a label for the concatenated role information
+        JLabel useRoleLabel = new JLabel(UseRole);
+        useRoleLabel.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
+        useRoleLabel.setForeground(Color.WHITE); // Set text color to white
+
+        // Add user information to the userInfoPanel
+        userInfoPanel.add(useNameLabel);
+        userInfoPanel.add(useEmailLabel);
+        userInfoPanel.add(useRoleLabel); // Add the label displaying the role information
+
+        // Create a panel for the logo and title
+        JPanel logoBodyPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Change alignment to RIGHT
+        logoBodyPanel.setOpaque(false);
+
+        // Add your logo using a JLabel
+        ImageIcon logoIconBody = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\Avater.jpg");
+        Image scaledImageBody = logoIconBody.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        logoIconBody = new ImageIcon(scaledImageBody);
+        JLabel logoBodyLabel = new JLabel(logoIconBody);
+
+        // Add the logo to the logoBodyPanel
+        logoBodyPanel.add(logoBodyLabel);
+
+        if (details != null) {
+            JLabel address = new JLabel("Address: " + details.getAddress());
+            address.setForeground(Color.WHITE);
+            address.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
+            JLabel phone = new JLabel("Phone: " + details.getPhone());
+            phone.setForeground(Color.WHITE);
+            phone.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
 
             JButton edit = new JButton("Edit");
+            edit.setOpaque(false);
             edit.addActionListener((ActionEvent e) -> {
                 editPage edit1 = new editPage(user);
                 edit1.setVisible(true);
                 dispose();
             });
 
-            userInfoPanel.add(nameLabel);
-            userInfoPanel.add(emailLabel);
-            userInfoPanel.add(roleLabel);
             userInfoPanel.add(address);
             userInfoPanel.add(phone);
             userInfoPanel.add(edit);
-        } else if (details == null) {
-            details = userDAO.getUserDetails(userId);
-            JLabel address = new JLabel("Address: " + details.getAddress()); // Replace with actual method to get role
-            JLabel phone = new JLabel("phone: " + details.getPhone()); // Replace with actual method to get role
-
-            JButton edit = new JButton("Edit");
-            edit.addActionListener((ActionEvent e) -> {
-                editPage edit1 = new editPage(user);
-                edit1.setVisible(true);
-                dispose();
-            });
-
-            userInfoPanel.add(nameLabel);
-            userInfoPanel.add(emailLabel);
-            userInfoPanel.add(roleLabel);
-            userInfoPanel.add(address);
-            userInfoPanel.add(phone);
-            userInfoPanel.add(edit);
-        } else {
-            JLabel errorLabel = new JLabel("User details not available");
-            userInfoPanel.add(errorLabel);
         }
-        welcomePanel.add(userInfoPanel, BorderLayout.CENTER);
 
-        mainContentPanel.add(welcomePanel, BorderLayout.CENTER);
+        // Add headerPanel and userInfoPanel to the frame
+        headerPanel.add(logoTitlePanel, BorderLayout.WEST);
+        headerPanel.add(menuPanel, BorderLayout.CENTER);
 
-        // Add the main content panel to the JFrame
-        getContentPane().add(mainContentPanel);
+        // Create a main content panel to hold user information
+        JPanel mainContentPanel = new JPanel(new BorderLayout()); // Use BorderLayout
+        mainContentPanel.setOpaque(false);
+
+        // Center the logoBodyPanel and userInfoPanel
+        JPanel centerPanel = new JPanel(new GridBagLayout());
+        centerPanel.setOpaque(false);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        centerPanel.add(logoBodyPanel, gbc);
+        centerPanel.add(userInfoPanel, gbc);
+
+        // Add headerPanel and mainContentPanel to the frame
+        add(headerPanel, BorderLayout.NORTH);
+        add(centerPanel, BorderLayout.CENTER);
     }
 
     public static void main(String[] args) {
-        new admin().setVisible(true);
+        // Example usage
+        User user = new User(/* Initialize user data */);
+        new admin(user).setVisible(true);
     }
 
     private Image getAppIcon() {
         ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
         return icon.getImage();
-    }
-
-    private admin() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
