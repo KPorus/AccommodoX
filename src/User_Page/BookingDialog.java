@@ -174,7 +174,10 @@ public class BookingDialog extends JDialog {
                             + " ************ ************ ************ ************ \n"
                             + "Offer: " + offer + "%\n"
                             + " ************ ************ ************ ************ \n"
-                            + "Prize: $" + prize;
+                            + "Prize: $" + prize + "\n\n"
+                            + "\t\t\t\t\t\t\t\t admin\n"
+                            + "\t\t\t\t\t\t\t\t ---------\n"
+                            + "\t\t\t\t\t\t\t\t Signature";
 
                     // Set font and size for hotel name
                     g2d.setFont(new Font("Serif", Font.BOLD, 16));

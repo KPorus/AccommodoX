@@ -172,6 +172,26 @@ public class editPage extends JFrame {
             mainContentPanel.add(menuPanel, BorderLayout.WEST);
 
         }
+        
+        if ("accountent".equals(role)) {
+            profile.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String Name = nameLabel.getText();
+                    String Email = emailLabel.getText();
+                    String Pass = passLabel.getText();
+                    int Id = user.getId();
+                    User initialUserData = new User(Id, Name, Email, Pass, user.getRole()); // Provide actual user data
+                    new Account(initialUserData).setVisible(true);
+                    dispose();
+                }
+            });
+            
+            menuPanel.add(profile);
+            mainContentPanel.add(menuPanel, BorderLayout.WEST);
+
+        }
+
 
         userInfoPanel.add(nameLabel);
         userInfoPanel.add(emailLabel);

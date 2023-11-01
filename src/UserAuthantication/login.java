@@ -8,14 +8,19 @@ import Design.GradientPanel;
 import User_Page.admin;
 import User_Page.receiptionist;
 import User_data.UserInfo;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -40,11 +45,27 @@ public class login extends JFrame {
         setResizable(false);
         setContentPane(new GradientPanel());
 
+        JPanel logoTitlePanel = new JPanel(new BorderLayout());
+        logoTitlePanel.setOpaque(false);
+
+        JLabel logo = new JLabel();
+        try {
+            ImageIcon logoIcon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\Login.jpeg");
+            Image scaledImage = logoIcon.getImage().getScaledInstance(500, 500, Image.SCALE_SMOOTH);
+            logoIcon = new ImageIcon(scaledImage);
+            logo.setIcon(logoIcon);
+        } catch (Exception ex) {
+            System.err.println("Error loading image: " + ex.getMessage());
+        }
+        logoTitlePanel.add(logo, BorderLayout.WEST);
+
         // Title Label
         JLabel title = new JLabel("Login Form");
         title.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 28));
         title.setForeground(new Color(255, 255, 255));
+        logoTitlePanel.add(title, BorderLayout.CENTER);
 
+        add(logoTitlePanel, BorderLayout.NORTH);
         // User Name Input Field
         JTextField userName = new JTextField("Enter your user name");
         userName.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
@@ -84,7 +105,7 @@ public class login extends JFrame {
                 String User = userName.getText();
                 String Pass = new String(pass.getPassword());
                 if (userDAO.loginUser(User, Pass)) {
-                    JOptionPane.showConfirmDialog(login.this, "Login Successful", "Success Message", 0b0);
+                    JOptionPane.showMessageDialog(login.this, "Login Successful", "Success Message", JOptionPane.NO_OPTION);
                     info = userDAO.getUserInfo(User);
                     User_data.User user = userDAO.getUser(info.getId());
                     if ("customer".equals(info.getRole())) {
@@ -102,7 +123,6 @@ public class login extends JFrame {
                         adminPage.setVisible(true);
 
                     }
-
 
                     // Close the login page
                     dispose();
@@ -134,7 +154,14 @@ public class login extends JFrame {
         panel.add(lbu);
         panel.add(login);
 
-        getContentPane().add(panel);
+        JPanel titleAndLoginPanel = new JPanel();
+        titleAndLoginPanel.setOpaque(false);
+        titleAndLoginPanel.setLayout(new BoxLayout(titleAndLoginPanel, BoxLayout.Y_AXIS));
+        titleAndLoginPanel.add(title);
+        titleAndLoginPanel.add(Box.createVerticalStrut(20));
+        titleAndLoginPanel.add(panel);
+
+        add(titleAndLoginPanel, BorderLayout.CENTER);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {

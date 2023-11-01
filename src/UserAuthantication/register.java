@@ -6,27 +6,14 @@ import DB.MySQLConnection;
 import Design.FocusListener;
 import Design.GradientPanel;
 import Validation.isPassValid;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Image;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
 
-/**
- *
- * @author User
- */
 public class register extends JFrame {
 
     private MySQLConnection mysqlConnection;
@@ -35,54 +22,63 @@ public class register extends JFrame {
     private isPassValid passValidator;
 
     public register() {
-        mysqlConnection = new MySQLConnection(); // Initialize MySQLConnection
-        userDAO = new UserDAO(mysqlConnection.getConnection()); // Initialize UserDAO
-        emailValidator = new isEmailValid(); // Initialize the emailValidator instance
-        passValidator = new isPassValid();// Initialize the passValidator instance
-        
-        
+        mysqlConnection = new MySQLConnection();
+        userDAO = new UserDAO(mysqlConnection.getConnection());
+        emailValidator = new isEmailValid();
+        passValidator = new isPassValid();
+
         setTitle("Register Page");
-        setIconImage(getAppIcon()); // Set the application icon
+        setIconImage(getAppIcon());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 50, 1000, 500);
-        setResizable(false);
-        setLayout(new GridLayout(1, 2));
+        setResizable(true);
+
+        setLayout(new BorderLayout());
         setContentPane(new GradientPanel());
 
-        // Add an image to the left side
-        JLabel logo = new JLabel();
-        ImageIcon logoIcon = new ImageIcon("Image/Icon.jpg"); // Replace "logo.png" with your image file
-        logo.setIcon(logoIcon);
+        JPanel logoTitlePanel = new JPanel(new BorderLayout());
+        logoTitlePanel.setOpaque(false);
 
-        // Title Label
+        JLabel logo = new JLabel();
+        try {
+            ImageIcon logoIcon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
+            Image scaledImage = logoIcon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);
+            logoIcon = new ImageIcon(scaledImage);
+            logo.setIcon(logoIcon);
+        } catch (Exception ex) {
+            System.err.println("Error loading image: " + ex.getMessage());
+        }
+        logoTitlePanel.add(logo, BorderLayout.WEST);
+
         JLabel title = new JLabel("Welcome to AccommodoX");
         title.setForeground(Color.WHITE);
         title.setFont(new Font("SAN", Font.BOLD, 28));
-        // User Name Input Field
+        logoTitlePanel.add(title, BorderLayout.CENTER);
+
+        add(logoTitlePanel, BorderLayout.NORTH);
+
         JTextField userName = new JTextField("Enter your user name");
         userName.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
         userName.setBackground(Color.WHITE);
         userName.addFocusListener(new FocusListener("Enter your user name"));
 
-        // Email Input Field
         JTextField email = new JTextField("Enter your Email");
         email.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
         email.setBackground(new Color(255, 255, 255));
         email.addFocusListener(new FocusListener("Enter your Email"));
 
-        // Password Input Field
         JPasswordField pass = new JPasswordField("Enter your Password");
         pass.setEchoChar((char) 0);
         pass.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
         pass.setBackground(new Color(255, 255, 255));
         pass.addFocusListener(new FocusListener("Enter your Password"));
 
-        // Already Created Account Text
         JTextPane lbu = new JTextPane();
-        lbu.setContentType("text/html"); // Set content type to HTML
+        lbu.setContentType("text/html");
         lbu.setText("<html><body><span style='font-family: SansSerif; font-size: 10pt; color: white; background: transparent; border: none; cursor: pointer;'>Already created an account!!</span></body></html>");
         lbu.setEditable(false);
-        lbu.setBackground(new Color(0, 0, 0, 0)); // Transparent background
+        lbu.setBackground(new Color(0, 0, 0, 0));
+
         lbu.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -91,12 +87,12 @@ public class register extends JFrame {
             }
         });
 
-        // Sign Up Button
         JButton SignUp = new JButton("Sign Up");
         SignUp.setFont(new Font(Font.MONOSPACED, Font.BOLD, 14));
         SignUp.setBackground(new Color(14, 129, 152));
-        SignUp.setForeground(Color.WHITE); // Set text color to white
-        SignUp.setFocusPainted(false); // Remove focus border
+        SignUp.setForeground(Color.WHITE);
+        SignUp.setFocusPainted(false);
+
         SignUp.addActionListener((ActionEvent e) -> {
             String User = userName.getText();
             String Email = email.getText();
@@ -112,16 +108,14 @@ public class register extends JFrame {
             } else if (userDAO.isEmailExists(Email)) {
                 JOptionPane.showMessageDialog(register.this, "Email already exists.");
             } else {
-                // Proceed with registration
                 if (userDAO.registerUser(User, Email, Pass, "customer")) {
-                    JOptionPane.showConfirmDialog(register.this, "Registration Successful", "Success Message", 0b0);
+                    JOptionPane.showConfirmDialog(register.this, "Registration Successful", "Success Message", 0);
                 } else {
                     JOptionPane.showMessageDialog(register.this, "User registration failed.");
                 }
             }
         });
 
-        // Apply hover effect
         SignUp.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -134,30 +128,41 @@ public class register extends JFrame {
             }
         });
 
-        // Create the layout panel
-        JPanel panel = new JPanel(new GridLayout(6, 1, 15, 10));
-        panel.setOpaque(false);
-        panel.add(title);
-        panel.add(userName);
-        panel.add(email);
-        panel.add(pass);
-        panel.add(lbu);
-        panel.add(SignUp);
+        JPanel registrationPanel = new JPanel(new GridLayout(6, 1, 15, 10));
+        registrationPanel.setOpaque(false);
+        registrationPanel.add(userName);
+        registrationPanel.add(email);
+        registrationPanel.add(pass);
+        registrationPanel.add(lbu);
+        registrationPanel.add(SignUp);
 
-        getContentPane().add(panel);
-         getContentPane().add(logo);
+        JPanel titleAndRegistrationPanel = new JPanel();
+        titleAndRegistrationPanel.setOpaque(false);
+        titleAndRegistrationPanel.setLayout(new BoxLayout(titleAndRegistrationPanel, BoxLayout.Y_AXIS));
+        titleAndRegistrationPanel.add(title);
+        titleAndRegistrationPanel.add(Box.createVerticalStrut(20));
+        titleAndRegistrationPanel.add(registrationPanel);
+
+        add(titleAndRegistrationPanel, BorderLayout.CENTER);
+
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
-                mysqlConnection.closeConnection(); // Close MySQL connection when window closes
+                mysqlConnection.closeConnection();
             }
         });
-        
-        
     }
-       private Image getAppIcon() {
-        ImageIcon icon = new ImageIcon("Icon.jpg"); // Replace "icon.png" with your application icon file
+
+    private Image getAppIcon() {
+        ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\Icon.jpg");
         return icon.getImage();
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            register registration = new register();
+            registration.setVisible(true);
+        });
     }
 }
