@@ -89,8 +89,8 @@ public class register extends JFrame {
 
         JButton SignUp = new JButton("Sign Up");
         SignUp.setFont(new Font(Font.MONOSPACED, Font.BOLD, 14));
-        SignUp.setBackground(new Color(14, 129, 152));
-        SignUp.setForeground(Color.WHITE);
+        SignUp.setForeground(Color.white);
+        SignUp.setBackground(new Color(24, 63, 102));
         SignUp.setFocusPainted(false);
 
         SignUp.addActionListener((ActionEvent e) -> {

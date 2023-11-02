@@ -38,10 +38,21 @@ public class SingleUserBooking extends JFrame {
         // Create a panel for the menu options
         JPanel menuPanel = new JPanel(new GridLayout(6, 1, 0, 20)); // Increase the row count to accommodate the "Add Room" button
         menuPanel.setOpaque(false);
-
+        
         JButton profile = new JButton("Profile");
-        JButton BookedRoom = new JButton("Booked Room");
+        profile.setForeground(Color.white);
+        profile.setBackground(new Color(24, 63, 102));
+        profile.setFocusPainted(false); // Disable focus border 
+
+        JButton BookedRoom = new JButton("Booked Rooms");
+        BookedRoom.setForeground(Color.white);
+        BookedRoom.setBackground(new Color(24, 63, 102));
+        BookedRoom.setFocusPainted(false); // Disable focus border
+
         JButton rooms = new JButton("Rooms");
+        rooms.setForeground(Color.white);
+        rooms.setBackground(new Color(24, 63, 102));
+        rooms.setFocusPainted(false); // Disable focus border
 
         // Check the user's role
         User user = userDAO.getUser(userId);
@@ -82,13 +93,13 @@ public class SingleUserBooking extends JFrame {
         if (bookings != null && !bookings.isEmpty()) {
             for (Booking booking : bookings) {
                 Object[] rowData = {
-                        booking.getRoomId(),
-                        booking.getNumberOfRooms(),
-                        booking.getPrize(),
-                        booking.getBookingFrom(),
-                        booking.getBookingTo(),
-                        booking.getCheckInTime(),
-                        booking.getCheckOutTime()
+                    booking.getRoomId(),
+                    booking.getNumberOfRooms(),
+                    booking.getPrize(),
+                    booking.getBookingFrom(),
+                    booking.getBookingTo(),
+                    booking.getCheckInTime(),
+                    booking.getCheckOutTime()
                 };
                 tableModel.addRow(rowData);
             }
@@ -110,6 +121,7 @@ public class SingleUserBooking extends JFrame {
             frame.setVisible(true);
         });
     }
+
     private Image getAppIcon() {
         ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
         return icon.getImage();

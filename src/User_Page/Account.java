@@ -67,9 +67,18 @@ public class Account extends JFrame {
 // Create a panel for the menu buttons
         JPanel menuPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         menuPanel.setOpaque(false);
+
         int userId = user.getId();
         JButton profile = new JButton("Profile");
+        profile.setForeground(Color.white);
+        profile.setBackground(new Color(24, 63, 102));
+        profile.setFocusPainted(false); // Disable focus border
+
         JButton account = new JButton("Account Info");
+        account.setForeground(Color.white);
+        account.setBackground(new Color(24, 63, 102));
+        account.setFocusPainted(false); // Disable focus border
+
         menuPanel.add(profile);
         menuPanel.add(account);
 
@@ -146,7 +155,10 @@ public class Account extends JFrame {
             phone.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
 
             JButton edit = new JButton("Edit");
-            edit.setOpaque(false);
+            edit.setForeground(Color.white);
+            edit.setBackground(new Color(24, 63, 102));
+            edit.setFocusPainted(false); // Disable focus border
+            
             edit.addActionListener((ActionEvent e) -> {
                 editPage edit1 = new editPage(user);
                 edit1.setVisible(true);

@@ -46,11 +46,34 @@ public class rooms extends JFrame {
         menuPanel.setOpaque(false);
 
         JButton profile = new JButton("Profile");
+        profile.setForeground(Color.white);
+        profile.setBackground(new Color(24, 63, 102));
+        profile.setFocusPainted(false); // Disable focus border      
+
         JButton customers = new JButton("Customers");
+        customers.setForeground(Color.white);
+        customers.setBackground(new Color(24, 63, 102));
+        customers.setFocusPainted(false); // Disable focus border
+        
         JButton BookedRoom = new JButton("Booked Room");
+        BookedRoom.setForeground(Color.white);
+        BookedRoom.setBackground(new Color(24, 63, 102));
+        BookedRoom.setFocusPainted(false); // Disable focus border
+        
         JButton employees = new JButton("Employees");
+        employees.setForeground(Color.white);
+        employees.setBackground(new Color(24, 63, 102));
+        employees.setFocusPainted(false); // Disable focus border
+        
         JButton rooms = new JButton("Rooms");
+        rooms.setForeground(Color.white);
+        rooms.setBackground(new Color(24, 63, 102));
+        rooms.setFocusPainted(false); // Disable focus border
+        
         JButton offer = new JButton("Offers");
+        offer.setForeground(Color.white);
+        offer.setBackground(new Color(24, 63, 102));
+        offer.setFocusPainted(false); // Disable focus border
         // Check the user's role
         User user = userDAO.getUser(userId);
         String role = user.getRole();

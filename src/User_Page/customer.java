@@ -82,9 +82,25 @@ public class customer extends JFrame {
 
         int userId = user.getId();
         JButton profile = new JButton("Profile");
+        profile.setForeground(Color.white);
+        profile.setBackground(new Color(24, 63, 102));
+        profile.setFocusPainted(false); // Disable focus border  
+        
         JButton rooms = new JButton("Rooms");
+        rooms.setForeground(Color.white);
+        rooms.setBackground(new Color(24, 63, 102));
+        rooms.setFocusPainted(false); // Disable focus border
+        
         JButton BookedRooms = new JButton("Booked Room");
+        BookedRooms.setForeground(Color.white);
+        BookedRooms.setBackground(new Color(24, 63, 102));
+        BookedRooms.setFocusPainted(false); // Disable focus border
+        
         JButton contact = new JButton("Contact Us");
+        contact.setForeground(Color.white);
+        contact.setBackground(new Color(24, 63, 102));
+        contact.setFocusPainted(false); // Disable focus border
+        
         contact.addActionListener(((e) -> {
             new Contact().setVisible(true);
         }));
@@ -173,7 +189,10 @@ public class customer extends JFrame {
             phone.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
 
             JButton edit = new JButton("Edit");
-            edit.setOpaque(false);
+            edit.setForeground(Color.white);
+            edit.setBackground(new Color(24, 63, 102));
+            edit.setFocusPainted(false); // Disable focus border
+            
             edit.addActionListener((ActionEvent e) -> {
                 editPage edit1 = new editPage(user);
                 edit1.setVisible(true);

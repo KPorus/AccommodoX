@@ -40,7 +40,7 @@ public class editPage extends JFrame {
         setTitle("Edit profile page");
         setIconImage(getAppIcon());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 50, 1000, 500);
+        setBounds(100, 50, 1000, 550);
         setResizable(false);
         setContentPane(new GradientPanel());
         setLayout(new BorderLayout());
@@ -80,26 +80,57 @@ public class editPage extends JFrame {
         userInfoPanel.setOpaque(false);
         userInfoPanel.setForeground(new Color(255, 255, 255));
         userInfoPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 0, 0));
-
+        
+        JLabel name = new JLabel("Name");
+        name.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
+        name.setForeground(Color.WHITE); // Set text color to white
         JTextField nameLabel = new JTextField(user.getUsername()); // Replace with actual method to get name
+        JPanel namepanel = new JPanel(new GridLayout(1, 1, 0, 0));
+        namepanel.add(name);
+        namepanel.add(nameLabel);
+        namepanel.setOpaque(false);
+        
+        JLabel email = new JLabel("Email");
+        email.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
+        email.setForeground(Color.WHITE); // Set text color to white
         JTextField emailLabel = new JTextField(user.getEmail()); // Replace with actual method to get email
+        JPanel emailpanel = new JPanel(new GridLayout(1, 1, 1, 1));
+        emailpanel.add(email);
+        emailpanel.add(emailLabel);
+        emailpanel.setOpaque(false);
+        
+        JLabel pass = new JLabel("Password");
+        pass.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
+        pass.setForeground(Color.WHITE); // Set text color to white
         JTextField passLabel = new JTextField(user.getPassword()); // Replace with actual method to get role
+        JPanel passpanel = new JPanel(new GridLayout(1, 1, 1, 1));
+        passpanel.add(pass);
+        passpanel.add(passLabel);
+        passpanel.setOpaque(false);
 
         JLabel address = new JLabel("Address");
+        address.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
+        address.setForeground(Color.WHITE); // Set text color to white
         JTextField addressText = new JTextField(details.getAddress());
-        JPanel addresspanel = new JPanel(new GridLayout(1, 1, 10, 10));
+        JPanel addresspanel = new JPanel(new GridLayout(1, 1, 1, 1));
         addresspanel.add(address);
         addresspanel.add(addressText);
         addresspanel.setOpaque(false);
 
         JLabel phone = new JLabel("Phone");
+        phone.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
+        phone.setForeground(Color.WHITE); // Set text color to white
         JTextField phoneText = new JTextField(details.getPhone());
-        JPanel phonepanel = new JPanel(new GridLayout(1, 1, 10, 10));
+        JPanel phonepanel = new JPanel(new GridLayout(1, 1, 1, 1));
         phonepanel.add(phone);
         phonepanel.add(phoneText);
         phonepanel.setOpaque(false);
 
         JButton save = new JButton("Save");
+        save.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
+        save.setForeground(Color.white);
+        save.setBackground(new Color(24, 63, 102));
+        save.setFocusPainted(false); // Disable focus border
         save.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -110,7 +141,7 @@ public class editPage extends JFrame {
                 String Phone = phoneText.getText();
                 int Id = user.getId();
                 if (userDAO.updateUserAndDetails(Id, Name, Pass, Email, Address, Phone)) {
-                    JOptionPane.showConfirmDialog(editPage.this, "User info updated", "Success Message", 0);
+                    JOptionPane.showMessageDialog(editPage.this, "User info updated", "Success Message", 1);
                 } else {
                     JOptionPane.showMessageDialog(editPage.this, "Failed.");
                 }
@@ -118,11 +149,35 @@ public class editPage extends JFrame {
         });
 
         JButton profile = new JButton("Profile");
+        profile.setForeground(Color.white);
+        profile.setBackground(new Color(24, 63, 102));
+        profile.setFocusPainted(false); // Disable focus border
+        
         JButton users = new JButton("Customers");
+        users.setForeground(Color.white);
+        users.setBackground(new Color(24, 63, 102));
+        users.setFocusPainted(false); // Disable focus border
+        
         JButton emp = new JButton("Employees");
+        emp.setForeground(Color.white);
+        emp.setBackground(new Color(24, 63, 102));
+        emp.setFocusPainted(false); // Disable focus border
+        
         JButton BookedRoom = new JButton("Booked Room");
+        BookedRoom.setForeground(Color.white);
+        BookedRoom.setBackground(new Color(24, 63, 102));
+        BookedRoom.setFocusPainted(false); // Disable focus border
+        
         JButton rooms = new JButton("Rooms");
+        rooms.setForeground(Color.white);
+        rooms.setBackground(new Color(24, 63, 102));
+        rooms.setFocusPainted(false); // Disable focus border
+        
         JButton offer = new JButton("Offers");
+        offer.setForeground(Color.white);
+        offer.setBackground(new Color(24, 63, 102));
+        offer.setFocusPainted(false); // Disable focus border
+        
         if ("admin".equals(role)) {
             profile.addActionListener(new ActionListener() {
                 @Override
@@ -251,9 +306,9 @@ public class editPage extends JFrame {
         headerPanel.add(logoTitlePanel, BorderLayout.WEST);
         headerPanel.add(menuPanel, BorderLayout.EAST);
 
-        userInfoPanel.add(nameLabel);
-        userInfoPanel.add(emailLabel);
-        userInfoPanel.add(passLabel);
+        userInfoPanel.add(namepanel);
+        userInfoPanel.add(emailpanel);
+        userInfoPanel.add(passpanel);
         userInfoPanel.add(addresspanel);
         userInfoPanel.add(phonepanel);
         userInfoPanel.add(save);

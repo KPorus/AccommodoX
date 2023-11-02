@@ -41,7 +41,7 @@ public class Offers extends JFrame {
 
         setTitle("Offers");
         setIconImage(getAppIcon());
-       
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 50, 1000, 500);
         setResizable(false);
@@ -56,9 +56,30 @@ public class Offers extends JFrame {
         menuPanel.setOpaque(false);
 
         JButton profile = new JButton("Profile");
+        profile.setForeground(Color.white);
+        profile.setBackground(new Color(24, 63, 102));
+        profile.setFocusPainted(false); // Disable focus border
+
         JButton users = new JButton("Customers");
+        users.setForeground(Color.white);
+        users.setBackground(new Color(24, 63, 102));
+        users.setFocusPainted(false); // Disable focus border
+
+        JButton emp = new JButton("Employees");
+        emp.setForeground(Color.white);
+        emp.setBackground(new Color(24, 63, 102));
+        emp.setFocusPainted(false); // Disable focus border
+
         JButton rooms = new JButton("Rooms");
+        rooms.setForeground(Color.white);
+        rooms.setBackground(new Color(24, 63, 102));
+        rooms.setFocusPainted(false); // Disable focus border
+
         JButton offer = new JButton("Offers");
+        offer.setForeground(Color.white);
+        offer.setBackground(new Color(24, 63, 102));
+        offer.setFocusPainted(false); // Disable focus border
+
         rooms.addActionListener((ActionEvent e) -> {
             new rooms(userId).setVisible(true);
             dispose();
@@ -67,7 +88,6 @@ public class Offers extends JFrame {
             new allCustomer(null, userId).setVisible(true);
             dispose();
         });
-        JButton emp = new JButton("Employees");
         emp.addActionListener((ActionEvent e) -> {
             new employee(userId).setVisible(true);
             dispose();
@@ -168,14 +188,12 @@ public class Offers extends JFrame {
                     String normalizedRoomType = room_type.toLowerCase();
                     System.out.println(normalizedRoomType);
                     if (Arrays.asList(validRoomTypes).contains(normalizedRoomType)) {
-                        if(userDAO.updateRoomOffer(normalizedRoomType, percent))
-                        {
+                        if (userDAO.updateRoomOffer(normalizedRoomType, percent)) {
                             userDAO.insertOffer(title1, description, "open");
-                        }else
-                        {
+                        } else {
                             JOptionPane.showMessageDialog(Offers.this, "Failed to update room");
                         }
-                        
+
                         // Refresh the offers panel to display the newly added offer
                         updateOffersPanel();
                     } else {
@@ -301,6 +319,7 @@ public class Offers extends JFrame {
         System.out.println("Selected offer: " + offer.getTitle());
         selectedOffers.add(offer);
     }
+
     private Image getAppIcon() {
         ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
         return icon.getImage();

@@ -71,9 +71,20 @@ public class receiptionist extends JFrame {
 
         int userId = user.getId();
         JButton profile = new JButton("Profile");
+        profile.setForeground(Color.white);
+        profile.setBackground(new Color(24, 63, 102));
+        profile.setFocusPainted(false); // Disable focus border 
+        
         JButton users = new JButton("Booked Rooms");
+        users.setForeground(Color.white);
+        users.setBackground(new Color(24, 63, 102));
+        users.setFocusPainted(false); // Disable focus border
+        
         JButton rooms = new JButton("Rooms");
-
+        rooms.setForeground(Color.white);
+        rooms.setBackground(new Color(24, 63, 102));
+        rooms.setFocusPainted(false); // Disable focus border
+        
         rooms.addActionListener((ActionEvent e) -> {
             new rooms(userId).setVisible(true);
             dispose();
@@ -161,7 +172,10 @@ public class receiptionist extends JFrame {
             phone.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
 
             JButton edit = new JButton("Edit");
-            edit.setOpaque(false);
+            edit.setForeground(Color.white);
+            edit.setBackground(new Color(24, 63, 102));
+            edit.setFocusPainted(false); // Disable focus border
+            
             edit.addActionListener((ActionEvent e) -> {
                 editPage edit1 = new editPage(user);
                 edit1.setVisible(true);

@@ -39,10 +39,29 @@ public class admin extends JFrame {
 
         int userId = user.getId();
         JButton profile = new JButton("Profile");
+        profile.setForeground(Color.white);
+        profile.setBackground(new Color(24, 63, 102));
+        profile.setFocusPainted(false); // Disable focus border
+
         JButton users = new JButton("Customers");
-        JButton emp = new JButton("Employee");
+        users.setForeground(Color.white);
+        users.setBackground(new Color(24, 63, 102));
+        users.setFocusPainted(false); // Disable focus border
+
+        JButton emp = new JButton("Employees");
+        emp.setForeground(Color.white);
+        emp.setBackground(new Color(24, 63, 102));
+        emp.setFocusPainted(false); // Disable focus border
+
         JButton rooms = new JButton("Rooms");
+        rooms.setForeground(Color.white);
+        rooms.setBackground(new Color(24, 63, 102));
+        rooms.setFocusPainted(false); // Disable focus border
+
         JButton offer = new JButton("Offers");
+        offer.setForeground(Color.white);
+        offer.setBackground(new Color(24, 63, 102));
+        offer.setFocusPainted(false); // Disable focus border
 
         // Add action listeners to the buttons
         rooms.addActionListener((ActionEvent e) -> {
@@ -54,12 +73,12 @@ public class admin extends JFrame {
             new allCustomer(user, userId).setVisible(true);
             dispose();
         });
-        
+
         emp.addActionListener((ActionEvent e) -> {
             new employee(userId).setVisible(true);
             dispose();
         });
-        
+
         offer.addActionListener((ActionEvent e) -> {
             new Offers(userId).setVisible(true);
             dispose();
@@ -172,7 +191,10 @@ public class admin extends JFrame {
             phone.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
 
             JButton edit = new JButton("Edit");
-            edit.setOpaque(false);
+            edit.setForeground(Color.white);
+            edit.setBackground(new Color(24, 63, 102));
+            edit.setFocusPainted(false); // Disable focus border
+            
             edit.addActionListener((ActionEvent e) -> {
                 editPage edit1 = new editPage(user);
                 edit1.setVisible(true);

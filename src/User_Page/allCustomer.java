@@ -47,10 +47,30 @@ public class allCustomer extends JFrame {
         menuPanel.setOpaque(false);
 
         JButton profile = new JButton("Profile");
+        profile.setForeground(Color.white);
+        profile.setBackground(new Color(24, 63, 102));
+        profile.setFocusPainted(false); // Disable focus border
+
         JButton users = new JButton("Customers");
+        users.setForeground(Color.white);
+        users.setBackground(new Color(24, 63, 102));
+        users.setFocusPainted(false); // Disable focus border
+
         JButton emp = new JButton("Employees");
+        emp.setForeground(Color.white);
+        emp.setBackground(new Color(24, 63, 102));
+        emp.setFocusPainted(false); // Disable focus border
+        
         JButton rooms = new JButton("Rooms");
-         JButton offer = new JButton("Offers");
+        rooms.setForeground(Color.white);
+        rooms.setBackground(new Color(24, 63, 102));
+        rooms.setFocusPainted(false); // Disable focus border
+
+        JButton offer = new JButton("Offers");
+        offer.setForeground(Color.white);
+        offer.setBackground(new Color(24, 63, 102));
+        offer.setFocusPainted(false); // Disable focus border
+
         profile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -67,7 +87,7 @@ public class allCustomer extends JFrame {
                 dispose();
             }
         });
-        
+
         rooms.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -261,6 +281,7 @@ public class allCustomer extends JFrame {
         JFrame frame = new allCustomer(null, 0);
         frame.setVisible(true);
     }
+
     private Image getAppIcon() {
         ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
         return icon.getImage();

@@ -98,8 +98,8 @@ public class login extends JFrame {
         // Login Button
         JButton login = new JButton("Login");
         login.setFont(new Font(Font.MONOSPACED, Font.BOLD, 14));
-        login.setBackground(new Color(14, 129, 152));
-        login.setForeground(Color.WHITE); // Set text color to white
+        login.setForeground(Color.white);
+        login.setBackground(new Color(24, 63, 102));
         login.setFocusPainted(false); // Remove focus border
         login.addActionListener(new ActionListener() {
             @Override

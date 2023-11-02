@@ -43,8 +43,20 @@ public class BookedRooms extends JFrame {
         menuPanel.setOpaque(false);
 
         JButton profile = new JButton("Profile");
+        profile.setForeground(Color.white);
+        profile.setBackground(new Color(24, 63, 102));
+        profile.setFocusPainted(false); // Disable focus border 
+
         JButton Booked = new JButton("Booked Rooms");
+        Booked.setForeground(Color.white);
+        Booked.setBackground(new Color(24, 63, 102));
+        Booked.setFocusPainted(false); // Disable focus border
+
         JButton rooms = new JButton("Rooms");
+        rooms.setForeground(Color.white);
+        rooms.setBackground(new Color(24, 63, 102));
+        rooms.setFocusPainted(false); // Disable focus border
+        
         rooms.addActionListener((ActionEvent e) -> {
             new rooms(userId).setVisible(true);
             dispose();
@@ -65,7 +77,7 @@ public class BookedRooms extends JFrame {
         JPanel bookingPanel = new JPanel(new BorderLayout());
         bookingPanel.setOpaque(false);
 
-        String[] columnNames = {"User Name", "Room Type", "Booking To", "Booking From", "Check-In Time", "Check-Out Time", "Number of Rooms", "Prize","Offer"};
+        String[] columnNames = {"User Name", "Room Type", "Booking To", "Booking From", "Check-In Time", "Check-Out Time", "Number of Rooms", "Prize", "Offer"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -140,6 +152,7 @@ public class BookedRooms extends JFrame {
         JFrame frame = new BookedRooms(user, userId);
         frame.setVisible(true);
     }
+
     private Image getAppIcon() {
         ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
         return icon.getImage();
