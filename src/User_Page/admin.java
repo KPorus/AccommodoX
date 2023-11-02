@@ -1,4 +1,5 @@
 package User_Page;
+
 import DB.MySQLConnection;
 import DB.UserDAO;
 import Design.GradientPanel;
@@ -8,6 +9,8 @@ import User_data.UserDetails;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
 
 public class admin extends JFrame {
 
@@ -145,8 +148,8 @@ public class admin extends JFrame {
         logoBodyPanel.setOpaque(false);
 
         // Add your logo using a JLabel
-        ImageIcon logoIconBody = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\Avater.jpg");
-        Image scaledImageBody = logoIconBody.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        ImageIcon logoIconBody = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\Avater.png");
+        Image scaledImageBody = logoIconBody.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
         logoIconBody = new ImageIcon(scaledImageBody);
         JLabel logoBodyLabel = new JLabel(logoIconBody);
 
@@ -205,4 +208,24 @@ public class admin extends JFrame {
         ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
         return icon.getImage();
     }
+
+//    // Method to create a rounded image with a shadow effect
+//    private ImageIcon createRoundedImageWithShadow(ImageIcon originalImageIcon, int size, int shadowSize) {
+//        BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+//        Graphics2D g2d = image.createGraphics();
+//        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//
+//        // Create a shadow for the image
+//        int x = (size - originalImageIcon.getIconWidth()) / 2 + shadowSize;
+//        int y = (size - originalImageIcon.getIconHeight()) / 2 + shadowSize;
+//        g2d.setColor(new Color(0, 0, 0, 100));
+//        g2d.fillRoundRect(x, y, originalImageIcon.getIconWidth(), originalImageIcon.getIconHeight(), size, size);
+//
+//        // Draw the rounded image
+//        g2d.setClip(new Ellipse2D.Double(x, y, originalImageIcon.getIconWidth(), originalImageIcon.getIconHeight()));
+//        g2d.drawImage(originalImageIcon.getImage(), x, y, null);
+//
+//        g2d.dispose();
+//        return new ImageIcon(image);
+//    }
 }

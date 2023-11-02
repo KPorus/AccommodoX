@@ -5,6 +5,7 @@ import DB.MySQLConnection;
 import User_Page.customer;
 import Design.FocusListener;
 import Design.GradientPanel;
+import User_Page.Account;
 import User_Page.admin;
 import User_Page.receiptionist;
 import User_data.UserInfo;
@@ -120,9 +121,12 @@ public class login extends JFrame {
 
                     }
                     if ("receiptionist".equals(info.getRole())) {
-                        receiptionist adminPage = new receiptionist(user);
-                        adminPage.setVisible(true);
-
+                        receiptionist receiption = new receiptionist(user);
+                        receiption.setVisible(true);
+                    }
+                    if ("accountent".equals(info.getRole())) {
+                        Account accountent = new Account(user);
+                        accountent.setVisible(true);
                     }
 
                     // Close the login page
