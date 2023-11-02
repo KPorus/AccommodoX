@@ -7,6 +7,10 @@ import User_data.UserDetails;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import DB.UserDAO;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -26,7 +30,7 @@ public class editPage extends JFrame {
     private UserDAO userDAO;
     private User userData;
     private UserDetails details;
-   
+
     public editPage(User user) {
         this.userData = user;
         mysqlConnection = new MySQLConnection(); // Initialize MySQLConnection
@@ -39,21 +43,39 @@ public class editPage extends JFrame {
         setBounds(100, 50, 1000, 500);
         setResizable(false);
         setContentPane(new GradientPanel());
+        setLayout(new BorderLayout());
+        // Create a panel for the logo, title, and menu buttons
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setOpaque(false);
+
+        // Create a panel for the logo and title
+        JPanel logoTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        logoTitlePanel.setOpaque(false);
+
+        // Add your logo using a JLabel
+        ImageIcon logoIcon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
+        Image scaledImage = logoIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+        logoIcon = new ImageIcon(scaledImage);
+        JLabel logoLabel = new JLabel(logoIcon);
+
+        // Add the logo to the logoTitlePanel
+        logoTitlePanel.add(logoLabel);
+
+        JLabel title = new JLabel("AccommodoX");
+        title.setForeground(Color.WHITE);
+        title.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        title.setFont(new Font("SansSerif", Font.BOLD, 24));
+        logoTitlePanel.add(title);
 
         // Create a main content panel with BorderLayout
         JPanel mainContentPanel = new JPanel(new BorderLayout());
         mainContentPanel.setOpaque(false);
 
         // Create a panel for the menu options
-        JPanel menuPanel = new JPanel(new GridLayout(6, 1, 0, 20));
+        JPanel menuPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         menuPanel.setOpaque(false);
 
         details = userDAO.getUserDetails(userId);
-
-        // Create a panel for the welcome message and user information
-        JPanel welcomePanel = new JPanel(new BorderLayout());
-        welcomePanel.setOpaque(false);
-
         JPanel userInfoPanel = new JPanel(new GridLayout(6, 1, 0, 10)); // 3 rows, 1 column
         userInfoPanel.setOpaque(false);
         userInfoPanel.setForeground(new Color(255, 255, 255));
@@ -100,7 +122,7 @@ public class editPage extends JFrame {
         JButton emp = new JButton("Employees");
         JButton BookedRoom = new JButton("Booked Room");
         JButton rooms = new JButton("Rooms");
-
+        JButton offer = new JButton("Offers");
         if ("admin".equals(role)) {
             profile.addActionListener(new ActionListener() {
                 @Override
@@ -132,12 +154,18 @@ public class editPage extends JFrame {
                     dispose();
                 }
             });
+            offer.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new Offers(userId).setVisible(true); // Pass the fetched user data
+                    dispose();
+                }
+            });
             menuPanel.add(profile);
             menuPanel.add(users);
             menuPanel.add(emp);
             menuPanel.add(rooms);
-
-            mainContentPanel.add(menuPanel, BorderLayout.WEST);
+            menuPanel.add(offer);
 
         }
 
@@ -171,7 +199,6 @@ public class editPage extends JFrame {
             menuPanel.add(profile);
             menuPanel.add(rooms);
             menuPanel.add(BookedRoom);
-            mainContentPanel.add(menuPanel, BorderLayout.WEST);
 
         }
 
@@ -188,11 +215,41 @@ public class editPage extends JFrame {
                     dispose();
                 }
             });
-
             menuPanel.add(profile);
-            mainContentPanel.add(menuPanel, BorderLayout.WEST);
-
         }
+        if ("receiptionist".equals(role)) {
+            profile.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String Name = nameLabel.getText();
+                    String Email = emailLabel.getText();
+                    String Pass = passLabel.getText();
+                    int Id = user.getId();
+                    User initialUserData = new User(Id, Name, Email, Pass, user.getRole()); // Provide actual user data
+                    new receiptionist(initialUserData).setVisible(true);
+                    dispose();
+                }
+            });
+            rooms.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new rooms(userId).setVisible(true); // Pass the fetched user data
+                    dispose();
+                }
+            });
+            BookedRoom.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new BookedRooms(null,userId).setVisible(true); // Pass the fetched user data
+                    dispose();
+                }
+            });
+            menuPanel.add(profile);
+            menuPanel.add(rooms);
+            menuPanel.add(BookedRoom);
+        }
+        headerPanel.add(logoTitlePanel, BorderLayout.WEST);
+        headerPanel.add(menuPanel, BorderLayout.EAST);
 
         userInfoPanel.add(nameLabel);
         userInfoPanel.add(emailLabel);
@@ -201,12 +258,30 @@ public class editPage extends JFrame {
         userInfoPanel.add(phonepanel);
         userInfoPanel.add(save);
 
-        welcomePanel.add(userInfoPanel, BorderLayout.CENTER);
+        mainContentPanel.add(userInfoPanel, BorderLayout.CENTER);
+        // Create a panel for the logo and user information
+        JPanel logoBodyPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        logoBodyPanel.setOpaque(false);
 
-        mainContentPanel.add(welcomePanel, BorderLayout.CENTER);
+        ImageIcon logoIconBody = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\Avater.png");
+        Image scaledImageBody = logoIconBody.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+        logoIconBody = new ImageIcon(scaledImageBody);
+        JLabel logoBodyLabel = new JLabel(logoIconBody);
 
-        // Add the main content panel to the JFrame
-        getContentPane().add(mainContentPanel);
+        // Add the logo to the logoBodyPanel
+        logoBodyPanel.add(logoBodyLabel);
+        // Center the logoBodyPanel and userInfoPanel
+        JPanel centerPanel = new JPanel(new GridBagLayout());
+        centerPanel.setOpaque(false);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        centerPanel.add(logoBodyPanel, gbc);
+        centerPanel.add(mainContentPanel, gbc);
+
+        // Add headerPanel and centerPanel to the frame
+        add(headerPanel, BorderLayout.NORTH);
+        add(centerPanel, BorderLayout.CENTER);
+
     }
 
     public static void main(String[] args) {

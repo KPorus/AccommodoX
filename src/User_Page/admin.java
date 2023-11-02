@@ -40,6 +40,7 @@ public class admin extends JFrame {
         int userId = user.getId();
         JButton profile = new JButton("Profile");
         JButton users = new JButton("Customers");
+        JButton emp = new JButton("Employee");
         JButton rooms = new JButton("Rooms");
         JButton offer = new JButton("Offers");
 
@@ -53,7 +54,12 @@ public class admin extends JFrame {
             new allCustomer(user, userId).setVisible(true);
             dispose();
         });
-
+        
+        emp.addActionListener((ActionEvent e) -> {
+            new employee(userId).setVisible(true);
+            dispose();
+        });
+        
         offer.addActionListener((ActionEvent e) -> {
             new Offers(userId).setVisible(true);
             dispose();
@@ -62,6 +68,7 @@ public class admin extends JFrame {
         // Add buttons to the menu panel
         menuPanel.add(profile);
         menuPanel.add(users);
+        menuPanel.add(emp);
         menuPanel.add(rooms);
         menuPanel.add(offer);
 
