@@ -63,9 +63,13 @@ public class BookingDialog extends JDialog {
         numberOfRoom = new JTextField();
         panel.add(numberOfRoom);
 
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 1));
         bookButton = new JButton("Book");
-        panel.add(bookButton);
-
+        bookButton.setForeground(Color.white);
+        bookButton.setBackground(new Color(24, 63, 102));
+        bookButton.setFocusPainted(false); // Disable focus border
+        buttonPanel.add(bookButton);
+      
         bookButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -142,7 +146,8 @@ public class BookingDialog extends JDialog {
             }
         });
 
-        add(panel);
+        add(panel,BorderLayout.WEST);
+        add(buttonPanel,BorderLayout.SOUTH);
         pack();
         setLocationRelativeTo(parent);
     }

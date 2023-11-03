@@ -37,13 +37,14 @@ public class allCustomer extends JFrame {
         setBounds(100, 50, 1000, 500);
         setResizable(false);
         setContentPane(new GradientPanel());
+        setLayout(new BorderLayout()); // Use BorderLayout for the main frame
 
         // Create a main content panel with BorderLayout
         JPanel mainContentPanel = new JPanel(new BorderLayout());
         mainContentPanel.setOpaque(false);
 
-        // Create a panel for the menu options
-        JPanel menuPanel = new JPanel(new GridLayout(6, 1, 0, 20));
+        // Create a panel for the menu options on the top
+        JPanel menuPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Align buttons to the right
         menuPanel.setOpaque(false);
 
         JButton profile = new JButton("Profile");
@@ -60,7 +61,7 @@ public class allCustomer extends JFrame {
         emp.setForeground(Color.white);
         emp.setBackground(new Color(24, 63, 102));
         emp.setFocusPainted(false); // Disable focus border
-        
+
         JButton rooms = new JButton("Rooms");
         rooms.setForeground(Color.white);
         rooms.setBackground(new Color(24, 63, 102));
@@ -104,11 +105,36 @@ public class allCustomer extends JFrame {
         menuPanel.add(emp);
         menuPanel.add(rooms);
         menuPanel.add(offer);
-        mainContentPanel.add(menuPanel, BorderLayout.WEST);
+        // Create a panel for the logo, title, and menu buttons
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setOpaque(false);
 
-        // Create a panel for the welcome message and user information
-        JPanel welcomePanel = new JPanel(new BorderLayout());
-        welcomePanel.setOpaque(false);
+        // Create a panel for the logo and title
+        JPanel logoTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        logoTitlePanel.setOpaque(false);
+
+        // Add your logo using a JLabel
+        ImageIcon logoIcon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
+        Image scaledImage = logoIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+        logoIcon = new ImageIcon(scaledImage);
+        JLabel logoLabel = new JLabel(logoIcon);
+
+        // Add the logo to the logoTitlePanel
+        logoTitlePanel.add(logoLabel);
+
+        JLabel title = new JLabel("AccommodoX");
+        title.setForeground(Color.WHITE);
+        title.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0)); // Add a gap between the logo and title
+        title.setFont(new Font("SansSerif", Font.BOLD, 24)); // Increase the font size
+        // Add the title to the logoTitlePanel
+        logoTitlePanel.add(title);
+
+        // Create a panel for the logo and title
+        JPanel logoBodyPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Change alignment to RIGHT
+        logoBodyPanel.setOpaque(false);
+        // Add headerPanel and userInfoPanel to the frame
+        headerPanel.add(logoTitlePanel, BorderLayout.WEST);
+        headerPanel.add(menuPanel, BorderLayout.CENTER);
 
         // Initialize the table model with columns
         String[] columnNames = {"Name", "Email", "Role", "Phone", "Address"};
@@ -140,16 +166,28 @@ public class allCustomer extends JFrame {
         displayCustomers(currentPage);
 
         JScrollPane scrollPane = new JScrollPane(customerTable);
-        welcomePanel.add(scrollPane, BorderLayout.CENTER);
-
-        mainContentPanel.add(welcomePanel, BorderLayout.CENTER);
+        scrollPane.setPreferredSize(new Dimension(500, 350)); // Set the preferred size for the scroll pane
+        mainContentPanel.add(scrollPane, BorderLayout.CENTER);
 
         // Add pagination controls
         JPanel paginationPanel = new JPanel();
-        JButton prevButton = new JButton("Previous");
-        JButton deleteSelectedButton = new JButton("Delete"); // New button
-        JButton nextButton = new JButton("Next");
+        paginationPanel.setPreferredSize(new Dimension(500, 50)); // Set the preferred size for the pagination panel
 
+        JButton prevButton = new JButton("Previous");
+        prevButton.setForeground(Color.white);
+        prevButton.setBackground(new Color(24, 63, 102));
+        prevButton.setFocusPainted(false); // Disable focus border
+
+        JButton deleteSelectedButton = new JButton("Delete"); // New button
+        deleteSelectedButton.setForeground(Color.white);
+        deleteSelectedButton.setBackground(new Color(24, 63, 102));
+        deleteSelectedButton.setFocusPainted(false); // Disable focus border
+
+        JButton nextButton = new JButton("Next");
+        nextButton.setForeground(Color.white);
+        nextButton.setBackground(new Color(24, 63, 102));
+        nextButton.setFocusPainted(false); // Disable focus border
+        
         prevButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -226,8 +264,16 @@ public class allCustomer extends JFrame {
         paginationPanel.add(nextButton);
         mainContentPanel.add(paginationPanel, BorderLayout.SOUTH);
 
-        // Add the main content panel to the JFrame
-        getContentPane().add(mainContentPanel);
+        // Center the logoBodyPanel and userInfoPanel
+        JPanel centerPanel = new JPanel(new GridBagLayout());
+        centerPanel.setOpaque(false);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        centerPanel.add(mainContentPanel, gbc);
+
+        // Add headerPanel and mainContentPanel to the frame
+        add(headerPanel, BorderLayout.NORTH);
+        add(centerPanel, BorderLayout.CENTER);
     }
 
     private void displayCustomers(int page) {

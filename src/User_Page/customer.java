@@ -85,22 +85,22 @@ public class customer extends JFrame {
         profile.setForeground(Color.white);
         profile.setBackground(new Color(24, 63, 102));
         profile.setFocusPainted(false); // Disable focus border  
-        
+
         JButton rooms = new JButton("Rooms");
         rooms.setForeground(Color.white);
         rooms.setBackground(new Color(24, 63, 102));
         rooms.setFocusPainted(false); // Disable focus border
-        
+
         JButton BookedRooms = new JButton("Booked Room");
         BookedRooms.setForeground(Color.white);
         BookedRooms.setBackground(new Color(24, 63, 102));
         BookedRooms.setFocusPainted(false); // Disable focus border
-        
+
         JButton contact = new JButton("Contact Us");
         contact.setForeground(Color.white);
         contact.setBackground(new Color(24, 63, 102));
         contact.setFocusPainted(false); // Disable focus border
-        
+
         contact.addActionListener(((e) -> {
             new Contact().setVisible(true);
         }));
@@ -192,7 +192,7 @@ public class customer extends JFrame {
             edit.setForeground(Color.white);
             edit.setBackground(new Color(24, 63, 102));
             edit.setFocusPainted(false); // Disable focus border
-            
+
             edit.addActionListener((ActionEvent e) -> {
                 editPage edit1 = new editPage(user);
                 edit1.setVisible(true);
@@ -230,7 +230,7 @@ public class customer extends JFrame {
         add(centerPanel, BorderLayout.CENTER);
 
         // Create a timer to update the offers text
-        Timer timer = new Timer(3000, new ActionListener() {
+        Timer timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 showNextOffer();
@@ -248,7 +248,8 @@ public class customer extends JFrame {
                 .collect(Collectors.toList());
 
         if (!openOffers.isEmpty()) {
-            offersLabel.setText(openOffers.get(currentOfferIndex).getDescription());
+            offersLabel.setText(openOffers.get(currentOfferIndex).getDescription()+". "+ "Offers on" + " " + openOffers.get(currentOfferIndex).getRoomType() + " ." + "Offer up to " + openOffers.get(currentOfferIndex).getPercentage() + "%");
+            offersLabel.setFont(new Font("SansSerif", Font.BOLD, 12)); // Increase the font size;
             currentOfferIndex = (currentOfferIndex + 1) % openOffers.size();
         } else {
             // No open offers found, you can display a message or take other actions

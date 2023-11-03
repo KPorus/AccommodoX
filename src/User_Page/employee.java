@@ -42,13 +42,14 @@ public class employee extends JFrame {
         setBounds(100, 50, 1000, 500);
         setResizable(false);
         setContentPane(new GradientPanel());
+        setLayout(new BorderLayout()); // Use BorderLayout for the main frame
 
         // Create a main content panel with BorderLayout
         JPanel mainContentPanel = new JPanel(new BorderLayout());
         mainContentPanel.setOpaque(false);
 
-        // Create a panel for the menu options
-        JPanel menuPanel = new JPanel(new GridLayout(6, 1, 0, 20)); // Increase the row count to accommodate the "Add Employee" button
+        // Create a panel for the menu options on the top
+        JPanel menuPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Align buttons to the right
         menuPanel.setOpaque(false);
 
         JButton profile = new JButton("Profile");
@@ -103,11 +104,36 @@ public class employee extends JFrame {
         menuPanel.add(employees);
         menuPanel.add(rooms);
         menuPanel.add(offer);
-        mainContentPanel.add(menuPanel, BorderLayout.WEST);
+        // Create a panel for the logo, title, and menu buttons
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setOpaque(false);
 
-        // Create a panel for the welcome message and user information
-        JPanel welcomePanel = new JPanel(new BorderLayout());
-        welcomePanel.setOpaque(false);
+        // Create a panel for the logo and title
+        JPanel logoTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        logoTitlePanel.setOpaque(false);
+
+        // Add your logo using a JLabel
+        ImageIcon logoIcon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
+        Image scaledImage = logoIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+        logoIcon = new ImageIcon(scaledImage);
+        JLabel logoLabel = new JLabel(logoIcon);
+
+        // Add the logo to the logoTitlePanel
+        logoTitlePanel.add(logoLabel);
+
+        JLabel title = new JLabel("AccommodoX");
+        title.setForeground(Color.WHITE);
+        title.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0)); // Add a gap between the logo and title
+        title.setFont(new Font("SansSerif", Font.BOLD, 24)); // Increase the font size
+        // Add the title to the logoTitlePanel
+        logoTitlePanel.add(title);
+
+        // Create a panel for the logo and title
+        JPanel logoBodyPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Change alignment to RIGHT
+        logoBodyPanel.setOpaque(false);
+        // Add headerPanel and userInfoPanel to the frame
+        headerPanel.add(logoTitlePanel, BorderLayout.WEST);
+        headerPanel.add(menuPanel, BorderLayout.CENTER);
 
         // Initialize the table model with columns
         String[] columnNames = {"Name", "Phone", "Email", "Role", "Employee Type", "Address", "Salary", "Join Date", "Resign Date"};
@@ -131,14 +157,23 @@ public class employee extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(employeeTable);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED); // Enable horizontal scrolling
-        welcomePanel.add(scrollPane, BorderLayout.CENTER);
+        scrollPane.setPreferredSize(new Dimension(900, 350)); // Set the preferred size for the scroll pane
 
-        mainContentPanel.add(welcomePanel, BorderLayout.CENTER);
+        mainContentPanel.add(scrollPane, BorderLayout.CENTER);
 
         // Add pagination controls
         JPanel paginationPanel = new JPanel();
+        paginationPanel.setPreferredSize(new Dimension(500, 50)); // Set the preferred size for the pagination panel
+
         JButton prevButton = new JButton("Previous");
+        prevButton.setForeground(Color.white);
+        prevButton.setBackground(new Color(24, 63, 102));
+        prevButton.setFocusPainted(false); // Disable focus border
+
         JButton nextButton = new JButton("Next");
+        nextButton.setForeground(Color.white);
+        nextButton.setBackground(new Color(24, 63, 102));
+        nextButton.setFocusPainted(false); // Disable focus border
 
         prevButton.addActionListener((ActionEvent e) -> {
             if (currentPage > 1) {
@@ -159,11 +194,12 @@ public class employee extends JFrame {
         paginationPanel.add(nextButton);
         mainContentPanel.add(paginationPanel, BorderLayout.SOUTH);
 
-        // Add the main content panel to the JFrame
-        getContentPane().add(mainContentPanel);
-
         // Create an "Add Employee" button
         JButton addEmployeeButton = new JButton("Add Employee");
+        addEmployeeButton.setForeground(Color.white);
+        addEmployeeButton.setBackground(new Color(24, 63, 102));
+        addEmployeeButton.setFocusPainted(false); // Disable focus border
+
         paginationPanel.add(addEmployeeButton);
 
         addEmployeeButton.addActionListener((ActionEvent e) -> {
@@ -174,6 +210,9 @@ public class employee extends JFrame {
 
         // Add an "Update" button for selected rows
         JButton updateEmployeeButton = new JButton("Update Employee");
+        updateEmployeeButton.setForeground(Color.white);
+        updateEmployeeButton.setBackground(new Color(24, 63, 102));
+        updateEmployeeButton.setFocusPainted(false); // Disable focus border
         paginationPanel.add(updateEmployeeButton);
 
         updateEmployeeButton.addActionListener((ActionEvent e) -> {
@@ -189,6 +228,18 @@ public class employee extends JFrame {
                 JOptionPane.showMessageDialog(employee.this, "Please select an employee to update.");
             }
         });
+
+        // Center the logoBodyPanel and userInfoPanel
+        JPanel centerPanel = new JPanel(new GridBagLayout());
+        centerPanel.setOpaque(false);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        centerPanel.add(mainContentPanel, gbc);
+
+        // Add headerPanel and mainContentPanel to the frame
+        add(headerPanel, BorderLayout.NORTH);
+        add(centerPanel, BorderLayout.CENTER);
+
     }
 
     // Inside your Employee class
@@ -286,7 +337,14 @@ public class employee extends JFrame {
             panel.add(employeeTypeField);
 
             JButton saveButton = new JButton("Save");
+            saveButton.setForeground(Color.white);
+            saveButton.setBackground(new Color(24, 63, 102));
+            saveButton.setFocusPainted(false); // Disable focus border
+            
             JButton cancelButton = new JButton("Cancel");
+            cancelButton.setForeground(Color.white);
+            cancelButton.setBackground(new Color(24, 63, 102));
+            cancelButton.setFocusPainted(false); // Disable focus border
 
             saveButton.addActionListener((ActionEvent e) -> {
                 // Get the employee information from the dialog
@@ -405,10 +463,16 @@ public class employee extends JFrame {
             panel.add(resignDateField);
 
             updateButton = new JButton("Update"); // Add an "Update" button
+            updateButton.setForeground(Color.white);
+            updateButton.setBackground(new Color(24, 63, 102));
+            updateButton.setFocusPainted(false); // Disable focus border
             panel.add(updateButton);
 
             JButton cancelButton = new JButton("Cancel");
-
+            cancelButton.setForeground(Color.white);
+            cancelButton.setBackground(new Color(24, 63, 102));
+            cancelButton.setFocusPainted(false); // Disable focus border
+            
             updateButton.addActionListener((ActionEvent e) -> {
                 // Get the updated employee information from the dialog
                 String updatedName = nameField.getText();

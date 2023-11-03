@@ -36,14 +36,19 @@ public class rooms extends JFrame {
         setBounds(100, 50, 1000, 500);
         setResizable(false);
         setContentPane(new GradientPanel());
+        setLayout(new BorderLayout()); // Use BorderLayout for the main frame
 
         // Create a main content panel with BorderLayout
         JPanel mainContentPanel = new JPanel(new BorderLayout());
         mainContentPanel.setOpaque(false);
 
-        // Create a panel for the menu options
-        JPanel menuPanel = new JPanel(new GridLayout(6, 1, 0, 20)); // Increase the row count to accommodate the "Add Room" button
+        // Create a panel for the menu options on the top
+        JPanel menuPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Align buttons to the right
         menuPanel.setOpaque(false);
+
+        // Create a panel for the logo, title, and menu buttons
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setOpaque(false);
 
         JButton profile = new JButton("Profile");
         profile.setForeground(Color.white);
@@ -54,22 +59,22 @@ public class rooms extends JFrame {
         customers.setForeground(Color.white);
         customers.setBackground(new Color(24, 63, 102));
         customers.setFocusPainted(false); // Disable focus border
-        
+
         JButton BookedRoom = new JButton("Booked Room");
         BookedRoom.setForeground(Color.white);
         BookedRoom.setBackground(new Color(24, 63, 102));
         BookedRoom.setFocusPainted(false); // Disable focus border
-        
+
         JButton employees = new JButton("Employees");
         employees.setForeground(Color.white);
         employees.setBackground(new Color(24, 63, 102));
         employees.setFocusPainted(false); // Disable focus border
-        
+
         JButton rooms = new JButton("Rooms");
         rooms.setForeground(Color.white);
         rooms.setBackground(new Color(24, 63, 102));
         rooms.setFocusPainted(false); // Disable focus border
-        
+
         JButton offer = new JButton("Offers");
         offer.setForeground(Color.white);
         offer.setBackground(new Color(24, 63, 102));
@@ -106,8 +111,7 @@ public class rooms extends JFrame {
             menuPanel.add(employees);
             menuPanel.add(rooms);
             menuPanel.add(offer);
-            mainContentPanel.add(menuPanel, BorderLayout.WEST);
-
+            headerPanel.add(menuPanel, BorderLayout.CENTER);
         }
 
         if ("customer".equals(role)) {
@@ -129,8 +133,7 @@ public class rooms extends JFrame {
             menuPanel.add(profile);
             menuPanel.add(rooms);
             menuPanel.add(BookedRoom);
-            mainContentPanel.add(menuPanel, BorderLayout.WEST);
-
+            headerPanel.add(menuPanel, BorderLayout.CENTER);
         }
 
         if ("receiptionist".equals(role)) {
@@ -149,13 +152,35 @@ public class rooms extends JFrame {
             menuPanel.add(profile);
             menuPanel.add(BookedRoom);
             menuPanel.add(rooms);
-            mainContentPanel.add(menuPanel, BorderLayout.WEST);
-
+            headerPanel.add(menuPanel, BorderLayout.CENTER);
         }
 
-        // Create a panel for the welcome message and user information
-        JPanel welcomePanel = new JPanel(new BorderLayout());
-        welcomePanel.setOpaque(false);
+        // Create a panel for the logo and title
+        JPanel logoTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        logoTitlePanel.setOpaque(false);
+
+        // Add your logo using a JLabel
+        ImageIcon logoIcon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
+        Image scaledImage = logoIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+        logoIcon = new ImageIcon(scaledImage);
+        JLabel logoLabel = new JLabel(logoIcon);
+
+        // Add the logo to the logoTitlePanel
+        logoTitlePanel.add(logoLabel);
+
+        JLabel title = new JLabel("AccommodoX");
+        title.setForeground(Color.WHITE);
+        title.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0)); // Add a gap between the logo and title
+        title.setFont(new Font("SansSerif", Font.BOLD, 24)); // Increase the font size
+        // Add the title to the logoTitlePanel
+        logoTitlePanel.add(title);
+
+        // Create a panel for the logo and title
+        JPanel logoBodyPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Change alignment to RIGHT
+        logoBodyPanel.setOpaque(false);
+        // Add headerPanel and userInfoPanel to the frame
+        headerPanel.add(logoTitlePanel, BorderLayout.WEST);
+        
 
         // Initialize the table model with columns
         String[] columnNames = null;
@@ -184,14 +209,23 @@ public class rooms extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(roomTable);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED); // Enable horizontal scrolling
-        welcomePanel.add(scrollPane, BorderLayout.CENTER);
+        scrollPane.setPreferredSize(new Dimension(900, 350)); // Set the preferred size for the scroll pane
 
-        mainContentPanel.add(welcomePanel, BorderLayout.CENTER);
+        mainContentPanel.add(scrollPane, BorderLayout.CENTER);
 
         // Add pagination controls
         JPanel paginationPanel = new JPanel();
+        paginationPanel.setPreferredSize(new Dimension(500, 50)); // Set the preferred size for the pagination panel
+
         JButton prevButton = new JButton("Previous");
+        prevButton.setForeground(Color.white);
+        prevButton.setBackground(new Color(24, 63, 102));
+        prevButton.setFocusPainted(false); // Disable focus border
+
         JButton nextButton = new JButton("Next");
+        nextButton.setForeground(Color.white);
+        nextButton.setBackground(new Color(24, 63, 102));
+        nextButton.setFocusPainted(false); // Disable focus border
 
         prevButton.addActionListener(new ActionListener() {
             @Override
@@ -217,6 +251,9 @@ public class rooms extends JFrame {
         if ("customer".equals(role)) {
             // Create an "Booking room" button
             JButton roomBookButton = new JButton("Room Book");
+            roomBookButton.setForeground(Color.white);
+            roomBookButton.setBackground(new Color(24, 63, 102));
+            roomBookButton.setFocusPainted(false); // Disable focus border
             paginationPanel.add(roomBookButton);
 
             roomBookButton.addActionListener(new ActionListener() {
@@ -240,11 +277,12 @@ public class rooms extends JFrame {
         paginationPanel.add(nextButton);
         mainContentPanel.add(paginationPanel, BorderLayout.SOUTH);
 
-        // Add the main content panel to the JFrame
-        getContentPane().add(mainContentPanel);
-
         // Add an "Update Rooms" button for selected rows
         JButton updateRoomsButton = new JButton("Update Room");
+        updateRoomsButton.setForeground(Color.white);
+        updateRoomsButton.setBackground(new Color(24, 63, 102));
+        updateRoomsButton.setFocusPainted(false); // Disable focus border
+
         if ("admin".equals(role)) {
             paginationPanel.add(updateRoomsButton);
 
@@ -265,6 +303,16 @@ public class rooms extends JFrame {
                 }
             });
         }
+        // Center the logoBodyPanel and userInfoPanel
+        JPanel centerPanel = new JPanel(new GridBagLayout());
+        centerPanel.setOpaque(false);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        centerPanel.add(mainContentPanel, gbc);
+
+        // Add headerPanel and mainContentPanel to the frame
+        add(headerPanel, BorderLayout.NORTH);
+        add(centerPanel, BorderLayout.CENTER);
     }
 
     private void displayRooms(int page, String role) {
@@ -403,10 +451,15 @@ public class rooms extends JFrame {
             privateBusCheckBox.setSelected(room.isPrivateBus());
             panel.add(privateBusCheckBox);
 
-            updateButton = new JButton("Update");
+            updateButton.setForeground(Color.white);
+            updateButton.setBackground(new Color(24, 63, 102));
+            updateButton.setFocusPainted(false); // Disable focus border
             panel.add(updateButton);
 
             JButton cancelButton = new JButton("Cancel");
+            cancelButton.setForeground(Color.white);
+            cancelButton.setBackground(new Color(24, 63, 102));
+            cancelButton.setFocusPainted(false); // Disable focus border
             panel.add(cancelButton);
 
             updateButton.addActionListener(new ActionListener() {

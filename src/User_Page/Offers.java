@@ -8,7 +8,10 @@ import User_data.User;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -46,13 +49,14 @@ public class Offers extends JFrame {
         setBounds(100, 50, 1000, 500);
         setResizable(false);
         setContentPane(new GradientPanel());
+        setLayout(new BorderLayout()); // Use BorderLayout for the main frame
 
         // Create a main content panel with BorderLayout
         JPanel mainContentPanel = new JPanel(new BorderLayout());
         mainContentPanel.setOpaque(false);
 
-        // Create a panel for the menu options
-        JPanel menuPanel = new JPanel(new GridLayout(6, 1, 0, 20)); // Increase the row count to accommodate the "Add Room" button
+        // Create a panel for the menu options on the top
+        JPanel menuPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Align buttons to the right
         menuPanel.setOpaque(false);
 
         JButton profile = new JButton("Profile");
@@ -108,7 +112,36 @@ public class Offers extends JFrame {
         menuPanel.add(rooms);
         menuPanel.add(offer);
 
-        mainContentPanel.add(menuPanel, BorderLayout.WEST);
+        // Create a panel for the logo, title, and menu buttons
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setOpaque(false);
+
+        // Create a panel for the logo and title
+        JPanel logoTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        logoTitlePanel.setOpaque(false);
+
+        // Add your logo using a JLabel
+        ImageIcon logoIcon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
+        Image scaledImage = logoIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+        logoIcon = new ImageIcon(scaledImage);
+        JLabel logoLabel = new JLabel(logoIcon);
+
+        // Add the logo to the logoTitlePanel
+        logoTitlePanel.add(logoLabel);
+
+        JLabel title = new JLabel("AccommodoX");
+        title.setForeground(Color.WHITE);
+        title.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0)); // Add a gap between the logo and title
+        title.setFont(new Font("SansSerif", Font.BOLD, 24)); // Increase the font size
+        // Add the title to the logoTitlePanel
+        logoTitlePanel.add(title);
+
+        // Create a panel for the logo and title
+        JPanel logoBodyPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Change alignment to RIGHT
+        logoBodyPanel.setOpaque(false);
+        // Add headerPanel and userInfoPanel to the frame
+        headerPanel.add(logoTitlePanel, BorderLayout.WEST);
+        headerPanel.add(menuPanel, BorderLayout.CENTER);
 
         // Create a panel for the welcome message and user information
         JPanel welcomePanel = new JPanel(new BorderLayout());
@@ -148,7 +181,6 @@ public class Offers extends JFrame {
 
         // Wrap the offersPanel in a JScrollPane for scrolling if there are many offers
         JScrollPane offersScrollPane = new JScrollPane(offersPanel);
-
         welcomePanel.add(offersScrollPane, BorderLayout.CENTER);
         // Add the offersScrollPane to the main content panel
         mainContentPanel.add(welcomePanel, BorderLayout.CENTER);
@@ -157,16 +189,36 @@ public class Offers extends JFrame {
         JPanel paginationPanel = new JPanel();
         paginationPanel.setOpaque(false);
         JButton Open = new JButton("ADD OFFERS");
+        Open.setForeground(Color.white);
+        Open.setBackground(new Color(24, 63, 102));
+        Open.setFocusPainted(false); // Disable focus border
+
         JButton close = new JButton("CLOSE OFFERS");
+        close.setForeground(Color.white);
+        close.setBackground(new Color(24, 63, 102));
+        close.setFocusPainted(false); // Disable focus border
+
         JButton Delete = new JButton("Delete OFFERS");
+        Delete.setForeground(Color.white);
+        Delete.setBackground(new Color(24, 63, 102));
+        Delete.setFocusPainted(false); // Disable focus border
 
         paginationPanel.add(Open);
         paginationPanel.add(close);
         paginationPanel.add(Delete);
         mainContentPanel.add(paginationPanel, BorderLayout.SOUTH);
         mainContentPanel.add(welcomePanel, BorderLayout.CENTER);
-        // Add the main content panel to the JFrame
-        getContentPane().add(mainContentPanel);
+
+        // Center the logoBodyPanel and userInfoPanel
+        JPanel centerPanel = new JPanel(new GridBagLayout());
+        centerPanel.setOpaque(false);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        centerPanel.add(mainContentPanel, gbc);
+
+        // Add headerPanel and mainContentPanel to the frame
+        add(headerPanel, BorderLayout.NORTH);
+        add(centerPanel, BorderLayout.CENTER);
 
         Open.addActionListener((ActionEvent e) -> {
             // Show the input dialog
@@ -174,7 +226,7 @@ public class Offers extends JFrame {
             String description = JOptionPane.showInputDialog(Offers.this, "Enter Offer Description:");
             String percentInput = JOptionPane.showInputDialog(Offers.this, "Enter Offer amount (in percent):");
             String room_type = JOptionPane.showInputDialog(Offers.this, "Enter room types (Queen, Master, Normal, Double): ");
-
+            int percentage = Integer.parseInt(percentInput);
             // Check if both title, description, room_type, and percent are not empty or null
             if (title1 != null && !title1.isEmpty()
                     && description != null && !description.isEmpty()
@@ -189,7 +241,7 @@ public class Offers extends JFrame {
                     System.out.println(normalizedRoomType);
                     if (Arrays.asList(validRoomTypes).contains(normalizedRoomType)) {
                         if (userDAO.updateRoomOffer(normalizedRoomType, percent)) {
-                            userDAO.insertOffer(title1, description, "open");
+                            userDAO.insertOffer(title1, description, "open", normalizedRoomType, percentage);
                         } else {
                             JOptionPane.showMessageDialog(Offers.this, "Failed to update room");
                         }
@@ -217,6 +269,8 @@ public class Offers extends JFrame {
                     boolean updated = userDAO.updateOffer(selectedOffer.getOfferId(), "close");
                     System.out.println(updated);
                     if (updated) {
+                        if (userDAO.updateRoomOffer(selectedOffer.getRoomType(), 0)) {
+                        }
                         JOptionPane.showMessageDialog(Offers.this, "Offer has been closed.");
                         System.out.println("Offer with ID " + selectedOffer.getOfferId() + " has been closed.");
                     } else {
@@ -287,30 +341,32 @@ public class Offers extends JFrame {
     // Create a method to create an offer box panel
     private JPanel createOfferBox(Offer off) {
         JPanel offerBox = new JPanel();
-        offerBox.setPreferredSize(new Dimension(500, -1));
+        offerBox.setPreferredSize(new Dimension(500, 100)); // Adjust width and height as needed
         offerBox.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         offerBox.setLayout(new BoxLayout(offerBox, BoxLayout.Y_AXIS));
         offerBox.setOpaque(false);
         offerBox.setBackground(new Color(0, 0, 0, 0)); // Transparent background
         JLabel titleLabel = new JLabel("Title: " + off.getTitle());
         JLabel descriptionLabel = new JLabel("Description: " + off.getDescription());
-
+        JLabel roomLabel = new JLabel("RoomType: " + off.getRoomType());
+        JLabel percentageLabel = new JLabel("Percentage: " + off.getPercentage());
         // Check the status and set background color accordingly
+        titleLabel.setForeground(Color.WHITE);
+        descriptionLabel.setForeground(Color.WHITE);
+        roomLabel.setForeground(Color.WHITE);
+        percentageLabel.setForeground(Color.WHITE);
         if ("open".equals(off.getStatus())) {
             offerBox.setBackground(Color.GREEN);
-            titleLabel.setForeground(Color.WHITE);
-            descriptionLabel.setForeground(Color.WHITE);
         } else if ("close".equals(off.getStatus())) {
             offerBox.setBackground(Color.RED);
-            titleLabel.setForeground(Color.WHITE);
-            descriptionLabel.setForeground(Color.WHITE);
         }
 
         offerBox.setOpaque(true); // Ensure that the panel's background is visible
 
         offerBox.add(titleLabel);
         offerBox.add(descriptionLabel);
-
+        offerBox.add(roomLabel);
+        offerBox.add(percentageLabel);
         return offerBox;
     }
 

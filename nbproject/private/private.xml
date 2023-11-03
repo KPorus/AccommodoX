@@ -3,11 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Java%20Project/AccommodoX/src/User_Page/editPage.java</file>
-            <file>file:/D:/Java%20Project/AccommodoX/src/UserAuthantication/login.java</file>
+            <file>file:/D:/Java%20Project/AccommodoX/src/User_Page/BookingDialog.java</file>
+            <file>file:/D:/Java%20Project/AccommodoX/src/User_Page/allCustomer.java</file>
+            <file>file:/D:/Java%20Project/AccommodoX/src/User_Page/Account.java</file>
             <file>file:/D:/Java%20Project/AccommodoX/src/User_Page/receiptionist.java</file>
+            <file>file:/D:/Java%20Project/AccommodoX/src/User_Page/rooms.java</file>
+            <file>file:/D:/Java%20Project/AccommodoX/src/User_Page/admin.java</file>
             <file>file:/D:/Java%20Project/AccommodoX/src/User_Page/customer.java</file>
-            <file>file:/D:/Java%20Project/AccommodoX/src/User_Page/employee.java</file>
+            <file>file:/D:/Java%20Project/AccommodoX/src/User_Page/Offers.java</file>
             <file>file:/D:/Java%20Project/AccommodoX/src/User_Page/BookedRooms.java</file>
         </group>
     </open-files>

@@ -540,7 +540,7 @@ public class UserDAO {
                 Time checkOutTime = Time.valueOf(checkOutTimeStr);
 
                 // Create a BookingWithUserInfo object and add it to the list
-                BookingWithUserInfo bookingWithUserInfo = new BookingWithUserInfo(userName, roomType, bookingTo, bookingFrom, checkInTime, checkOutTime, numberOfRooms, prize,offer);
+                BookingWithUserInfo bookingWithUserInfo = new BookingWithUserInfo(userName, roomType, bookingTo, bookingFrom, checkInTime, checkOutTime, numberOfRooms, prize, offer);
                 bookings.add(bookingWithUserInfo);
             }
         } catch (SQLException e) {
@@ -550,13 +550,15 @@ public class UserDAO {
         return bookings;
     }
 
-    public boolean insertOffer(String title, String description, String status) {
-        String insertOfferQuery = "INSERT INTO offers (title,description,status) VALUES (?, ?,?)";
+    public boolean insertOffer(String title, String description, String status, String room_type, int percentage) {
+        String insertOfferQuery = "INSERT INTO offers (title,description,status,room_type,percentage) VALUES (?, ?,?,?,?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertOfferQuery)) {
             preparedStatement.setString(1, title);
             preparedStatement.setString(2, description);
             preparedStatement.setString(3, status);
+            preparedStatement.setString(4, room_type);
+            preparedStatement.setInt(5, percentage);
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -566,7 +568,7 @@ public class UserDAO {
     }
 
     public List<Offer> getAllOffers() {
-        String selectOffersQuery = "SELECT id,title, description,status FROM offers";
+        String selectOffersQuery = "SELECT * FROM offers";
         List<Offer> offersList = new ArrayList<>();
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(selectOffersQuery); ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -575,8 +577,10 @@ public class UserDAO {
                 String title = resultSet.getString("title");
                 String description = resultSet.getString("description");
                 String status = resultSet.getString("status");
+                String room = resultSet.getString("room_type");
+                int percentage = resultSet.getInt("percentage");
                 int id = resultSet.getInt("id");
-                Offer offer = new Offer(id, title, description, status);
+                Offer offer = new Offer(id, title, description, status, room, percentage);
                 offersList.add(offer);
             }
         } catch (SQLException e) {
