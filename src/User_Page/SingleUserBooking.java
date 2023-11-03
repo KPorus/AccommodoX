@@ -117,7 +117,7 @@ public class SingleUserBooking extends JFrame {
         bookings = userDAO.getAllRoomsOfUser(userId);
 
         // Create a table model for booking data
-        String[] columnNames = {"Room ID", "Number of Rooms", "Price", "Booking From", "Booking To", "Check-In Time", "Check-Out Time"};
+        String[] columnNames = {"Room ID", "Number of Rooms", "Price", "Booking From", "Booking To", "Check-In Time", "Check-Out Time","Payment"};
         tableModel = new DefaultTableModel(columnNames, 0);
         bookingTable = new JTable(tableModel);
 
@@ -131,7 +131,8 @@ public class SingleUserBooking extends JFrame {
                     booking.getBookingFrom(),
                     booking.getBookingTo(),
                     booking.getCheckInTime(),
-                    booking.getCheckOutTime()
+                    booking.getCheckOutTime(),
+                    booking.getpayment()
                 };
                 tableModel.addRow(rowData);
             }
@@ -208,7 +209,8 @@ public class SingleUserBooking extends JFrame {
                 booking.getBookingFrom(),
                 booking.getBookingTo(),
                 booking.getCheckInTime(),
-                booking.getCheckOutTime()
+                booking.getCheckOutTime(),
+                booking.getpayment()
             };
             tableModel.addRow(rowData);
         }

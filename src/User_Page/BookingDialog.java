@@ -69,7 +69,7 @@ public class BookingDialog extends JDialog {
         bookButton.setBackground(new Color(24, 63, 102));
         bookButton.setFocusPainted(false); // Disable focus border
         buttonPanel.add(bookButton);
-      
+
         bookButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -128,15 +128,65 @@ public class BookingDialog extends JDialog {
                             double p = percent / 100.0;
                             prize = (int) (prize * p);
                         }
-                        // Call the insertBooking method to save the booking
-                        boolean success = userDAO.insertBooking(userId, room.getId(), numberOfRooms, prize, bookingTo, bookingFrom, checkInTimeFormatted, checkOutTimeFormatted, offer);
-                        boolean roomSuccess = userDAO.updateAvailableRoom(available, booked, room.getId());
-                        if (success && roomSuccess) {
-                            JOptionPane.showMessageDialog(BookingDialog.this, "Room booked successfully.");
-                            generateBookingConfirmationPDF(userId, room, numberOfRooms, prize, offer);
-                            dispose(); // Close the dialog
-                        } else {
-                            JOptionPane.showMessageDialog(BookingDialog.this, "Failed to book room.", "Error", JOptionPane.ERROR_MESSAGE);
+
+                        // Define the payment methods
+                        String[] paymentMethods = {"manual", "bkash"};
+
+                        // Create a JComboBox to display payment methods
+                        JComboBox<String> paymentMethodComboBox = new JComboBox<>(paymentMethods);
+
+                        // Show the JOptionPane with the payment method selection
+                        int result = JOptionPane.showConfirmDialog(null, paymentMethodComboBox, "Select Payment Method", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                        if (result == JOptionPane.OK_OPTION) {
+                            // Get the selected payment method
+                            String selectedPaymentMethod = (String) paymentMethodComboBox.getSelectedItem();
+                            JOptionPane.showMessageDialog(null, "Selected Payment Method: " + selectedPaymentMethod);
+                            if ("bkash".equals(selectedPaymentMethod)) {
+                                JLabel bkashNumberField = new JLabel("our bkash number: 01969509218");
+
+                                JPanel panel = new JPanel();
+                                panel.add(bkashNumberField);
+
+                                int bkashResult = JOptionPane.showConfirmDialog(null, panel, "Are you want to proceed to next step", JOptionPane.OK_CANCEL_OPTION);
+
+                                if (bkashResult == JOptionPane.OK_OPTION) {
+                                    String bkashNumber = bkashNumberField.getText();
+
+                                    if (bkashNumber != null && !bkashNumber.isEmpty()) {
+                                        String transactionNumber = JOptionPane.showInputDialog("Enter your transaction number:");
+
+                                        if (transactionNumber != null && !transactionNumber.isEmpty()) {
+                                            // Call the insertBooking method to save the booking
+                                            boolean success = userDAO.insertBooking(userId, room.getId(), numberOfRooms, prize, bookingTo, bookingFrom, checkInTimeFormatted, checkOutTimeFormatted, offer, selectedPaymentMethod);
+                                            boolean roomSuccess = userDAO.updateAvailableRoom(available, booked, room.getId());
+
+                                            if (success && roomSuccess) {
+                                                JOptionPane.showMessageDialog(null, "Room booked successfully.");
+                                                generateBookingConfirmationPDF(userId, room, numberOfRooms, prize, offer, selectedPaymentMethod);
+                                                dispose(); // Close the dialog
+                                            } else {
+                                                JOptionPane.showMessageDialog(null, "Failed to book room.", "Error", JOptionPane.ERROR_MESSAGE);
+                                            }
+                                        } else {
+                                            JOptionPane.showMessageDialog(null, "Transaction number is required.", "Error", JOptionPane.ERROR_MESSAGE);
+                                        }
+                                    }
+                                }
+                            } else {
+                                // Call the insertBooking method to save the booking
+                                boolean success = userDAO.insertBooking(userId, room.getId(), numberOfRooms, prize, bookingTo, bookingFrom, checkInTimeFormatted, checkOutTimeFormatted, offer, selectedPaymentMethod);
+                                boolean roomSuccess = userDAO.updateAvailableRoom(available, booked, room.getId());
+
+                                if (success && roomSuccess) {
+                                    JOptionPane.showMessageDialog(null, "Room booked successfully.");
+                                    generateBookingConfirmationPDF(userId, room, numberOfRooms, prize, offer, selectedPaymentMethod);
+                                    dispose(); // Close the dialog
+                                } else {
+                                    JOptionPane.showMessageDialog(null, "Failed to book room.", "Error", JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+
                         }
                     } else {
                         JOptionPane.showMessageDialog(BookingDialog.this, "Room are not available.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -146,13 +196,13 @@ public class BookingDialog extends JDialog {
             }
         });
 
-        add(panel,BorderLayout.WEST);
-        add(buttonPanel,BorderLayout.SOUTH);
+        add(panel, BorderLayout.WEST);
+        add(buttonPanel, BorderLayout.SOUTH);
         pack();
         setLocationRelativeTo(parent);
     }
 
-    private void generateBookingConfirmationPDF(int userId, Rooms room, int numberOfRooms, int prize, int offer) {
+    private void generateBookingConfirmationPDF(int userId, Rooms room, int numberOfRooms, int prize, int offer, String payment) {
         // Create a PageFormat for the printer
         PageFormat pageFormat = new PageFormat();
         pageFormat.setOrientation(PageFormat.PORTRAIT);
@@ -183,6 +233,7 @@ public class BookingDialog extends JDialog {
                             + "Offer: " + offer + "%\n"
                             + " ************ ************ ************ ************ \n"
                             + "Prize: $" + prize + "\n\n"
+                            + "Payment Method: " + payment + "\n\n"
                             + "\t\t\t\t\t\t\t\t admin\n"
                             + "\t\t\t\t\t\t\t\t ---------\n"
                             + "\t\t\t\t\t\t\t\t Signature";

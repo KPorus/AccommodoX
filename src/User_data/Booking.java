@@ -12,8 +12,9 @@ public class Booking {
     private Date bookingFrom;
     private Time checkInTime;
     private Time checkOutTime;
+    private String payment;
 
-    public Booking(int userId, int roomId, int NumberOfRooms, int prize, Date bookingTo, Date bookingFrom, Time checkInTime, Time checkOutTime) {
+    public Booking(int userId, int roomId, int NumberOfRooms, int prize, Date bookingTo, Date bookingFrom, Time checkInTime, Time checkOutTime,String payment) {
         this.userId = userId;
         this.roomId = roomId;
         this.NumberOfRooms = NumberOfRooms;
@@ -22,6 +23,7 @@ public class Booking {
         this.bookingFrom = bookingFrom;
         this.checkInTime = checkInTime;
         this.checkOutTime = checkOutTime;
+        this.payment = payment;
     }
 
     // Empty constructor
@@ -59,5 +61,8 @@ public class Booking {
 
     public Time getCheckOutTime() {
         return checkOutTime;
+    }
+    public String getpayment() {
+        return payment;
     }
 }
