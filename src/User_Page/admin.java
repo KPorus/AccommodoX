@@ -63,6 +63,11 @@ public class admin extends JFrame {
         offer.setBackground(new Color(24, 63, 102));
         offer.setFocusPainted(false); // Disable focus border
 
+        JButton account = new JButton("Account Info");
+        account.setForeground(Color.white);
+        account.setBackground(new Color(24, 63, 102));
+        account.setFocusPainted(false); // Disable focus border
+
         // Add action listeners to the buttons
         rooms.addActionListener((ActionEvent e) -> {
             new rooms(userId).setVisible(true);
@@ -83,12 +88,17 @@ public class admin extends JFrame {
             new Offers(userId).setVisible(true);
             dispose();
         });
+        account.addActionListener((ActionEvent e) -> {
+            new AllAccountInfo(userId).setVisible(true);
+            dispose();
+        });
 
         // Add buttons to the menu panel
         menuPanel.add(profile);
         menuPanel.add(users);
         menuPanel.add(emp);
         menuPanel.add(rooms);
+        menuPanel.add(account);
         menuPanel.add(offer);
 
         // Create a panel for the logo, title, and menu buttons
@@ -194,7 +204,7 @@ public class admin extends JFrame {
             edit.setForeground(Color.white);
             edit.setBackground(new Color(24, 63, 102));
             edit.setFocusPainted(false); // Disable focus border
-            
+
             edit.addActionListener((ActionEvent e) -> {
                 editPage edit1 = new editPage(user);
                 edit1.setVisible(true);

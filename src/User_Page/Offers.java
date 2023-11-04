@@ -84,6 +84,11 @@ public class Offers extends JFrame {
         offer.setBackground(new Color(24, 63, 102));
         offer.setFocusPainted(false); // Disable focus border
 
+        JButton account = new JButton("Account Info");
+        account.setForeground(Color.white);
+        account.setBackground(new Color(24, 63, 102));
+        account.setFocusPainted(false); // Disable focus border
+
         rooms.addActionListener((ActionEvent e) -> {
             new rooms(userId).setVisible(true);
             dispose();
@@ -106,10 +111,15 @@ public class Offers extends JFrame {
             updateOffersPanel();
             System.out.println("Function called");
         });
+        account.addActionListener((ActionEvent e) -> {
+            new AllAccountInfo(userId).setVisible(true);
+            dispose();
+        });
         menuPanel.add(profile);
         menuPanel.add(users);
         menuPanel.add(emp);
         menuPanel.add(rooms);
+        menuPanel.add(account);
         menuPanel.add(offer);
 
         // Create a panel for the logo, title, and menu buttons

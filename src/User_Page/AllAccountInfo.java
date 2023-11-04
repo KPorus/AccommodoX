@@ -5,6 +5,7 @@ import DB.UserDAO;
 import Design.GradientPanel;
 import User_data.FundData;
 import User_data.User;
+import User_data.UserDetails;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -15,8 +16,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -24,14 +23,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.print.PrinterException;
+import javax.swing.JTable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -39,10 +36,15 @@ import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 
 public class AllAccountInfo extends JFrame {
 
     private UserDAO userDAO;
+    private User userData;
+    private UserDetails details;
     private MySQLConnection mysqlConnection;
     private JTable accountTable;
     private DefaultTableModel tableModel;
@@ -52,10 +54,15 @@ public class AllAccountInfo extends JFrame {
     private int pageSize = 10; // Number of rows per page
     private JButton backButton;
     private int Id;
+    private JButton printButton;
 
     public AllAccountInfo(int userId) {
-        mysqlConnection = new MySQLConnection();
-        this.userDAO = new UserDAO(mysqlConnection.getConnection());
+
+        mysqlConnection = new MySQLConnection(); // Initialize MySQLConnection
+        userDAO = new UserDAO(mysqlConnection.getConnection()); // Initialize UserDAO
+        this.userData = userDAO.getUser(userId);
+        String role = userData.getRole();
+        details = userDAO.getUserDetails(userId);
 
         setTitle("All Account");
         setIconImage(getAppIcon());
@@ -92,19 +99,140 @@ public class AllAccountInfo extends JFrame {
         account.setBackground(new Color(24, 63, 102));
         account.setFocusPainted(false); // Disable focus border
 
-        profile.addActionListener((ActionEvent e) -> {
-            User userData = userDAO.getUser(userId); // Fetch user data by ID
-            new Account(userData).setVisible(true); // Pass the fetched user data
-            dispose();
-        });
-        Book.addActionListener((ActionEvent e) -> {
-            new RoomAccount(userId).setVisible(true);
-            dispose();
-        });
+        if ("admin".equals(role)) {
+            JLabel name = new JLabel("Name");
+            name.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
+            name.setForeground(Color.WHITE); // Set text color to white
+            JTextField nameLabel = new JTextField(userData.getUsername()); // Replace with actual method to get name
+            JPanel namepanel = new JPanel(new GridLayout(1, 1, 0, 0));
+            namepanel.add(name);
+            namepanel.add(nameLabel);
+            namepanel.setOpaque(false);
 
-        menuPanel.add(profile);
-        menuPanel.add(Book);
-        menuPanel.add(account);
+            JLabel email = new JLabel("Email");
+            email.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
+            email.setForeground(Color.WHITE); // Set text color to white
+            JTextField emailLabel = new JTextField(userData.getEmail()); // Replace with actual method to get email
+            JPanel emailpanel = new JPanel(new GridLayout(1, 1, 1, 1));
+            emailpanel.add(email);
+            emailpanel.add(emailLabel);
+            emailpanel.setOpaque(false);
+
+            JLabel pass = new JLabel("Password");
+            pass.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
+            pass.setForeground(Color.WHITE); // Set text color to white
+            JTextField passLabel = new JTextField(userData.getPassword()); // Replace with actual method to get role
+            JPanel passpanel = new JPanel(new GridLayout(1, 1, 1, 1));
+            passpanel.add(pass);
+            passpanel.add(passLabel);
+            passpanel.setOpaque(false);
+
+            JLabel address = new JLabel("Address");
+            address.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
+            address.setForeground(Color.WHITE); // Set text color to white
+            JTextField addressText = new JTextField(details.getAddress());
+            JPanel addresspanel = new JPanel(new GridLayout(1, 1, 1, 1));
+            addresspanel.add(address);
+            addresspanel.add(addressText);
+            addresspanel.setOpaque(false);
+
+            JLabel phone = new JLabel("Phone");
+            phone.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
+            phone.setForeground(Color.WHITE); // Set text color to white
+            JTextField phoneText = new JTextField(details.getPhone());
+            JPanel phonepanel = new JPanel(new GridLayout(1, 1, 1, 1));
+            phonepanel.add(phone);
+            phonepanel.add(phoneText);
+            phonepanel.setOpaque(false);
+
+            JButton users = new JButton("Customers");
+            users.setForeground(Color.white);
+            users.setBackground(new Color(24, 63, 102));
+            users.setFocusPainted(false); // Disable focus border
+
+            JButton emp = new JButton("Employees");
+            emp.setForeground(Color.white);
+            emp.setBackground(new Color(24, 63, 102));
+            emp.setFocusPainted(false); // Disable focus border
+
+            JButton BookedRoom = new JButton("Booked Room");
+            BookedRoom.setForeground(Color.white);
+            BookedRoom.setBackground(new Color(24, 63, 102));
+            BookedRoom.setFocusPainted(false); // Disable focus border
+
+            JButton rooms = new JButton("Rooms");
+            rooms.setForeground(Color.white);
+            rooms.setBackground(new Color(24, 63, 102));
+            rooms.setFocusPainted(false); // Disable focus border
+
+            JButton offer = new JButton("Offers");
+            offer.setForeground(Color.white);
+            offer.setBackground(new Color(24, 63, 102));
+            offer.setFocusPainted(false); // Disable focus border
+            details = userDAO.getUserDetails(userId);
+            profile.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String Name = nameLabel.getText();
+                    String Email = emailLabel.getText();
+                    String Pass = passLabel.getText();
+                    int Id = userData.getId();
+                    User initialUserData = new User(Id, Name, Email, Pass, userData.getRole()); // Provide actual user data
+                    new admin(initialUserData).setVisible(true);
+                    dispose();
+                }
+            });
+            users.addActionListener((ActionEvent e) -> {
+                new allCustomer(userData, userId).setVisible(true);
+                dispose();
+            });
+            emp.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new employee(userId).setVisible(true); // Pass the fetched user data
+                    dispose();
+                }
+            });
+            rooms.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new rooms(userId).setVisible(true); // Pass the fetched user data
+                    dispose();
+                }
+            });
+            offer.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new Offers(userId).setVisible(true); // Pass the fetched user data
+                    dispose();
+                }
+            });
+            account.addActionListener((ActionEvent e) -> {
+                new AllAccountInfo(userId).setVisible(true);
+                dispose();
+            });
+            menuPanel.add(profile);
+            menuPanel.add(users);
+            menuPanel.add(emp);
+            menuPanel.add(rooms);
+            menuPanel.add(account);
+            menuPanel.add(offer);
+
+        } else {
+            profile.addActionListener((ActionEvent e) -> {
+                User userData = userDAO.getUser(userId); // Fetch user data by ID
+                new Account(userData).setVisible(true); // Pass the fetched user data
+                dispose();
+            });
+            Book.addActionListener((ActionEvent e) -> {
+                new RoomAccount(userId).setVisible(true);
+                dispose();
+            });
+
+            menuPanel.add(profile);
+            menuPanel.add(Book);
+            menuPanel.add(account);
+        }
 
         // Create a panel for the logo and title
         JPanel logoTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -233,11 +361,26 @@ public class AllAccountInfo extends JFrame {
                 displayAccountData(currentPage);
             }
         });
+        // Create a "Print" button for generating PDF
+        printButton = new JButton("Print");
+        printButton.setForeground(Color.white);
+        printButton.setBackground(new Color(24, 63, 102));
+        printButton.setFocusPainted(false);
+
+        printButton.addActionListener(e -> {
+            try {
+                //            printToPDF(accountTable);
+                accountTable.print();
+            } catch (PrinterException ex) {
+                Logger.getLogger(AllAccountInfo.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
 
         paginationPanel.add(prevButton);
         paginationPanel.add(nextButton);
         paginationPanel.add(updateDataButton);
         paginationPanel.add(addRowButton);
+        paginationPanel.add(printButton);
         mainContentPanel.add(paginationPanel, BorderLayout.SOUTH);
 
         JPanel centerPanel = new JPanel(new GridBagLayout());
@@ -246,7 +389,7 @@ public class AllAccountInfo extends JFrame {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         centerPanel.add(mainContentPanel, gbc);
 
-        add(menuPanel, BorderLayout.NORTH);
+        add(headerPanel, BorderLayout.NORTH);
         add(centerPanel, BorderLayout.CENTER);
 
     }
@@ -385,7 +528,7 @@ public class AllAccountInfo extends JFrame {
                             java.util.Date utilDate = dateFormat.parse(updatedData);
                             java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 
-                            boolean updateSuccess = userDAO.updateDatabase(sqlDate,tableModel.getColumnName(selectedColumn),id);
+                            boolean updateSuccess = userDAO.updateDatabase(sqlDate, tableModel.getColumnName(selectedColumn), id);
 
                             if (updateSuccess) {
                                 updateSumAndTotalIncome(selectedRow, selectedColumn);
@@ -398,18 +541,18 @@ public class AllAccountInfo extends JFrame {
                         }
                     } else {
                         String columnName = "";
-                        
-                        if(tableModel.getColumnName(selectedColumn).equals("Fund")){
-                            columnName = "fund"; 
+
+                        if (tableModel.getColumnName(selectedColumn).equals("Fund")) {
+                            columnName = "fund";
                         }
-                        if(tableModel.getColumnName(selectedColumn).equals("Total Salary")){
-                            columnName = "total_salary"; 
+                        if (tableModel.getColumnName(selectedColumn).equals("Total Salary")) {
+                            columnName = "total_salary";
                         }
-                        if(tableModel.getColumnName(selectedColumn).equals("Total paid in bkash")){
-                            columnName = "room_prize_bkash"; 
+                        if (tableModel.getColumnName(selectedColumn).equals("Total paid in bkash")) {
+                            columnName = "room_prize_bkash";
                         }
-                        if(tableModel.getColumnName(selectedColumn).equals("Total paid in manual")){
-                            columnName = "room_prize_manual"; 
+                        if (tableModel.getColumnName(selectedColumn).equals("Total paid in manual")) {
+                            columnName = "room_prize_manual";
                         }
                         boolean updateSuccess = userDAO.updateDatabaseOne(updatedData, columnName, id);
 

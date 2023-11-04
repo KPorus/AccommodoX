@@ -82,6 +82,11 @@ public class employee extends JFrame {
         offer.setBackground(new Color(24, 63, 102));
         offer.setFocusPainted(false); // Disable focus border
 
+        JButton account = new JButton("Account Info");
+        account.setForeground(Color.white);
+        account.setBackground(new Color(24, 63, 102));
+        account.setFocusPainted(false); // Disable focus border
+        
         profile.addActionListener((ActionEvent e) -> {
             User userData = userDAO.getUser(userId); // Fetch user data by ID
             new admin(userData).setVisible(true); // Pass the fetched user data
@@ -99,10 +104,15 @@ public class employee extends JFrame {
             new Offers(userId).setVisible(true);
             dispose();
         });
+        account.addActionListener((ActionEvent e) -> {
+            new AllAccountInfo(userId).setVisible(true);
+            dispose();
+        });
         menuPanel.add(profile);
         menuPanel.add(customers);
         menuPanel.add(employees);
         menuPanel.add(rooms);
+        menuPanel.add(account);
         menuPanel.add(offer);
         // Create a panel for the logo, title, and menu buttons
         JPanel headerPanel = new JPanel(new BorderLayout());
@@ -340,7 +350,7 @@ public class employee extends JFrame {
             saveButton.setForeground(Color.white);
             saveButton.setBackground(new Color(24, 63, 102));
             saveButton.setFocusPainted(false); // Disable focus border
-            
+
             JButton cancelButton = new JButton("Cancel");
             cancelButton.setForeground(Color.white);
             cancelButton.setBackground(new Color(24, 63, 102));
@@ -472,7 +482,7 @@ public class employee extends JFrame {
             cancelButton.setForeground(Color.white);
             cancelButton.setBackground(new Color(24, 63, 102));
             cancelButton.setFocusPainted(false); // Disable focus border
-            
+
             updateButton.addActionListener((ActionEvent e) -> {
                 // Get the updated employee information from the dialog
                 String updatedName = nameField.getText();

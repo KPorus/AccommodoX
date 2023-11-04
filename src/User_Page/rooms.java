@@ -83,6 +83,10 @@ public class rooms extends JFrame {
         User user = userDAO.getUser(userId);
         String role = user.getRole();
         if ("admin".equals(role)) {
+            JButton account = new JButton("Account Info");
+            account.setForeground(Color.white);
+            account.setBackground(new Color(24, 63, 102));
+            account.setFocusPainted(false); // Disable focus border
             profile.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -106,10 +110,15 @@ public class rooms extends JFrame {
                 new Offers(userId).setVisible(true);
                 dispose();
             });
+            account.addActionListener((ActionEvent e) -> {
+                new AllAccountInfo(userId).setVisible(true);
+                dispose();
+            });
             menuPanel.add(profile);
             menuPanel.add(customers);
             menuPanel.add(employees);
             menuPanel.add(rooms);
+            menuPanel.add(account);
             menuPanel.add(offer);
             headerPanel.add(menuPanel, BorderLayout.CENTER);
         }
@@ -180,7 +189,6 @@ public class rooms extends JFrame {
         logoBodyPanel.setOpaque(false);
         // Add headerPanel and userInfoPanel to the frame
         headerPanel.add(logoTitlePanel, BorderLayout.WEST);
-        
 
         // Initialize the table model with columns
         String[] columnNames = null;
