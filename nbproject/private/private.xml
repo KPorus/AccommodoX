@@ -4,9 +4,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/Java%20Project/AccommodoX/src/DB/UserDAO.java</file>
-            <file>file:/D:/Java%20Project/AccommodoX/src/User_Page/customer.java</file>
-            <file>file:/D:/Java%20Project/AccommodoX/src/User_Page/Offers.java</file>
-            <file>file:/D:/Java%20Project/AccommodoX/src/User_data/Offer.java</file>
+            <file>file:/D:/Java%20Project/AccommodoX/src/User_Page/Account.java</file>
+            <file>file:/D:/Java%20Project/AccommodoX/src/User_Page/AllAccountInfo.java</file>
+            <file>file:/D:/Java%20Project/AccommodoX/src/User_data/FundData.java</file>
+            <file>file:/D:/Java%20Project/AccommodoX/src/User_Page/BookedRooms.java</file>
+            <file>file:/D:/Java%20Project/AccommodoX/src/User_Page/RoomAccount.java</file>
         </group>
     </open-files>
 </project-private>

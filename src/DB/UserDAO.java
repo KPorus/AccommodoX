@@ -2,6 +2,7 @@ package DB;
 
 import User_data.Booking;
 import User_data.BookingWithUserInfo;
+import User_data.FundData;
 import User_data.Offer;
 import User_data.Rooms;
 import java.sql.Connection;
@@ -487,7 +488,7 @@ public class UserDAO {
     }
 
     public List<BookingWithUserInfo> getAllBookingsWithUserInfo() {
-        String selectBookingQuery = "SELECT u.name AS user_name, r.room_Type, b.booking_to, b.booking_from, b.checkInTime, b.checkOutTime, b.NumberOfRooms, b.prize,b.offer "
+        String selectBookingQuery = "SELECT u.name AS user_name, r.room_Type, b.booking_to, b.booking_from, b.checkInTime, b.checkOutTime, b.NumberOfRooms, b.prize, b.offer, b.payment "
                 + "FROM booking b "
                 + "JOIN users u ON u.id = b.userId "
                 + "JOIN rooms r ON r.id = b.roomId";
@@ -507,12 +508,13 @@ public class UserDAO {
                 int numberOfRooms = resultSet.getInt("NumberOfRooms");
                 int prize = resultSet.getInt("prize");
                 int offer = resultSet.getInt("offer");
+                String payment = resultSet.getString("payment");
                 // Parse the formatted time strings into Time objects
                 Time checkInTime = Time.valueOf(checkInTimeStr);
                 Time checkOutTime = Time.valueOf(checkOutTimeStr);
 
                 // Create a BookingWithUserInfo object and add it to the list
-                BookingWithUserInfo bookingWithUserInfo = new BookingWithUserInfo(userName, roomType, bookingTo, bookingFrom, checkInTime, checkOutTime, numberOfRooms, prize, offer);
+                BookingWithUserInfo bookingWithUserInfo = new BookingWithUserInfo(userName, roomType, bookingTo, bookingFrom, checkInTime, checkOutTime, numberOfRooms, prize, offer, payment);
                 bookings.add(bookingWithUserInfo);
             }
         } catch (SQLException e) {
@@ -597,6 +599,79 @@ public class UserDAO {
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(deleteOfferQuery)) {
             preparedStatement.setInt(1, id); // Set the ID as a parameter
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public List<FundData> getAllAccountData() {
+        String selectFundDataQuery = "SELECT * FROM account";
+        List<FundData> fundDataList = new ArrayList<>();
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectFundDataQuery); ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                double fund = resultSet.getDouble("fund");
+                double totalSalary = resultSet.getDouble("total_salary");
+                double roomPrizeBkash = resultSet.getDouble("room_prize_bkash");
+                double roomPrizeManual = resultSet.getDouble("room_prize_manual");
+                String date = resultSet.getString("Date");
+
+                FundData fundData = new FundData(id, fund, totalSalary, roomPrizeBkash, roomPrizeManual, date);
+                fundDataList.add(fundData);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return fundDataList;
+    }
+
+    public boolean updateDatabase(Date updatedData, String columnName, int id) {
+        String updateQuery = "UPDATE account SET " + columnName + " = ? WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+            preparedStatement.setDate(1, updatedData);
+            preparedStatement.setInt(2, id);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Return false to indicate a failed update
+        }
+    }
+
+    public boolean updateDatabaseOne(String updatedData, String columnName, int id) {
+        String updateQuery = "UPDATE account SET `" + columnName + "` = ? WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+            double updatedValue = Double.parseDouble(updatedData);
+            preparedStatement.setDouble(1, updatedValue);
+            preparedStatement.setInt(2, id);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Return false to indicate a failed update
+        }
+    }
+
+    public boolean insertNewRowIntoDatabase(Date Date, double fund, double total_salary, double room_prize_bkash, double room_prize_manual) {
+        String insertQuery = "INSERT INTO account ( fund, total_salary, room_prize_bkash, room_prize_manual,Date) VALUES ( ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
+            preparedStatement.setDouble(1, fund);
+            preparedStatement.setDouble(2, total_salary);
+            preparedStatement.setDouble(3, room_prize_bkash);
+            preparedStatement.setDouble(4, room_prize_manual);
+            preparedStatement.setDate(5, Date);
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;

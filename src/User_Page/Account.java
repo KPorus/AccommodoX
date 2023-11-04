@@ -74,12 +74,27 @@ public class Account extends JFrame {
         profile.setBackground(new Color(24, 63, 102));
         profile.setFocusPainted(false); // Disable focus border
 
+        JButton Book = new JButton("Booked Rooms");
+        Book.setForeground(Color.white);
+        Book.setBackground(new Color(24, 63, 102));
+        Book.setFocusPainted(false); // Disable focus border
+
         JButton account = new JButton("Account Info");
         account.setForeground(Color.white);
         account.setBackground(new Color(24, 63, 102));
         account.setFocusPainted(false); // Disable focus border
 
+        Book.addActionListener((ActionEvent e) -> {
+            new RoomAccount(userId).setVisible(true);
+            dispose();
+        });
+        account.addActionListener((ActionEvent e) -> {
+            new AllAccountInfo(userId).setVisible(true);
+            dispose();
+        });
+
         menuPanel.add(profile);
+        menuPanel.add(Book);
         menuPanel.add(account);
 
         // Add the logoTitlePanel and menuPanel to the headerPanel
@@ -158,7 +173,7 @@ public class Account extends JFrame {
             edit.setForeground(Color.white);
             edit.setBackground(new Color(24, 63, 102));
             edit.setFocusPainted(false); // Disable focus border
-            
+
             edit.addActionListener((ActionEvent e) -> {
                 editPage edit1 = new editPage(user);
                 edit1.setVisible(true);

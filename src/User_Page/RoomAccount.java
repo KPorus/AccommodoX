@@ -5,29 +5,43 @@ import DB.UserDAO;
 import Design.GradientPanel;
 import User_data.BookingWithUserInfo;
 import User_data.User;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.table.DefaultTableColumnModel;
 
-public class BookedRooms extends JFrame {
+public class RoomAccount extends JFrame {
 
     private UserDAO userDAO;
     private MySQLConnection mysqlConnection;
-    private JTable bookingTable;
-    private DefaultTableModel tableModel;
+    private final JTable bookingTable;
+    private final DefaultTableModel tableModel;
     private List<BookingWithUserInfo> bookedRooms;
     private int currentPage = 1;
     private int pageSize = 10; // Number of rows per page
-    private JButton backButton;
+    private double totalAmountBkash = 0.0;
+    private double totalAmountManual = 0.0;
 
-    public BookedRooms(User user, int userId) {
+    public RoomAccount(int userId) {
         mysqlConnection = new MySQLConnection();
         this.userDAO = new UserDAO(mysqlConnection.getConnection());
 
@@ -54,34 +68,30 @@ public class BookedRooms extends JFrame {
         JButton profile = new JButton("Profile");
         profile.setForeground(Color.white);
         profile.setBackground(new Color(24, 63, 102));
-        profile.setFocusPainted(false); // Disable focus border 
+        profile.setFocusPainted(false); // Disable focus border
 
-        JButton Booked = new JButton("Booked Rooms");
-        Booked.setForeground(Color.white);
-        Booked.setBackground(new Color(24, 63, 102));
-        Booked.setFocusPainted(false); // Disable focus border
+        JButton Book = new JButton("Booked Rooms");
+        Book.setForeground(Color.white);
+        Book.setBackground(new Color(24, 63, 102));
+        Book.setFocusPainted(false); // Disable focus border
 
-        JButton rooms = new JButton("Rooms");
-        rooms.setForeground(Color.white);
-        rooms.setBackground(new Color(24, 63, 102));
-        rooms.setFocusPainted(false); // Disable focus border
+        JButton account = new JButton("Account Info");
+        account.setForeground(Color.white);
+        account.setBackground(new Color(24, 63, 102));
+        account.setFocusPainted(false); // Disable focus border
 
-        rooms.addActionListener((ActionEvent e) -> {
-            new rooms(userId).setVisible(true);
+        profile.addActionListener((ActionEvent e) -> {
+            User userData = userDAO.getUser(userId); // Fetch user data by ID
+            new Account(userData).setVisible(true); // Pass the fetched user data
             dispose();
         });
-        profile.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                User userData = userDAO.getUser(userId); // Fetch user data by ID
-                new receiptionist(userData).setVisible(true); // Pass the fetched user data
-                dispose();
-            }
+        account.addActionListener((ActionEvent e) -> {
+            new AllAccountInfo(userId).setVisible(true);
+            dispose();
         });
-
         menuPanel.add(profile);
-        menuPanel.add(Booked);
-        menuPanel.add(rooms);
+        menuPanel.add(Book);
+        menuPanel.add(account);
 
         // Create a panel for the logo and title
         JPanel logoTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -110,7 +120,7 @@ public class BookedRooms extends JFrame {
         headerPanel.add(logoTitlePanel, BorderLayout.WEST);
         headerPanel.add(menuPanel, BorderLayout.CENTER);
 
-        String[] columnNames = {"User Name", "Room Type", "Booking To", "Booking From", "Check-In Time", "Check-Out Time", "Number of Rooms", "Prize", "Offer","Payment"};
+        String[] columnNames = {"User Name", "Room Type", "Booking To", "Booking From", "Check-In Time", "Check-Out Time", "Prize", "Offer"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -143,29 +153,24 @@ public class BookedRooms extends JFrame {
         nextButton.setBackground(new Color(24, 63, 102));
         nextButton.setFocusPainted(false); // Disable focus border
 
-        prevButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (currentPage > 1) {
-                    currentPage--;
-                    displayBookedRooms(currentPage);
-                }
+        prevButton.addActionListener((ActionEvent e) -> {
+            if (currentPage > 1) {
+                currentPage--;
+                displayBookedRooms(currentPage);
             }
         });
 
-        nextButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int maxPage = (int) Math.ceil((double) bookedRooms.size() / pageSize);
-                if (currentPage < maxPage) {
-                    currentPage++;
-                    displayBookedRooms(currentPage);
-                }
+        nextButton.addActionListener((ActionEvent e) -> {
+            int maxPage = (int) Math.ceil((double) bookedRooms.size() / pageSize);
+            if (currentPage < maxPage) {
+                currentPage++;
+                displayBookedRooms(currentPage);
             }
         });
         paginationPanel.add(prevButton);
         paginationPanel.add(nextButton);
         mainContentPanel.add(paginationPanel, BorderLayout.SOUTH);
+
         // Center the logoBodyPanel and userInfoPanel
         JPanel centerPanel = new JPanel(new GridBagLayout());
         centerPanel.setOpaque(false);
@@ -184,6 +189,9 @@ public class BookedRooms extends JFrame {
         int startIdx = (page - 1) * pageSize;
         int endIdx = Math.min(startIdx + pageSize, bookedRooms.size());
 
+        totalAmountBkash = 0.0;
+        totalAmountManual = 0.0;
+
         for (int i = startIdx; i < endIdx; i++) {
             BookingWithUserInfo room = bookedRooms.get(i);
             Object[] rowData = {
@@ -193,52 +201,74 @@ public class BookedRooms extends JFrame {
                 room.getBookingFrom(),
                 room.getCheckInTime(),
                 room.getCheckOutTime(),
-                room.getNumberOfRooms(),
                 room.getPrize(),
                 room.getOffer(),
-                room.getPayment()
-            };
+                room.getPayment(),};
             tableModel.addRow(rowData);
+
+            if ("bkash".equals(room.getPayment())) {
+                totalAmountBkash += room.getPrize();
+            } else if ("manual".equals(room.getPayment())) {
+                totalAmountManual += room.getPrize();
+            }
         }
 
-        for (int i = 0; i < tableModel.getColumnCount(); i++) {
-            packColumn(bookingTable, i);
-        }
+        // Add a row for "Total Amount (bkash)"
+        Object[] totalAmountBkashRow = {
+            "Total Amount (bkash)",
+            "",
+            "",
+            "",
+            "",
+            "",
+            totalAmountBkash,
+            "",
+            "",};
+        tableModel.addRow(totalAmountBkashRow);
+
+        // Add a row for "Total Amount (manual)"
+        Object[] totalAmountManualRow = {
+            "Total Amount (manual)",
+            "",
+            "",
+            "",
+            "",
+            "",
+            totalAmountManual,
+            "",
+            "",};
+        tableModel.addRow(totalAmountManualRow);
+
+        packColumns(bookingTable);
     }
 
-    private void packColumn(JTable table, int columnIndex) {
+    private void packColumns(JTable table) {
         int margin = 5;
         DefaultTableColumnModel colModel = (DefaultTableColumnModel) table.getColumnModel();
-        TableColumn col = colModel.getColumn(columnIndex);
-        int width = 0;
 
-        TableCellRenderer headerRenderer = col.getHeaderRenderer();
-        if (headerRenderer == null) {
-            headerRenderer = table.getTableHeader().getDefaultRenderer();
+        for (int i = 0; i < tableModel.getColumnCount(); i++) {
+            TableColumn col = colModel.getColumn(i);
+            TableCellRenderer headerRenderer = col.getHeaderRenderer();
+            if (headerRenderer == null) {
+                headerRenderer = table.getTableHeader().getDefaultRenderer();
+            }
+
+            Component headerComp = headerRenderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
+            int width = headerComp.getPreferredSize().width;
+
+            for (int row = 0; row < table.getRowCount(); row++) {
+                TableCellRenderer renderer = table.getCellRenderer(row, i);
+                Component comp = table.prepareRenderer(renderer, row, i);
+                width = Math.max(comp.getPreferredSize().width + margin, width);
+            }
+
+            col.setPreferredWidth(width + margin);
         }
-
-        Component headerComp = headerRenderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
-        width = headerComp.getPreferredSize().width;
-
-        for (int row = 0; row < table.getRowCount(); row++) {
-            TableCellRenderer renderer = table.getCellRenderer(row, columnIndex);
-            Component comp = table.prepareRenderer(renderer, row, columnIndex);
-            width = Math.max(comp.getPreferredSize().width + margin, width);
-        }
-
-        col.setPreferredWidth(width + margin);
-    }
-
-    public static void main(String[] args) {
-        // This is just for testing; you can remove this part when integrating with your application.
-        User user = new User(); // Replace with your User object
-        int userId = 1; // Replace with the actual user ID
-        JFrame frame = new BookedRooms(user, userId);
-        frame.setVisible(true);
     }
 
     private Image getAppIcon() {
         ImageIcon icon = new ImageIcon("D:\\Java Project\\AccommodoX\\src\\Images\\hotel.jpeg");
         return icon.getImage();
     }
+
 }

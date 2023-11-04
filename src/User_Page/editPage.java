@@ -80,7 +80,7 @@ public class editPage extends JFrame {
         userInfoPanel.setOpaque(false);
         userInfoPanel.setForeground(new Color(255, 255, 255));
         userInfoPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 0, 0));
-        
+
         JLabel name = new JLabel("Name");
         name.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
         name.setForeground(Color.WHITE); // Set text color to white
@@ -89,7 +89,7 @@ public class editPage extends JFrame {
         namepanel.add(name);
         namepanel.add(nameLabel);
         namepanel.setOpaque(false);
-        
+
         JLabel email = new JLabel("Email");
         email.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
         email.setForeground(Color.WHITE); // Set text color to white
@@ -98,7 +98,7 @@ public class editPage extends JFrame {
         emailpanel.add(email);
         emailpanel.add(emailLabel);
         emailpanel.setOpaque(false);
-        
+
         JLabel pass = new JLabel("Password");
         pass.setFont(new Font("SansSerif", Font.PLAIN, 16)); // Increase the font size
         pass.setForeground(Color.WHITE); // Set text color to white
@@ -152,32 +152,32 @@ public class editPage extends JFrame {
         profile.setForeground(Color.white);
         profile.setBackground(new Color(24, 63, 102));
         profile.setFocusPainted(false); // Disable focus border
-        
+
         JButton users = new JButton("Customers");
         users.setForeground(Color.white);
         users.setBackground(new Color(24, 63, 102));
         users.setFocusPainted(false); // Disable focus border
-        
+
         JButton emp = new JButton("Employees");
         emp.setForeground(Color.white);
         emp.setBackground(new Color(24, 63, 102));
         emp.setFocusPainted(false); // Disable focus border
-        
+
         JButton BookedRoom = new JButton("Booked Room");
         BookedRoom.setForeground(Color.white);
         BookedRoom.setBackground(new Color(24, 63, 102));
         BookedRoom.setFocusPainted(false); // Disable focus border
-        
+
         JButton rooms = new JButton("Rooms");
         rooms.setForeground(Color.white);
         rooms.setBackground(new Color(24, 63, 102));
         rooms.setFocusPainted(false); // Disable focus border
-        
+
         JButton offer = new JButton("Offers");
         offer.setForeground(Color.white);
         offer.setBackground(new Color(24, 63, 102));
         offer.setFocusPainted(false); // Disable focus border
-        
+
         if ("admin".equals(role)) {
             profile.addActionListener(new ActionListener() {
                 @Override
@@ -258,6 +258,16 @@ public class editPage extends JFrame {
         }
 
         if ("accountent".equals(role)) {
+            JButton Book = new JButton("Booked Rooms");
+            Book.setForeground(Color.white);
+            Book.setBackground(new Color(24, 63, 102));
+            Book.setFocusPainted(false); // Disable focus border
+
+            JButton account = new JButton("Account Info");
+            account.setForeground(Color.white);
+            account.setBackground(new Color(24, 63, 102));
+            account.setFocusPainted(false); // Disable focus border
+
             profile.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -270,7 +280,17 @@ public class editPage extends JFrame {
                     dispose();
                 }
             });
+            Book.addActionListener((ActionEvent e) -> {
+                new RoomAccount(userId).setVisible(true);
+                dispose();
+            });
+            account.addActionListener((ActionEvent e) -> {
+                new AllAccountInfo(userId).setVisible(true);
+                dispose();
+            });
             menuPanel.add(profile);
+            menuPanel.add(Book);
+            menuPanel.add(account);
         }
         if ("receiptionist".equals(role)) {
             profile.addActionListener(new ActionListener() {
@@ -295,7 +315,7 @@ public class editPage extends JFrame {
             BookedRoom.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new BookedRooms(null,userId).setVisible(true); // Pass the fetched user data
+                    new BookedRooms(null, userId).setVisible(true); // Pass the fetched user data
                     dispose();
                 }
             });
