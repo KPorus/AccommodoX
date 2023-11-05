@@ -99,6 +99,10 @@ public class rooms extends JFrame {
                 new allCustomer(null, userId).setVisible(true);
                 dispose();
             });
+            rooms.addActionListener((ActionEvent e) -> {
+                new rooms(userId).setVisible(true);
+                dispose();
+            });
             employees.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -139,6 +143,10 @@ public class rooms extends JFrame {
                     dispose();
                 }
             });
+            rooms.addActionListener((ActionEvent e) -> {
+                new rooms(userId).setVisible(true);
+                dispose();
+            });
             menuPanel.add(profile);
             menuPanel.add(rooms);
             menuPanel.add(BookedRoom);
@@ -156,6 +164,10 @@ public class rooms extends JFrame {
             });
             BookedRoom.addActionListener((ActionEvent e) -> {
                 new BookedRooms(null, userId).setVisible(true);
+                dispose();
+            });
+            rooms.addActionListener((ActionEvent e) -> {
+                new rooms(userId).setVisible(true);
                 dispose();
             });
             menuPanel.add(profile);
@@ -413,7 +425,7 @@ public class rooms extends JFrame {
         private JCheckBox flowersCheckBox;
         private JCheckBox freeWifiCheckBox;
         private JCheckBox privateBusCheckBox;
-        private JButton updateButton;
+//        private JButton updateButton;
 
         public UpdateRoomDialog(JFrame parent, Rooms room, String role) {
             super(parent, "Update Room", true);
@@ -458,7 +470,8 @@ public class rooms extends JFrame {
             privateBusCheckBox = new JCheckBox();
             privateBusCheckBox.setSelected(room.isPrivateBus());
             panel.add(privateBusCheckBox);
-
+            
+            JButton updateButton = new JButton("Update");
             updateButton.setForeground(Color.white);
             updateButton.setBackground(new Color(24, 63, 102));
             updateButton.setFocusPainted(false); // Disable focus border

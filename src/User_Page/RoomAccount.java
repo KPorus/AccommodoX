@@ -89,6 +89,10 @@ public class RoomAccount extends JFrame {
             new AllAccountInfo(userId).setVisible(true);
             dispose();
         });
+        Book.addActionListener((ActionEvent e) -> {
+            new RoomAccount(userId).setVisible(true);
+            dispose();
+        });
         menuPanel.add(profile);
         menuPanel.add(Book);
         menuPanel.add(account);

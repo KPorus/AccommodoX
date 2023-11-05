@@ -228,7 +228,10 @@ public class AllAccountInfo extends JFrame {
                 new RoomAccount(userId).setVisible(true);
                 dispose();
             });
-
+            account.addActionListener((ActionEvent e) -> {
+                new AllAccountInfo(userId).setVisible(true);
+                dispose();
+            });
             menuPanel.add(profile);
             menuPanel.add(Book);
             menuPanel.add(account);

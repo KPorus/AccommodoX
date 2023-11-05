@@ -14,6 +14,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -106,10 +107,12 @@ public class Offers extends JFrame {
             new admin(userData).setVisible(true);
             dispose();
         });
-        offer.addActionListener((ActionEvent e) -> {
-            // Refresh the offers panel when the "Offers" button is clicked
-            updateOffersPanel();
-            System.out.println("Function called");
+        offer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Offers(userId).setVisible(true); // Pass the fetched user data
+                dispose();
+            }
         });
         account.addActionListener((ActionEvent e) -> {
             new AllAccountInfo(userId).setVisible(true);
