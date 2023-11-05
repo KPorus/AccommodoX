@@ -12,6 +12,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.util.List;
 import javax.swing.table.DefaultTableColumnModel;
@@ -86,7 +87,7 @@ public class employee extends JFrame {
         account.setForeground(Color.white);
         account.setBackground(new Color(24, 63, 102));
         account.setFocusPainted(false); // Disable focus border
-        
+
         profile.addActionListener((ActionEvent e) -> {
             User userData = userDAO.getUser(userId); // Fetch user data by ID
             new admin(userData).setVisible(true); // Pass the fetched user data
@@ -107,6 +108,13 @@ public class employee extends JFrame {
         account.addActionListener((ActionEvent e) -> {
             new AllAccountInfo(userId).setVisible(true);
             dispose();
+        });
+        employees.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new employee(userId).setVisible(true); // Pass the fetched user data
+                dispose();
+            }
         });
         menuPanel.add(profile);
         menuPanel.add(customers);
